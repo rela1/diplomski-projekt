@@ -73,6 +73,7 @@ def train(model, vgg_init_dir, dataset_root):
   Args:
     model: module containing model architecture
   """
+  print(vgg_init_dir)
   train_data = dataset.read_images(dataset_root, 'train').astype(np.float64)
   test_data = dataset.read_images(dataset_root, 'test').astype(np.float64)
   validate_data = dataset.read_images(dataset_root, 'validate').astype(np.float64)
@@ -118,9 +119,9 @@ def train(model, vgg_init_dir, dataset_root):
         shape=(BATCH_SIZE, train_data.shape[1], train_data.shape[2], train_data.shape[3]))
     labels_node = tf.placeholder(tf.int64, shape=(BATCH_SIZE,))
     with tf.variable_scope('model'):
-      logits, loss, init_op, init_feed = model.build(data_node, labels_node, WEIGHT_DECAY, NUM_CLASSES, vgg_init_dir, FULLY_CONNECTED)
+      logits, loss, init_op, init_feed = model.build(data_node, labels_node, WEIGHT_DECAY, NUM_CLASSES, vgg_init_dir, fully_connected=FULLY_CONNECTED)
     with tf.variable_scope('model', reuse=True):
-      logits_eval, loss_eval = model.build(data_node, labels_node, WEIGHT_DECAY, FULLY_CONNECTED, NUM_CLASSES, vgg_init_dir, is_training=False)
+      logits_eval, loss_eval = model.build(data_node, labels_node, WEIGHT_DECAY, NUM_CLASSES, vgg_init_dir, is_training=False, fully_connected=FULLY_CONNECTED)
     opt = tf.train.AdamOptimizer(LEARNING_RATE)
     grads = opt.compute_gradients(loss)
     apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
