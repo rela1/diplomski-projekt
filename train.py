@@ -75,10 +75,10 @@ def train(model, vgg_init_dir, dataset_root):
   """
   print(vgg_init_dir)
   train_data = dataset.read_images(dataset_root, 'train').astype(np.float64)
-  test_data = dataset.read_images(dataset_root, 'test').astype(np.float64)
+  #test_data = dataset.read_images(dataset_root, 'test').astype(np.float64)
   validate_data = dataset.read_images(dataset_root, 'validate').astype(np.float64)
   train_labels = dataset.read_labels(dataset_root, 'train').astype(np.int64)
-  test_labels = dataset.read_labels(dataset_root, 'test').astype(np.int64)
+  #test_labels = dataset.read_labels(dataset_root, 'test').astype(np.int64)
   validate_labels = dataset.read_labels(dataset_root, 'validate').astype(np.int64)
 
   data_mean = train_data.reshape([-1, 3]).mean(0)
@@ -89,7 +89,7 @@ def train(model, vgg_init_dir, dataset_root):
 
   for c in range(train_data.shape[-1]):
     train_data[..., c] -= data_mean[c]
-    test_data[..., c] -= data_mean[c]
+    #test_data[..., c] -= data_mean[c]
     validate_data[..., c] -= data_mean[c]
     # better without variance normalization
     #train_data[..., c] /= data_std[c]
@@ -103,7 +103,7 @@ def train(model, vgg_init_dir, dataset_root):
   print(train_labels.shape)
 
   train_size = train_data.shape[0]
-  test_size = test_data.shape[0]
+  #test_size = test_data.shape[0]
   validate_size = validate_data.shape[0]
   assert train_size % BATCH_SIZE == 0
   assert test_size % BATCH_SIZE == 0
