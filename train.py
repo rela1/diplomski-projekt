@@ -110,7 +110,7 @@ def train(model, vgg_init_dir, dataset_root):
   assert validate_size % BATCH_SIZE == 0
 
   with tf.Graph().as_default():
-    config = tf.ConfigProto(log_device_placement=True)
+    config = tf.ConfigProto(log_device_placement=False)
     sess = tf.Session(config=config)
     global_step = tf.get_variable('global_step', [], dtype=tf.int64,
         initializer=tf.constant_initializer(0), trainable=False)
