@@ -115,7 +115,7 @@ def train(model, vgg_init_dir, dataset_root):
         initializer=tf.constant_initializer(0), trainable=False)
     num_batches_per_epoch = train_size // BATCH_SIZE
     data_node = tf.placeholder(tf.float32,
-        shape=(BATCH_SIZE, train_size.shape[1], train_size.shape[2], train_size.shape[3]))
+        shape=(BATCH_SIZE, train_data.shape[1], train_data.shape[2], train_data.shape[3]))
     labels_node = tf.placeholder(tf.int64, shape=(BATCH_SIZE,))
     with tf.variable_scope('model'):
       logits, loss, init_op, init_feed = model.build(data_node, labels_node, WEIGHT_DECAY, NUM_CLASSES, vgg_init_dir, FULLY_CONNECTED)
