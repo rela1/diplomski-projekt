@@ -44,7 +44,7 @@ if __name__ == '__main__':
 	X_train = np.append(X_train, X_validate, axis=0)
 	y_train = np.append(y_train, y_validate, axis=0)
 	y_train_oh = np.append(y_train_oh, y_validate_oh, axis=0)
-	model = logreg.TFLogReg(X_train.shape[1], 2, param_delta=LEARNING_RATE, param_lambda=1e-3)
+	model = logreg.TFLogReg(X_train.shape[1], 2, param_delta=LEARNING_RATE, param_lambda=WEIGHT_DECAY)
 	model.train(X_train, y_train_oh, EPOCHS)
 	y_train_pred = model.eval(X_train)
 	y_train_pred = np.argmax(y_train_pred, axis=1)
