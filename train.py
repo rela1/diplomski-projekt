@@ -106,7 +106,7 @@ def train(model, vgg_init_dir, dataset_root):
   #test_size = test_data.shape[0]
   validate_size = validate_data.shape[0]
   assert train_size % BATCH_SIZE == 0
-  assert test_size % BATCH_SIZE == 0
+  #assert test_size % BATCH_SIZE == 0
   assert validate_size % BATCH_SIZE == 0
 
   with tf.Graph().as_default():
