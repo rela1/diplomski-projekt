@@ -109,13 +109,13 @@ def train(model, vgg_init_dir, dataset_root):
   assert validate_size % BATCH_SIZE == 0
 
   with tf.Graph().as_default():
-    config = tf.ConfigProto(log_device_placement=FLAGS.log_device_placement)
+    config = tf.ConfigProto(log_device_placement=True)
     sess = tf.Session(config=config)
     global_step = tf.get_variable('global_step', [], dtype=tf.int64,
         initializer=tf.constant_initializer(0), trainable=False)
     num_batches_per_epoch = train_size // BATCH_SIZE
     data_node = tf.placeholder(tf.float32,
-        shape=(BATCH_SIZE, FLAGS.img_height, FLAGS.img_width, FLAGS.num_channels))
+        shape=(BATCH_SIZE, train_size.shape[1], train_size.shape[2], train_size.shape[3]))
     labels_node = tf.placeholder(tf.int64, shape=(BATCH_SIZE,))
     with tf.variable_scope('model'):
       logits, loss, init_op, init_feed = model.build(data_node, labels_node, WEIGHT_DECAY, NUM_CLASSES, vgg_init_dir, FULLY_CONNECTED)
