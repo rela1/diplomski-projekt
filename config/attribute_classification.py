@@ -5,7 +5,7 @@ import train_helper
 MODEL_PATH = './models/vgg_vertically_sliced.py'
 #MODEL_PATH = './models/swwae.py'
 
-SAVE_DIR = os.path.join('/media/irelic/Storage/My Documents/Ivan/Škola/FER/9. semestar/Projekt/dataset/he_ftts-irap/merge_lane_images_dataset/results/', train_helper.get_time_string())
+SAVE_DIR = os.path.join('/set/path/', train_helper.get_time_string())
 
 IMG_WIDTH = 492
 IMG_HEIGHT = 147
@@ -33,7 +33,7 @@ tf.app.flags.DEFINE_float('learning_rate_decay_factor', 0.5,
                           """Learning rate decay factor.""")
 tf.app.flags.DEFINE_float('moving_average_decay', 0.9999, '')
 
-tf.app.flags.DEFINE_string('vgg_init_dir', '/media/irelic/Storage/My Documents/Ivan/Škola/FER/9. semestar/Projekt/vgg16/', '')
+tf.app.flags.DEFINE_string('vgg_init_dir', '/set/path/', '')
 #povecaj_lr za w=1
 FLAGS = tf.app.flags.FLAGS
 tf.app.flags.DEFINE_string('train_dir', SAVE_DIR, \
