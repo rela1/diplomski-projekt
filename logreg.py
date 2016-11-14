@@ -14,7 +14,7 @@ class TFLogReg:
       self.X = tf.placeholder(tf.float32, [None, D])
       self.Yoh_ = tf.placeholder(tf.float32, [None, C])
 
-      self.W = tf.Variable(tf.zeros([D, C]))
+      self.W = tf.Variable(tf.random_normal([D, C], stddev=0.25))
       self.b = tf.Variable(tf.zeros(C))
 
       self.logits = tf.matmul(self.X, self.W) + self.b

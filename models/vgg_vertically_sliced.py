@@ -6,8 +6,6 @@ from tensorflow.contrib.layers.python.layers import initializers
 
 import losses
 
-FLAGS = tf.app.flags.FLAGS
-
 def total_loss_sum(losses):
   # Assemble all of the losses for the current tower only.
   # Calculate the total loss for the current tower.
@@ -35,8 +33,6 @@ def create_init_op(vgg_layers):
 
 def build_convolutional_feature_extractor(inputs, weight_decay, vgg_init_dir, is_training=True, vertical_slice=None):
   vgg_layers, vgg_layer_names = read_vgg_init(vgg_init_dir)
-
-  weight_decay = FLAGS.weight_decay
 
   with tf.contrib.framework.arg_scope([layers.convolution2d],
       kernel_size=3, stride=1, padding='SAME', rate=1, activation_fn=tf.nn.relu,
@@ -76,9 +72,9 @@ def build_convolutional_feature_extractor(inputs, weight_decay, vgg_init_dir, is
       init_op, init_feed = create_init_op(vgg_layers)
       return net, init_op, init_feed
 
-    return net, None, None
+    return net
 
-def build(inputs, labels, weight_decay, vgg_init_dir, is_training=True, vertical_slice=None, ):
+def build(inputs, labels, weight_decay, num_classes, vgg_init_dir, fully_connected=[], is_training=True, vertical_slice=None):
 
   # to big weight_decay = 5e-3
   bn_params = {
@@ -93,15 +89,20 @@ def build(inputs, labels, weight_decay, vgg_init_dir, is_training=True, vertical
       'is_training': is_training,
   }
 
-  net, init_op, init_feed = build_convolutional_feature_extractor(inputs, weight_decay, vgg_init_dir, is_training, vertical_slice)
+  if is_training:
+    net, init_op, init_feed = build_convolutional_feature_extractor(inputs, weight_decay, vgg_init_dir, is_training, vertical_slice)
+  else:
+    net = build_convolutional_feature_extractor(inputs, weight_decay, vgg_init_dir, is_training, vertical_slice)
 
   with tf.contrib.framework.arg_scope([layers.fully_connected],
       activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
       weights_initializer=initializers.xavier_initializer(),
       weights_regularizer=layers.l2_regularizer(weight_decay)):
-    net = layers.fully_connected(net, 10, scope='fc7')
-  logits = layers.fully_connected(net, FLAGS.num_classes, activation_fn=None,
-      weights_regularizer=layers.l2_regularizer(weight_decay), scope='logits')
+    layer_num = 1
+    for fully_connected_num in fully_connected:
+      net = layers.fully_connected(net, fully_connected_num, scope='fc{}'.format(layer_num))
+      layer_num += 1
+    logits = layers.fully_connected(net, num_classes, activation_fn=None, scope='logits')
 
   total_loss = loss(logits, labels, is_training)
   
