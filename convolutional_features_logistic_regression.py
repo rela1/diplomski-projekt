@@ -9,8 +9,8 @@ import os
 from sklearn import metrics
 import logreg
 
-EPOCHS = 200
-LEARNING_RATE = 1e-2
+EPOCHS = 2000
+LEARNING_RATE = 1e-4
 WEIGHT_DECAY = 1.0
 
 if __name__ == '__main__':
