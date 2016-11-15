@@ -131,6 +131,7 @@ def train(model, vgg_init_dir, dataset_root):
     sess.run(tf.initialize_local_variables())
     summ_writer = tf.train.SummaryWriter('../results/', graph=sess.graph)
     sum_writer.add_graph(sess.graph)
+    tf.merge_all_summaries()
     sum_writer.close()
     sess.run(init_op, feed_dict=init_feed)
     ex_start_time = time.time()
