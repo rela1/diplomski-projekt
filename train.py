@@ -127,10 +127,10 @@ def train(model, vgg_init_dir, dataset_root):
     apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
     with tf.control_dependencies([apply_gradient_op]):
       train_op = tf.no_op(name='train')
-    sess.run(tf.initialize_all_variables())
-    sess.run(tf.initialize_local_variables())
     summ_writer = tf.train.SummaryWriter('../results/', graph=sess.graph)
     sum_writer.add_graph(sess.graph)
+    sess.run(tf.initialize_all_variables())
+    sess.run(tf.initialize_local_variables())
     tf.merge_all_summaries()
     sum_writer.close()
     sess.run(init_op, feed_dict=init_feed)
