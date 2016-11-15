@@ -11,7 +11,7 @@ import logreg
 
 EPOCHS = 2000
 LEARNING_RATE = 1e-4
-WEIGHT_DECAY = 1e-2
+WEIGHT_DECAY = 1e-4
 
 if __name__ == '__main__':
 	X_train_left = dataset.read_convolutional_features(sys.argv[1], sys.argv[2], 'train')

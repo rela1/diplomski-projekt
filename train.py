@@ -14,7 +14,7 @@ from models import vgg_vertically_sliced
 
 np.set_printoptions(linewidth=250)
 
-BATCH_SIZE = 10
+BATCH_SIZE = 2
 WEIGHT_DECAY = 1e-3
 LEARNING_RATE = 1e-4
 FULLY_CONNECTED = [1024]
@@ -43,7 +43,7 @@ def evaluate(sess, epoch_num, data_node, labels_node, logits, loss, data, labels
   num_batches = data_size // BATCH_SIZE
   correct_cnt = 0
   for step in range(num_batches):
-    offset = step * BATCH_SIZE 
+    offset = step * BATCH_SIZE
     batch_data = data[offset:(offset + BATCH_SIZE), ...]
     batch_labels = labels[offset:(offset + BATCH_SIZE)]
     feed_dict = {data_node: batch_data, labels_node: batch_labels}
