@@ -14,7 +14,7 @@ from models import vgg_vertically_sliced
 
 np.set_printoptions(linewidth=250)
 
-BATCH_SIZE = 2
+BATCH_SIZE = 1
 WEIGHT_DECAY = 1e-3
 LEARNING_RATE = 1e-4
 FULLY_CONNECTED = [1024]
