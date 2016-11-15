@@ -128,11 +128,11 @@ def train(model, vgg_init_dir, dataset_root):
     with tf.control_dependencies([apply_gradient_op]):
       train_op = tf.no_op(name='train')
     summ_writer = tf.train.SummaryWriter('../results/', graph=sess.graph)
-    sum_writer.add_graph(sess.graph)
+    summ_writer.add_graph(sess.graph)
     sess.run(tf.initialize_all_variables())
     sess.run(tf.initialize_local_variables())
     tf.merge_all_summaries()
-    sum_writer.close()
+    summ_writer.close()
     sess.run(init_op, feed_dict=init_feed)
     ex_start_time = time.time()
     num_batches = train_size // BATCH_SIZE
