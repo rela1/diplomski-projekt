@@ -47,7 +47,7 @@ if __name__ == '__main__':
             dataset_features_left.extend(features_left)
             dataset_features_middle.extend(features_middle)
             assert features_left.shape == features_middle.shape
-            print("Done with feature extraction step, output shape: ", features.shape, " time per batch: ", (time.clock() - start))
+            print("Done with feature extraction step, output shape: ", features_left.shape, " time per batch: ", (time.clock() - start))
         dataset_features_left = np.array(dataset_features_left)
         dataset_features_middle = np.array(dataset_features_middle)
         print("Done with feature extraction of {} dataset, final output shape: {}".format(dataset_name, vertical_slice_name, dataset_features_left.shape))
