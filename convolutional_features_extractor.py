@@ -32,7 +32,7 @@ if __name__ == '__main__':
     with tf.variable_scope('model'):
         left_feature_extractor, init_op, init_feed = model.build_convolutional_feature_extractor(data_node, WEIGHT_DECAY, sys.argv[1], vertical_slice=0)
     with tf.variable_scope('model', reuse=True):
-        middle_feature_extractor = model.build_convolutional_feature_extractor(data_node, WEIGHT_DECAY, sys.argv[1], vertical_slice=1)
+        middle_feature_extractor = model.build_convolutional_feature_extractor(data_node, WEIGHT_DECAY, sys.argv[1], is_training=False, vertical_slice=1)
     print("Created feature extractors...")
     sess.run(tf.initialize_all_variables())
     sess.run(tf.initialize_local_variables())
