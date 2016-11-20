@@ -15,6 +15,9 @@ if __name__ == '__main__':
 		config = tf.ConfigProto(log_device_placement=False)
 		sess = tf.Session(config=config)
 		X = dataset.read_images(sys.argv[2], sys.argv[3])
+		mean = X.mean()
+		stdev = X.std()
+		X = (X - mean) / stdev
 		vertical_slice = int(sys.argv[4])
 		vertical_slice_name = "left" if vertical_slice == 0 else "middle"
 		data_node = tf.placeholder(tf.float32, shape=(None, int(sys.argv[5]), int(sys.argv[6]), int(sys.argv[7])))
