@@ -43,7 +43,7 @@ if __name__ == '__main__':
         dataset_features_middle = []
         for i in range(len(current_dataset) // BATCH_SIZE + 1):
             start = time.clock()
-            features_left, features_middle = sess.run(left_feature_extractor, middle_feature_extractor, feed_dict={data_node:current_dataset[i * BATCH_SIZE : (i+1) * BATCH_SIZE]})
+            features_left, features_middle = sess.run([left_feature_extractor, middle_feature_extractor], feed_dict={data_node:current_dataset[i * BATCH_SIZE : (i+1) * BATCH_SIZE]})
             dataset_features_left.extend(features_left)
             dataset_features_middle.extend(features_middle)
             assert features_left.shape == features_middle.shape
