@@ -38,16 +38,18 @@ if __name__ == '__main__':
     sess.run(tf.initialize_local_variables())
     sess.run(init_op, feed_dict=init_feed)
     for dataset_name in datasets:
-        dataset = datasets[dataset_name]
-        dataset_features = []
-        for vertical_slice in [0, 1]:
-            vertical_slice_name = "left" if vertical_slice == 0 else "middle"
-            feature_extractor = left_feature_extractor if vertical_slice == 0 else middle_feature_extractor
-            for i in range(len(dataset) // BATCH_SIZE + 1):
-                start = time.clock()
-                features = sess.run(feature_extractor, feed_dict={data_node:dataset[i * BATCH_SIZE : (i+1) * BATCH_SIZE]})
-                dataset_features.extend(features)
-                print("Done with feature extraction step, output shape: ", features.shape, " time per batch: ", (time.clock() - start))
-            dataset_features = np.array(dataset_features)
-            print("Done with feature extraction of {} dataset {} slice, final output shape: {}".format(dataset_name, vertical_slice_name, dataset_features.shape))
-            np.save(os.path.join(sys.argv[2], dataset_name + "_X_convolutional_" + vertical_slice_name), dataset_features)
+        current_dataset = datasets[dataset_name]
+        dataset_features_left = []
+        dataset_features_middle = []
+        for i in range(len(current_dataset) // BATCH_SIZE + 1):
+            start = time.clock()
+            features_left, features_middle = sess.run(left_feature_extractor, middle_feature_extractor, feed_dict={data_node:current_dataset[i * BATCH_SIZE : (i+1) * BATCH_SIZE]})
+            dataset_features_left.extend(features_left)
+            dataset_features_middle.extend(features_middle)
+            assert features_left.shape == features_middle.shape
+            print("Done with feature extraction step, output shape: ", features.shape, " time per batch: ", (time.clock() - start))
+        dataset_features_left = np.array(dataset_features_left)
+        dataset_features_middle = np.array(dataset_features_middle)
+        print("Done with feature extraction of {} dataset, final output shape: {}".format(dataset_name, vertical_slice_name, dataset_features_left.shape))
+        np.save(os.path.join(sys.argv[2], dataset_name + "_X_convolutional_left"), dataset_features_left)
+        np.save(os.path.join(sys.argv[2], dataset_name + "_X_convolutional_middle"), dataset_features_middle)
