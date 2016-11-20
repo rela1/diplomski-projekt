@@ -50,4 +50,4 @@ if __name__ == '__main__':
                 print("Done with feature extraction step, output shape: ", features.shape, " time per batch: ", (time.clock() - start))
             dataset_features = np.array(dataset_features)
             print("Done with feature extraction of {} dataset {} slice, final output shape: {}".format(dataset_name, vertical_slice_name, dataset_features.shape))
-            np.save(os.path.join(sys.argv[2] + "/test", dataset_name + "_X_convolutional_" + vertical_slice_name), dataset_features)
+            np.save(os.path.join(sys.argv[2], dataset_name + "_X_convolutional_" + vertical_slice_name), dataset_features)
