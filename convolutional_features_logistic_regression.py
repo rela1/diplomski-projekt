@@ -61,7 +61,7 @@ if __name__ == '__main__':
 	print("\taverage precision: ", metrics.average_precision_score(y_test, y_test_pred))
 	print("\trecall: ", metrics.recall_score(y_test, y_test_pred))
 	X_test_imgs = dataset.read_images(sys.argv[1], 'test')
-	if len(sys.argv > 4):
+	if len(sys.argv) > 4:
 		misclassified_output_folder = sys.argv[4]
 		for index, image in enumerate(X_test_imgs):
 			if y_test_pred[index] != y_test[index]:
