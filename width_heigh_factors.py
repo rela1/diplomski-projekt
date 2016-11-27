@@ -9,8 +9,8 @@ if __name__ == '__main__':
 	for img_path in sys.argv[1:]:
 		image_name = os.path.basename(img_path)
 		image = mpimg.imread(img_path)
-		width = image.shape[2]
-		height = image.shape[1]
+		width = float(image.shape[2])
+		height = float(image.shape[1])
 		factor = width / height
 		str_factor = "{:.2f}".format(factor)
 		factors.add(str_factor)
