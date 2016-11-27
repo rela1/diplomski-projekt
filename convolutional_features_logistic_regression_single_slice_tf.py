@@ -25,7 +25,7 @@ if __name__ == '__main__':
 	y_test_oh = np.array([[1 if y_test[i] == j else 0 for j in range(2)] for i in range(len(y_test))])
 	best_acc = 0
 	best_lambda = 0
-	for lambda_factor in np.linspace(2**-5, 2**-1, num=10):
+	for lambda_factor in np.linspace(1e-5, 1e-1, num=20):
 		model = logreg.TFLogReg(X_train.shape[1], 2, param_delta=LEARNING_RATE, param_lambda=lambda_factor)
 		model.train(X_train, y_train_oh, EPOCHS)
 		y_validate_pred = model.eval(X_validate)
@@ -53,7 +53,8 @@ if __name__ == '__main__':
 	print("\taverage precision: ", metrics.average_precision_score(y_test, y_test_pred))
 	print("\trecall: ", metrics.recall_score(y_test, y_test_pred))
 	X_test_imgs = dataset.read_images(sys.argv[1], 'test')
-	misclassified_output_folder = sys.argv[3]
-	for index, image in enumerate(X_test_imgs):
-		if y_test_pred[index] != y_test[index]:
-			img.imsave(os.path.join(misclassified_output_folder, str(y_test[index]) + "_" + str(index)), image)
+	if len(sys.argv) > 3:
+		misclassified_output_folder = sys.argv[3]
+		for index, image in enumerate(X_test_imgs):
+			if y_test_pred[index] != y_test[index]:
+				img.imsave(os.path.join(misclassified_output_folder, str(y_test[index]) + "_" + str(index)), image)

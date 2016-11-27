@@ -14,12 +14,12 @@ class TFLogReg:
       self.X = tf.placeholder(tf.float32, [None, D])
       self.Yoh_ = tf.placeholder(tf.float32, [None, C])
 
-      self.W = tf.Variable(tf.random_normal([D, C], stddev=0.25))
+      self.W = tf.Variable(tf.random_normal([D, C], stddev=0.35))
       self.b = tf.Variable(tf.zeros(C))
 
       self.logits = tf.matmul(self.X, self.W) + self.b
 
-      self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(self.logits, self.Yoh_)) + tf.contrib.layers.l1_regularizer(param_lambda)(self.W)
+      self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(self.logits, self.Yoh_)) + tf.contrib.layers.l2_regularizer(param_lambda)(self.W)
 
       self.trainer = tf.train.AdamOptimizer(learning_rate=param_delta)
       self.train_step = self.trainer.minimize(self.loss)

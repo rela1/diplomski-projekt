@@ -10,9 +10,9 @@ import os
 from sklearn import metrics
 from sklearn.metrics import confusion_matrix
 
-EPOCHS = 1
-LEARNING_RATE = 1e-4
-WEIGHT_DECAY = 1e-1
+EPOCHS = 5
+LEARNING_RATE = 1e-3
+WEIGHT_DECAY = 1e-2
 BATCH_SIZE = 20
 
 def build_model(inputs, labels, weight_decay, hidden_layers):
@@ -41,7 +41,7 @@ def train(train_x, train_y, valid_x, valid_y, session, inputs, labels, logits, l
   num_batches = num_examples // batch_size
   global_step = tf.Variable(0, trainable=False)
   learning_rate = tf.train.exponential_decay(starting_learning_rate, global_step,
-                                           10000, 0.96, staircase=True)
+                                           1000, 0.99, staircase=True)
   learning_step = (
     tf.train.AdamOptimizer(learning_rate)
     .minimize(loss, global_step=global_step)
@@ -129,12 +129,9 @@ if __name__ == '__main__':
 			best_acc = acc
 			best_lambda = lambda_factor
 	"""
-	X_train = np.append(X_train, X_validate, axis=0)
-	y_train = np.append(y_train, y_validate, axis=0)
-	y_train_oh = np.append(y_train_oh, y_validate_oh, axis=0)
 	inputs = tf.placeholder(dtype=tf.float32, shape=(BATCH_SIZE, X_train.shape[1]))
 	labels = tf.placeholder(dtype=tf.float32, shape=(BATCH_SIZE, 2))
-	session, logits, loss = build_model(inputs, labels, WEIGHT_DECAY, [1024])
+	session, logits, loss = build_model(inputs, labels, WEIGHT_DECAY, [2048])
 	train(X_train, y_train_oh, X_validate, y_validate_oh, session, inputs, labels, logits, loss, LEARNING_RATE)
 	evaluate("Test", X_test, inputs, y_test_oh, labels, session, logits, loss)
 	if len(sys.argv) > 4:
