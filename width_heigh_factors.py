@@ -13,5 +13,6 @@ if __name__ == '__main__':
 		height = float(image.shape[1])
 		factor = width / height
 		str_factor = "{:.2f}".format(factor)
+		print(str_factor)
 		factors.add(str_factor)
 	print("Image ratios: ", factors)
