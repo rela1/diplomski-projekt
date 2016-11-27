@@ -19,12 +19,6 @@ if __name__ == '__main__':
     for dataset_split in datasets:
         dataset = datasets[dataset_split]
         print("{} dataset shape: {}".format(dataset_split, dataset.shape))
-        if dataset.shape[3] == 4:
-            print("Dataset has alpha channel - removing...")
-            print(dataset[0][..., -1])
-            datasets[dataset_split] = np.squeeze(dataset, axis=3)
-            print(dataset[0][..., -1])
-            print("Dataset alpha channel removed")
     data_mean = datasets['train'].reshape([-1, 3]).mean(0)
     data_std = datasets['train'].reshape([-1, 3]).std(0)
     for c in range(datasets['train'].shape[-1]):
