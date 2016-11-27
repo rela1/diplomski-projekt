@@ -11,6 +11,7 @@ if __name__ == '__main__':
 		image = mpimg.imread(img_path)
 		width = float(image.shape[2])
 		height = float(image.shape[1])
+		print(image.shape, width, height)
 		factor = width / height
 		str_factor = "{:.2f}".format(factor)
 		print(str_factor)
