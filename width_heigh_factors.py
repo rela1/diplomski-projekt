@@ -9,11 +9,9 @@ if __name__ == '__main__':
 	for img_path in sys.argv[1:]:
 		image_name = os.path.basename(img_path)
 		image = mpimg.imread(img_path)
-		width = float(image.shape[2])
-		height = float(image.shape[1])
-		print(image.shape, width, height)
+		width = float(image.shape[1])
+		height = float(image.shape[0])
 		factor = width / height
 		str_factor = "{:.2f}".format(factor)
-		print(str_factor)
 		factors.add(str_factor)
 	print("Image ratios: ", factors)
