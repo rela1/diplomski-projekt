@@ -16,6 +16,8 @@ if __name__ == '__main__':
     for dataset_split in DATASET_SPLITS:
         datasets[dataset_split] = dataset.read_images(dataset_folder, dataset_split)
         print("Read {} dataset...".format(dataset_split))
+    for dataset_split in datasets:
+        print("{} dataset shape: {}".format(dataset_split, datasets[dataset_split].shape))
     data_mean = datasets['train'].reshape([-1, 3]).mean(0)
     data_std = datasets['train'].reshape([-1, 3]).std(0)
     for c in range(datasets['train'].shape[-1]):
