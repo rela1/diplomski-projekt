@@ -12,7 +12,7 @@ from sklearn.metrics import confusion_matrix
 
 EPOCHS = 100
 LEARNING_RATE = 1e-4
-WEIGHT_DECAY = 1e-1
+WEIGHT_DECAY = 1e-4
 BATCH_SIZE = 20
 
 def build_model(inputs, labels, weight_decay, hidden_layers):
