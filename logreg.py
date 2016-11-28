@@ -39,7 +39,7 @@ class TFLogReg:
       for i in range(param_niter):
         operations = [self.train_step]
         if i % 10 == 0:
-          operations.append(self.total_loss, self.regularization_loss)
+          operations.extend([self.total_loss, self.regularization_loss])
         session_results = self.session.run(operations, feed_dict={self.X : X, self.Yoh_ : Yoh_})
         if i % 10 == 0:
           print("iteration: {}, loss: {}, regularization loss: {}".format(i + 1, session_results[1], session_results[2]))
