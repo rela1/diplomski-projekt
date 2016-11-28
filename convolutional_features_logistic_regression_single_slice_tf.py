@@ -2,16 +2,13 @@ import matplotlib.pyplot as plt
 import matplotlib.image as img
 import sys
 import attributes_dataset as dataset
-import tensorflow as tf
-from models import vgg_vertically_sliced as model
 import numpy as np
 import os
 from sklearn import metrics
-import logreg
+import evaluate_helper
+from sklearn.linear_model import LogisticRegression
 
-EPOCHS = 200
-LEARNING_RATE = 1e-4
-WEIGHT_DECAY = 1.0
+METRIC_FUNCTIONS = (metrics.accuracy_score, metrics.precision_score, metrics.average_precision_score, metrics.recall_score)
 
 if __name__ == '__main__':
 	X_train = dataset.read_convolutional_features(sys.argv[1], sys.argv[2], 'train')
