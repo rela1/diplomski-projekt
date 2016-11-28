@@ -11,7 +11,7 @@ from sklearn import metrics
 from sklearn.metrics import confusion_matrix
 
 EPOCHS = 100
-LEARNING_RATE = 1e-3
+LEARNING_RATE = 1e-4
 WEIGHT_DECAY = 1e-1
 BATCH_SIZE = 20
 
@@ -48,6 +48,8 @@ def train(train_x, train_y, valid_x, valid_y, session, inputs, labels, logits, l
   )
   session.run(tf.initialize_all_variables())
   max_epochs = EPOCHS
+  best_valid_acc = 0
+  saver = tf.train.Saver()
   for epoch in range(1, max_epochs+1):
     cnt_correct = 0
     train_x, train_y = shuffle_data(train_x, train_y)
@@ -67,6 +69,10 @@ def train(train_x, train_y, valid_x, valid_y, session, inputs, labels, logits, l
         print("Train accuracy = %.2f" % (cnt_correct / ((i+1)*batch_size) * 100))
     train_loss, train_acc = evaluate("Train", train_x, inputs, train_y, labels, session, logits, loss)     
     valid_loss, valid_acc = evaluate("Validation", valid_x, inputs, valid_y, labels, session, logits, loss)
+    if valid_acc > best_valid_acc:
+      best_valid_acc = valid_acc
+      saved_path = saver.save(session, "best_model")
+    saver.restore(session, saved_path)
 
 
 def evaluate(name, x, inputs, y, labels, session, logits, loss):
