@@ -10,9 +10,9 @@ import os
 from sklearn import metrics
 from sklearn.metrics import confusion_matrix
 
-EPOCHS = 10
-LEARNING_RATE = 1e-4
-WEIGHT_DECAY = 1e-2
+EPOCHS = 50
+LEARNING_RATE = 1e-3
+WEIGHT_DECAY = 1e-1
 BATCH_SIZE = 20
 
 def build_model(inputs, labels, weight_decay, hidden_layers):
@@ -130,7 +130,7 @@ if __name__ == '__main__':
   """
   inputs = tf.placeholder(dtype=tf.float32, shape=(BATCH_SIZE, X_train.shape[1]))
   labels = tf.placeholder(dtype=tf.float32, shape=(BATCH_SIZE, 2))
-  session, logits, loss = build_model(inputs, labels, WEIGHT_DECAY, [1000, 100, 10])
+  session, logits, loss = build_model(inputs, labels, WEIGHT_DECAY, [2000, 200, 20])
   train(X_train, y_train_oh, X_validate, y_validate_oh, session, inputs, labels, logits, loss, LEARNING_RATE)
   evaluate("Test", X_test, inputs, y_test_oh, labels, session, logits, loss)
   if len(sys.argv) > 4:
