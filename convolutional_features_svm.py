@@ -29,7 +29,7 @@ if __name__ == '__main__':
 	best_c = 0
 	best_gamma = 0
 	for c_factor in np.logspace(-5, 15, num=35, base=2):
-		for gamma_factor in np.logspace(-15, 3, num=35, base=10):
+		for gamma_factor in np.logspace(-15, 3, num=35, base=2):
 			start = time.clock()
 			model = SVC(C=c_factor, gamma=gamma_factor, max_iter=100)
 			model.fit(X_train, y_train)
