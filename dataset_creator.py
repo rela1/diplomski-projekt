@@ -18,6 +18,7 @@ if __name__ == '__main__':
 		image = mpimg.imread(img_path)
 		if histogram_equalize == "True":
 			image = exposure.equalize_adapthist(image, clip_limit=0.03)
+			assert image.shape[-1] == 3
 		img_path_parts = image_name.split("_")
 		label = int(img_path_parts[0])
 		index = int(img_path_parts[1].split(".")[0])
