@@ -15,17 +15,33 @@ LEARNING_RATE = 1e-4
 WEIGHT_DECAY = 1e-2
 BATCH_SIZE = 20
 
-def build_model(inputs, labels, weight_decay, hidden_layers):
-  session = tf.Session()
+def build_model(inputs, labels, weight_decay, hidden_layers, is_training=True):
+  bn_params = {
+      # Decay for the moving averages.
+      'decay': 0.999,
+      'center': True,
+      'scale': True,
+      # epsilon to prevent 0s in variance.
+      'epsilon': 0.001,
+      # None to force the updates
+      'updates_collections': None,
+      'is_training': is_training,
+  }
+  if is_training:
+    session = tf.Session()
   net = inputs
   with tf.contrib.framework.arg_scope([layers.fully_connected], activation_fn=tf.nn.relu,
         weights_initializer=layers.xavier_initializer(),
-        weights_regularizer=layers.l2_regularizer(weight_decay)):
+        weights_regularizer=layers.l2_regularizer(weight_decay), 
+        normalizer_fn=layers.batch_norm, 
+        normalizer_params=bn_params):
     for i in range(len(hidden_layers)):
       net = layers.fully_connected(net, hidden_layers[i], scope='fc{}'.format(i+1))
   logits = layers.fully_connected(net, 2, activation_fn=None, scope='logits')
   loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits, labels)) + tf.reduce_sum(tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES))
-  return session, logits, loss
+  if is_training:
+    return session, logits, loss
+  return logits, loss
 
 def shuffle_data(data_x, data_y):
   indices = np.arange(data_x.shape[0])
@@ -122,23 +138,14 @@ if __name__ == '__main__':
   X_test = np.concatenate((X_test_left, X_test_middle), axis=1)
   y_test = dataset.read_labels(sys.argv[1], 'test')
   y_test_oh = np.array([[1 if y_test[i] == j else 0 for j in range(2)] for i in range(len(y_test))])
-  """
-  best_acc = 0
-  best_lambda = 0
-  for lambda_factor in np.linspace(2**-7, 2**-1, num=20):
-    model = logreg.TFLogReg(X_train.shape[1], 2, param_delta=LEARNING_RATE, param_lambda=lambda_factor)
-    model.train(X_train, y_train_oh, EPOCHS)
-    y_validate_pred = model.eval(X_validate)
-    acc = metrics.accuracy_score(y_validate, np.argmax(y_validate_pred, axis=1))
-    if acc > best_acc:
-      best_acc = acc
-      best_lambda = lambda_factor
-  """
   inputs = tf.placeholder(dtype=tf.float32, shape=(BATCH_SIZE, X_train.shape[1]))
   labels = tf.placeholder(dtype=tf.float32, shape=(BATCH_SIZE, 2))
-  session, logits, loss = build_model(inputs, labels, WEIGHT_DECAY, [2000])
+  with tf.variable_scope('model'):
+    session, logits, loss = build_model(inputs, labels, WEIGHT_DECAY, [2000])
+  with tf.variable_scope('model', reuse=True):
+    logits_eval, loss_eval = build_model(inputs, labels, WEIGHT_DECAY, [2000], is_training=False)
   train(X_train, y_train_oh, X_validate, y_validate_oh, session, inputs, labels, logits, loss, LEARNING_RATE)
-  evaluate("Test", X_test, inputs, y_test_oh, labels, session, logits, loss)
+  evaluate("Test", X_test, inputs, y_test_oh, labels, session, logits_eval, loss_eval)
   if len(sys.argv) > 4:
     misclassified_output_folder = sys.argv[4]
     for index, image in enumerate(X_test_imgs):
