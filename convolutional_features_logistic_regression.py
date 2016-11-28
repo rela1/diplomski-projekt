@@ -28,7 +28,7 @@ if __name__ == '__main__':
 	per_c_metrics_validate = {}
 	per_c_metrics_train = {}
 	for c_factor in np.logspace(0, 3, num=50):
-		model = LogisticRegression(penalty='l1', C=best_c, n_jobs=4)
+		model = LogisticRegression(penalty='l1', C=c_factor, n_jobs=4)
 		model.fit(X_train, y_train)
 		y_validate_pred = model.predict(X_validate)
 		y_train_pred = model.predict(X_train)
