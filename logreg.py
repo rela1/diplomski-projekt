@@ -19,7 +19,9 @@ class TFLogReg:
 
       self.logits = tf.matmul(self.X, self.W) + self.b
 
-      self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(self.logits, self.Yoh_)) + tf.contrib.layers.l2_regularizer(param_lambda)(self.W)
+      self.regularization_loss = tf.contrib.layers.l1_regularizer(param_lambda)(self.W)
+      self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(self.logits, self.Yoh_))
+      self.total_loss = self.regularization_loss + self.loss
 
       self.trainer = tf.train.AdamOptimizer(learning_rate=param_delta)
       self.train_step = self.trainer.minimize(self.loss)
@@ -37,10 +39,10 @@ class TFLogReg:
       for i in range(param_niter):
         operations = [self.train_step]
         if i % 10 == 0:
-          operations.append(self.loss)
+          operations.append(self.total_loss, self.regularization_loss)
         session_results = self.session.run(operations, feed_dict={self.X : X, self.Yoh_ : Yoh_})
         if i % 10 == 0:
-          print("iteration: {}, loss: {}".format(i + 1, session_results[1]))
+          print("iteration: {}, loss: {}, regularization loss: {}".format(i + 1, session_results[1], session_results[2]))
 
   def eval(self, X):
     """Arguments:
