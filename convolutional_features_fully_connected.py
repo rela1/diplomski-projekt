@@ -57,7 +57,7 @@ def train(train_x, train_y, valid_x, valid_y, session, inputs, labels, logits, l
   num_batches = num_examples // batch_size
   global_step = tf.Variable(0, trainable=False)
   learning_rate = tf.train.exponential_decay(starting_learning_rate, global_step,
-                                           10000, 0.99, staircase=True)
+                                           1000, 0.99, staircase=True)
   learning_step = (
     tf.train.AdamOptimizer(learning_rate)
     .minimize(loss, global_step=global_step)
