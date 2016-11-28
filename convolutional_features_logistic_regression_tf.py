@@ -33,7 +33,7 @@ if __name__ == '__main__':
 	best_lambda = 0
 	per_lambda_metrics_validate = {}
 	per_lambda_metrics_train = {}
-	for lambda_factor in np.logspace(-5, 5, num=20):
+	for lambda_factor in np.logspace(-5, 1, num=20):
 		model = logreg.TFLogReg(X_train.shape[1], 2, param_delta=LEARNING_RATE, param_lambda=lambda_factor)
 		model.train(X_train, y_train_oh, EPOCHS)
 		y_validate_pred = model.eval(X_validate)
