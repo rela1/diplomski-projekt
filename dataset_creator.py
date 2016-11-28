@@ -3,17 +3,21 @@ import numpy as np
 import matplotlib.image as mpimg
 import sys
 import random
+from skimage import exposure
 
 if __name__ == '__main__':
 	X = []
 	y = []
 	output_folder = sys.argv[1]
 	name_prefix = sys.argv[2]
-	num_images = len(sys.argv) - 3
+	histogram_equalize = sys.argv[3]
+	num_images = len(sys.argv) - 4
 	count = 0
-	for img_path in sys.argv[3:]:
+	for img_path in sys.argv[4:]:
 		image_name = os.path.basename(img_path)
 		image = mpimg.imread(img_path)
+		if histogram_equalize == "True":
+			image = exposure.equalize_adapthist(image, clip_limit=0.03)
 		img_path_parts = image_name.split("_")
 		label = int(img_path_parts[0])
 		index = int(img_path_parts[1].split(".")[0])
