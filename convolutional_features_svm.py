@@ -1,3 +1,4 @@
+import time
 import matplotlib.pyplot as plt
 import matplotlib.image as img
 import sys
@@ -7,6 +8,7 @@ import os
 from sklearn import metrics
 import evaluate_helper
 from sklearn.svm import SVC
+from sklearn.externals import joblib
 
 METRIC_FUNCTIONS = (metrics.accuracy_score, metrics.precision_score, metrics.average_precision_score, metrics.recall_score)
 
@@ -25,28 +27,31 @@ if __name__ == '__main__':
 	y_test = dataset.read_labels(sys.argv[1], 'test')
 	best_acc = 0
 	best_c = 0
-	per_c_metrics_validate = {}
-	per_c_metrics_train = {}
-	for c_factor in np.logspace(-1, 3, num=50):
-		model = SVC(C=c_factor, max_iter=50)
-		model.fit(X_train, y_train)
-		y_validate_pred = model.predict(X_validate)
-		y_train_pred = model.predict(X_train)
-		train_metrics = evaluate_helper.evaluate_metric_functions(y_train, y_train_pred, METRIC_FUNCTIONS)
-		valid_metrics = evaluate_helper.evaluate_metric_functions(y_validate, y_validate_pred, METRIC_FUNCTIONS)
-		per_c_metrics_validate[c_factor] = valid_metrics
-		per_c_metrics_train[c_factor] = train_metrics
-		print('c=', c_factor)
-		print('Train data:')
-		print(per_c_metrics_train[c_factor])
-		print('Validate data:')
-		print(per_c_metrics_validate[c_factor])
-		if valid_metrics['accuracy_score'] > best_acc:
-			best_acc = valid_metrics['accuracy_score']
-			best_c = c_factor
+	best_gamma = 0
+	for c_factor in np.logspace(-5, 15, num=35, base=2):
+		for gamma_factor in np.logspace(-15, 3, num=35, base=10):
+			start = time.clock()
+			model = SVC(C=c_factor, gamma=gamma_factor, max_iter=100)
+			model.fit(X_train, y_train)
+			y_validate_pred = model.predict(X_validate)
+			y_train_pred = model.predict(X_train)
+			train_metrics = evaluate_helper.evaluate_metric_functions(y_train, y_train_pred, METRIC_FUNCTIONS)
+			valid_metrics = evaluate_helper.evaluate_metric_functions(y_validate, y_validate_pred, METRIC_FUNCTIONS)
+			print('c=', c_factor)
+			print('gamma=', gamma_factor)
+			print('Train data:')
+			print(train_metrics)
+			print('Validate data:')
+			print(valid_metrics)
+			if valid_metrics['accuracy_score'] > best_acc:
+				best_acc = valid_metrics['accuracy_score']
+				best_c = c_factor
+				best_gamma = gamma_factor
+			print('time=', (time.clock() - start))
 	X_train = np.append(X_train, X_validate, axis=0)
 	y_train = np.append(y_train, y_validate, axis=0)
-	model = SVC(C=best_c, max_iter=50)
+	print("Selected parameters: c={}, gamma={}".format(best_c, best_gamma))
+	model = SVC(C=best_c, gamma=best_gamma, max_iter=100)
 	model.fit(X_train, y_train)
 	y_train_pred = model.predict(X_train)
 	y_test_pred = model.predict(X_test)
@@ -56,6 +61,7 @@ if __name__ == '__main__':
 	print(train_metrics)
 	print("Test data results:")
 	print(test_metrics)
+	joblib.dump(model, 'best_svm_model') 
 	if len(sys.argv) > 4:
 		X_test_imgs = dataset.read_images(sys.argv[1], 'test')
 		misclassified_output_folder = sys.argv[4]
