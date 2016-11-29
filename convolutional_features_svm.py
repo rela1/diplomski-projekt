@@ -12,6 +12,10 @@ from sklearn.externals import joblib
 
 METRIC_FUNCTIONS = (metrics.accuracy_score, metrics.precision_score, metrics.average_precision_score, metrics.recall_score)
 
+def print_metrics(metrics):
+	for metric in metrics:
+		print('\t{}={}'.format(metric, metrics[metric]))
+
 if __name__ == '__main__':
 	X_train_left = dataset.read_convolutional_features(sys.argv[1], sys.argv[2], 'train')
 	X_train_middle = dataset.read_convolutional_features(sys.argv[1], sys.argv[3], 'train')
@@ -39,18 +43,18 @@ if __name__ == '__main__':
 		y_train_pred = model.predict(X_train)
 		train_metrics = evaluate_helper.evaluate_metric_functions(y_train, y_train_pred, METRIC_FUNCTIONS)
 		valid_metrics = evaluate_helper.evaluate_metric_functions(y_validate, y_validate_pred, METRIC_FUNCTIONS)
-		print('c=', c_factor)
 		print('Train data:')
-		print(train_metrics)
+		print('\tc=', c_factor)
+		print_metrics(train_metrics)
 		print('Validate data:')
-		print(valid_metrics)
+		print('\tc=', c_factor)
+		print_metrics(valid_metrics)
 		if valid_metrics['accuracy_score'] > best_acc:
 			best_acc = valid_metrics['accuracy_score']
 			best_c = c_factor
 		print('time=', (time.clock() - start))
 	X_train = np.append(X_train, X_validate, axis=0)
 	y_train = np.append(y_train, y_validate, axis=0)
-	print("Selected parameters: c={}".format(best_c))
 	model = SVC(C=best_c, max_iter=100)
 	model.fit(X_train, y_train)
 	y_train_pred = model.predict(X_train)
@@ -58,9 +62,11 @@ if __name__ == '__main__':
 	train_metrics = evaluate_helper.evaluate_metric_functions(y_train, y_train_pred, METRIC_FUNCTIONS)
 	test_metrics = evaluate_helper.evaluate_metric_functions(y_test, y_test_pred, METRIC_FUNCTIONS)
 	print("Train data results:")
-	print(train_metrics)
+	print('\tc=', best_c)
+	print_metrics(train_metrics)
 	print("Test data results:")
-	print(test_metrics)
+	print('\tc=', best_c)
+	print_metrics(test_metrics)
 	joblib.dump(model, sys.argv[4])
 	if len(sys.argv) > 5:
 		X_test_imgs = dataset.read_images(sys.argv[1], 'test')
