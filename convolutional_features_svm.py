@@ -35,7 +35,7 @@ if __name__ == '__main__':
 	best_avg_prec = 0
 	best_c = 0
 	best_gamma = 0
-	for c_factor in np.logspace(-5, 3, num=50):
+	for c_factor in np.logspace(-5, 3, num=100):
 		start = time.clock()
 		model = SVC(C=c_factor, max_iter=100)
 		model.fit(X_train, y_train)
