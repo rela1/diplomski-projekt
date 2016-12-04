@@ -29,16 +29,16 @@ def get_accuracy(predictions, labels):
   return 100.0 * np.sum(predicted_labels == labels) / predictions.shape[0]
 
 
-def evaluate(sess, epoch_num, data_node, labels_node, logits, loss, data, labels):
+def evaluate(sess, name, epoch_num, data_node, labels_node, logits, loss, data, labels):
   """ Trains the network
     Args:
       sess: TF session
       logits: network logits
   """
-  print('\nTest performance:')
+  print('\nPerformance:')
   loss_avg = 0
   data_size = data.shape[0]
-  print('testsize = ', data_size)
+  print('testsize = ', name)
   assert data_size % BATCH_SIZE == 0
   num_batches = data_size // BATCH_SIZE
   correct_cnt = 0
@@ -64,7 +64,7 @@ def evaluate(sess, epoch_num, data_node, labels_node, logits, loss, data, labels
                           examples_per_sec, sec_per_batch))
   print('')
   accuracy = 100 * correct_cnt / data_size
-  print('Test accuracy = %.2f' % accuracy)
+  print('Accuracy = %.2f' % accuracy)
   return accuracy
 
 
@@ -157,11 +157,13 @@ def train(model, vgg_init_dir, dataset_root):
             (%.1f examples/sec; %.3f sec/batch)'
           print(format_str % (train_helper.get_expired_time(ex_start_time), epoch_num,
                               step+1, num_batches, loss_val, examples_per_sec, sec_per_batch))
-      valid_accuracy = evaluate(sess, epoch_num, data_node, labels_node, logits_eval,
+      valid_accuracy = evaluate(sess, 'validate', epoch_num, data_node, labels_node, logits_eval,
                           loss_eval, validate_data, validate_labels)
       if valid_accuracy > best_accuracy:
-        best_accuracy = accuracy
+        best_accuracy = valid_accuracy
       print('Best validate accuracy = %.2f' % valid_accuracy)
+    evaluate(sess, 'test', epoch_num, data_node, labels_node, logits_eval,
+                          loss_eval, test_data, test_labels)
 
 if __name__ == '__main__':
   vgg_init_dir = sys.argv[1]
