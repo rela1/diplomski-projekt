@@ -58,7 +58,7 @@ def build_convolutional_feature_extractor(inputs, weight_decay, vgg_init_dir, is
     net = layers.convolution2d(net, 512, scope='conv5_3')
     net = layers.max_pool2d(net, 2, 2, scope='pool5')
 
-    net = layers.convolution2d(net, 4096, kernel_size=7, scope='conv6_1')
+    #net = layers.convolution2d(net, 4096, kernel_size=7, scope='conv6_1')
     
     if vertical_slice != None:
       last_convolution_filter_size = net.get_shape()

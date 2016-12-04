@@ -30,12 +30,10 @@ if __name__ == '__main__':
 	X_test = np.concatenate((X_test_left, X_test_middle), axis=1)
 	y_test = dataset.read_labels(sys.argv[1], 'test')
 	best_acc = 0
-	best_prec = 0
-	best_rec = 0
-	best_avg_prec = 0
 	best_c = 0
-	best_gamma = 0
-	for c_factor in np.logspace(-5, 3, num=100):
+	per_c_train_metrics = {}
+	per_c_valid_metrics = {}
+	for c_factor in np.logspace(-15, 3, num=100):
 		start = time.clock()
 		model = SVC(C=c_factor, max_iter=100)
 		model.fit(X_train, y_train)
@@ -43,14 +41,12 @@ if __name__ == '__main__':
 		y_train_pred = model.predict(X_train)
 		train_metrics = evaluate_helper.evaluate_metric_functions(y_train, y_train_pred, METRIC_FUNCTIONS)
 		valid_metrics = evaluate_helper.evaluate_metric_functions(y_validate, y_validate_pred, METRIC_FUNCTIONS)
-		print('Train data:')
-		print('\tc=', c_factor)
-		print_metrics(train_metrics)
-		print('Validate data:')
-		print('\tc=', c_factor)
-		print_metrics(valid_metrics)
+		per_c_train_metrics[c_factor] = train_metrics
+		per_c_valid_metrics[c_factor] = valid_metrics
+		print('Current valid acc:', valid_metrics['accuracy_score'])
 		if valid_metrics['accuracy_score'] > best_acc:
 			best_acc = valid_metrics['accuracy_score']
+			print('New best valid acc:', best_acc)
 			best_c = c_factor
 		print('time=', (time.clock() - start))
 	X_train = np.append(X_train, X_validate, axis=0)
@@ -68,6 +64,18 @@ if __name__ == '__main__':
 	print('\tc=', best_c)
 	print_metrics(test_metrics)
 	joblib.dump(model, sys.argv[4])
+	sorted_c = sorted(per_c_valid_metrics.keys())
+	plt.subplot('211')
+	plt.plot(sorted_c, [per_c_train_metrics[c]['accuracy_score'] for c in sorted_c])
+	plt.xlabel('c')
+	plt.ylabel('accuracy')
+	plt.title('Train accuracy')
+	plt.subplot('212')
+	plt.plot(sorted_c, [per_c_valid_metrics[c]['accuracy_score'] for c in sorted_c])
+	plt.xlabel('c')
+	plt.ylabel('accuracy')
+	plt.title('Validation accuracy')
+	plt.show()
 	if len(sys.argv) > 5:
 		X_test_imgs = dataset.read_images(sys.argv[1], 'test')
 		misclassified_output_folder = sys.argv[5]

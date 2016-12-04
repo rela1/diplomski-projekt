@@ -54,5 +54,5 @@ if __name__ == '__main__':
         dataset_features_left = np.array(dataset_features_left)
         dataset_features_middle = np.array(dataset_features_middle)
         print("Done with feature extraction of {} dataset, final output shape: {}".format(dataset_name, dataset_features_left.shape))
-        np.save(os.path.join(sys.argv[2], dataset_name + "_X_convolutional_left"), dataset_features_left)
-        np.save(os.path.join(sys.argv[2], dataset_name + "_X_convolutional_middle"), dataset_features_middle)
+        np.save(os.path.join(sys.argv[2], dataset_name + "_X_convolutional_left_nofc1"), dataset_features_left)
+        np.save(os.path.join(sys.argv[2], dataset_name + "_X_convolutional_middle_nofc1"), dataset_features_middle)
