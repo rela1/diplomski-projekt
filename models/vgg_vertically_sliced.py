@@ -136,9 +136,9 @@ def build(inputs, labels, weight_decay, num_classes, vgg_init_dir, fully_connect
   }
 
   if is_training:
-    net, init_op, init_feed = build_convolutional_feature_extractor(inputs, weight_decay, vgg_init_dir, is_training, vertical_slice)
+    net, init_op, init_feed = build_convolutional_feature_extractor(inputs, weight_decay, vgg_init_dir, is_training)
   else:
-    net = build_convolutional_feature_extractor(inputs, weight_decay, vgg_init_dir, is_training, vertical_slice)
+    net = build_convolutional_feature_extractor(inputs, weight_decay, vgg_init_dir, is_training)
 
   with tf.contrib.framework.arg_scope([layers.fully_connected],
       activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
