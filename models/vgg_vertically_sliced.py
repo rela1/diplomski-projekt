@@ -65,7 +65,7 @@ def build_convolutional_pooled_feature_extractor(inputs, weight_decay, vgg_init_
     net = tf.slice(net, begin=[0, 0, 0, 0], size=[-1, vertical_slice_size, horizontal_slice_size * 2, -1])
     print("Created slice from ", [0, 0, 0, 0], "with size ", [-1, vertical_slice_size, horizontal_slice_size * 2, -1])
     print("Shape before pooling tiles: ", net.get_shape())
-    net = layers.max_pool2d(net, kernel_size=[2, 2], stride=2)
+    net = layers.avg_pool2d(net, kernel_size=[2, 2], stride=2)
     print("Pooled tiles, new shape: ", net.get_shape())
 
     net = tf.contrib.layers.flatten(net, scope='flatten')
