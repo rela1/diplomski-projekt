@@ -147,7 +147,7 @@ def build(inputs, labels, weight_decay, num_classes, vgg_init_dir, fully_connect
     for fully_connected_num in fully_connected:
       net = layers.fully_connected(net, fully_connected_num, scope='fc{}'.format(layer_num))
       layer_num += 1
-    logits = layers.fully_connected(net, num_classes, activation_fn=None, scope='logits')
+  logits = layers.fully_connected(net, num_classes, activation_fn=None, scope='logits')
 
   total_loss = loss(logits, labels, is_training)
   
