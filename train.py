@@ -14,10 +14,10 @@ from models import vgg_vertically_sliced
 
 np.set_printoptions(linewidth=250)
 
-BATCH_SIZE = 5
+BATCH_SIZE = 10
 WEIGHT_DECAY = 1e-4
-LEARNING_RATE = 1e-3
-FULLY_CONNECTED = []
+LEARNING_RATE = 1e-5
+FULLY_CONNECTED = [200]
 NUM_CLASSES = 2
 EPOCHS = 10
 
@@ -35,10 +35,10 @@ def evaluate(sess, name, epoch_num, data_node, labels_node, logits, loss, data, 
       sess: TF session
       logits: network logits
   """
-  print('\nPerformance:')
+  print('\nPerformance on {}:'.format(name))
   loss_avg = 0
   data_size = data.shape[0]
-  print('testsize = ', name)
+  print('size = ', data_size)
   assert data_size % BATCH_SIZE == 0
   num_batches = data_size // BATCH_SIZE
   correct_cnt = 0
@@ -161,7 +161,7 @@ def train(model, vgg_init_dir, dataset_root):
                           loss_eval, validate_data, validate_labels)
       if valid_accuracy > best_accuracy:
         best_accuracy = valid_accuracy
-      print('Best validate accuracy = %.2f' % valid_accuracy)
+      print('Best validate accuracy = %.2f' % best_accuracy)
     evaluate(sess, 'test', epoch_num, data_node, labels_node, logits_eval,
                           loss_eval, test_data, test_labels)
 
