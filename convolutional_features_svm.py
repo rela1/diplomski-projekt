@@ -16,6 +16,14 @@ def print_metrics(metrics):
 	for metric in metrics:
 		print('\t{}={}'.format(metric, metrics[metric]))
 
+def measure_sparsity(train, test, valid):
+	avg_percentage = 0
+	avg_percentage += float(np.sum(np.absolute(train) <= 1E-6))
+	avg_percentage += float(np.sum(np.absolute(test) <= 1E-6)) 
+	avg_percentage += float(np.sum(np.absolute(valid) <= 1E-6))
+	example_shape = train.shape[1]
+	return avg_percentage / (len(train) * example_shape + len(test) * example_shape + len(valid) * example_shape)
+
 if __name__ == '__main__':
 	X_train_left = dataset.read_convolutional_features(sys.argv[1], sys.argv[2], 'train')
 	X_train_middle = dataset.read_convolutional_features(sys.argv[1], sys.argv[3], 'train')
@@ -29,13 +37,17 @@ if __name__ == '__main__':
 	X_test_middle = dataset.read_convolutional_features(sys.argv[1], sys.argv[3], 'test')
 	X_test = np.concatenate((X_test_left, X_test_middle), axis=1)
 	y_test = dataset.read_labels(sys.argv[1], 'test')
+	print('Data sparsity:', measure_sparsity(X_train, X_test, X_validate))
 	best_acc = 0
 	best_c = 0
 	per_c_train_metrics = {}
 	per_c_valid_metrics = {}
-	for c_factor in np.logspace(-15, 3, num=100):
+	c_range = np.logspace(-2, 2, num=100)
+	num_iterations = len(c_range)
+	current_iteration = 1
+	for c_factor in c_range:
 		start = time.clock()
-		model = SVC(C=c_factor, max_iter=100)
+		model = SVC(C=c_factor)
 		model.fit(X_train, y_train)
 		y_validate_pred = model.predict(X_validate)
 		y_train_pred = model.predict(X_train)
@@ -43,15 +55,15 @@ if __name__ == '__main__':
 		valid_metrics = evaluate_helper.evaluate_metric_functions(y_validate, y_validate_pred, METRIC_FUNCTIONS)
 		per_c_train_metrics[c_factor] = train_metrics
 		per_c_valid_metrics[c_factor] = valid_metrics
-		print('Current valid acc:', valid_metrics['accuracy_score'])
+		print('Current valid acc:{}, current c:{}, iteration:{}/{}, time:{}'.format(valid_metrics['accuracy_score'], c_factor, current_iteration, num_iterations, (time.clock() - start)))
 		if valid_metrics['accuracy_score'] > best_acc:
 			best_acc = valid_metrics['accuracy_score']
 			print('New best valid acc:', best_acc)
 			best_c = c_factor
-		print('time=', (time.clock() - start))
+		current_iteration += 1
 	X_train = np.append(X_train, X_validate, axis=0)
 	y_train = np.append(y_train, y_validate, axis=0)
-	model = SVC(C=best_c, max_iter=100)
+	model = SVC(C=best_c)
 	model.fit(X_train, y_train)
 	y_train_pred = model.predict(X_train)
 	y_test_pred = model.predict(X_test)
