@@ -76,7 +76,7 @@ def build_convolutional_pooled_feature_extractor(inputs, weight_decay, vgg_init_
 
     return net
 
-def build_convolutional_feature_extractor(inputs, weight_decay, vgg_init_dir, is_training=True, vertical_slice=None):
+def build_convolutional_feature_extractor(inputs, weight_decay, vgg_init_dir, is_training=True):
   vgg_layers, vgg_layer_names = read_vgg_init(vgg_init_dir)
 
   with tf.contrib.framework.arg_scope([layers.convolution2d],
@@ -110,7 +110,7 @@ def build_convolutional_feature_extractor(inputs, weight_decay, vgg_init_dir, is
       net = layers.max_pool2d(net, kernel_size=[int(last_convolution_filter_size[1]), 1], stride=1)
       slice_size = int(int(last_convolution_filter_size[2]) / 3)
       net = tf.slice(net, begin=[0, 0, vertical_slice * slice_size, 0], size=[-1, -1, slice_size, -1])
-      print("Created slice from ", [0, 0, vertical_slice * slice_size, 0], "with size ", [-1, -1, slice_size, -1])
+      print("Created slice from ", [0, 0, 0, 0], "with size ", [-1, -1, slice_size * 2, -1])
 
     net = tf.contrib.layers.flatten(net, scope='flatten')
 
@@ -120,7 +120,7 @@ def build_convolutional_feature_extractor(inputs, weight_decay, vgg_init_dir, is
 
     return net
 
-def build(inputs, labels, weight_decay, num_classes, vgg_init_dir, fully_connected=[], is_training=True, vertical_slice=None):
+def build(inputs, labels, weight_decay, num_classes, vgg_init_dir, fully_connected=[], is_training=True):
 
   # to big weight_decay = 5e-3
   bn_params = {

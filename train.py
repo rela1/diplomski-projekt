@@ -14,11 +14,11 @@ from models import vgg_vertically_sliced
 
 np.set_printoptions(linewidth=250)
 
-BATCH_SIZE = 1
-WEIGHT_DECAY = 1e-3
-LEARNING_RATE = 1e-4
-FULLY_CONNECTED = [1024]
-NUM_CLASSES = 10
+BATCH_SIZE = 20
+WEIGHT_DECAY = 1e-4
+LEARNING_RATE = 1e-3
+FULLY_CONNECTED = []
+NUM_CLASSES = 2
 EPOCHS = 10
 
 
@@ -75,10 +75,10 @@ def train(model, vgg_init_dir, dataset_root):
   """
   print(vgg_init_dir)
   train_data = dataset.read_images(dataset_root, 'train').astype(np.float64)
-  #test_data = dataset.read_images(dataset_root, 'test').astype(np.float64)
+  test_data = dataset.read_images(dataset_root, 'test').astype(np.float64)
   validate_data = dataset.read_images(dataset_root, 'validate').astype(np.float64)
   train_labels = dataset.read_labels(dataset_root, 'train').astype(np.int64)
-  #test_labels = dataset.read_labels(dataset_root, 'test').astype(np.int64)
+  test_labels = dataset.read_labels(dataset_root, 'test').astype(np.int64)
   validate_labels = dataset.read_labels(dataset_root, 'validate').astype(np.int64)
 
   data_mean = train_data.reshape([-1, 3]).mean(0)
@@ -89,10 +89,11 @@ def train(model, vgg_init_dir, dataset_root):
 
   for c in range(train_data.shape[-1]):
     train_data[..., c] -= data_mean[c]
-    #test_data[..., c] -= data_mean[c]
+    test_data[..., c] -= data_mean[c]
     validate_data[..., c] -= data_mean[c]
     # better without variance normalization
     #train_data[..., c] /= data_std[c]
+    #validate_data[..., c] /= data_std[c]
     #test_data[..., c] /= data_std[c]
 
   print(train_data.mean())
@@ -103,15 +104,14 @@ def train(model, vgg_init_dir, dataset_root):
   print(train_labels.shape)
 
   train_size = train_data.shape[0]
-  #test_size = test_data.shape[0]
+  test_size = test_data.shape[0]
   validate_size = validate_data.shape[0]
   assert train_size % BATCH_SIZE == 0
-  #assert test_size % BATCH_SIZE == 0
+  assert test_size % BATCH_SIZE == 0
   assert validate_size % BATCH_SIZE == 0
 
   with tf.Graph().as_default():
-    config = tf.ConfigProto(log_device_placement=False)
-    sess = tf.Session(config=config)
+    sess = tf.Session()
     global_step = tf.get_variable('global_step', [], dtype=tf.int64,
         initializer=tf.constant_initializer(0), trainable=False)
     num_batches_per_epoch = train_size // BATCH_SIZE
@@ -127,12 +127,8 @@ def train(model, vgg_init_dir, dataset_root):
     apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
     with tf.control_dependencies([apply_gradient_op]):
       train_op = tf.no_op(name='train')
-    summ_writer = tf.train.SummaryWriter('../results/', graph=sess.graph)
-    summ_writer.add_graph(sess.graph)
     sess.run(tf.initialize_all_variables())
     sess.run(tf.initialize_local_variables())
-    tf.merge_all_summaries()
-    summ_writer.close()
     sess.run(init_op, feed_dict=init_feed)
     ex_start_time = time.time()
     num_batches = train_size // BATCH_SIZE
