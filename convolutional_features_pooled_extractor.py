@@ -45,7 +45,6 @@ if __name__ == '__main__':
             start = time.clock()
             features = sess.run(feature_extractor, feed_dict={data_node:current_dataset[i * BATCH_SIZE : (i+1) * BATCH_SIZE]})
             dataset_features.extend(features)
-            assert features_left.shape == features_middle.shape
             print("Done with feature extraction step, output shape: ", features_left.shape, " time per batch: ", (time.clock() - start))
         dataset_features = np.array(dataset_features)
         print("Done with feature extraction of {} dataset, final output shape: {}".format(dataset_name, dataset_features.shape))
