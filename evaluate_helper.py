@@ -5,7 +5,7 @@ import time
 METRIC_FUNCTIONS = (metrics.accuracy_score, metrics.precision_score, metrics.average_precision_score, metrics.recall_score)
 
 def print_metrics(metrics):
-  print('Results')
+  print('Results:')
   for metric in metrics:
     print('\t{}={}'.format(metric, metrics[metric]))
 
