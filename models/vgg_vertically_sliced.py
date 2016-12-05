@@ -26,7 +26,7 @@ def create_init_op(vgg_layers):
   init_op, init_feed = tf.contrib.framework.assign_from_values(init_map)
   return init_op, init_feed
 
-def build_convolutional_pooled_feature_extractor(inputs, weight_decay=0, vgg_init_dir=None, is_training=True):
+def build_convolutional_pooled_feature_extractor(inputs, weight_decay=0.0, vgg_init_dir=None, is_training=True):
   if is_training:
     vgg_layers, vgg_layer_names = read_vgg_init(vgg_init_dir)
 
@@ -73,7 +73,7 @@ def build_convolutional_pooled_feature_extractor(inputs, weight_decay=0, vgg_ini
 
     return net
 
-def build_convolutional_feature_extractor(inputs, weight_decay=0, vgg_init_dir=None, is_training=True):
+def build_convolutional_feature_extractor(inputs, weight_decay=0.0, vgg_init_dir=None, is_training=True):
   if is_training:
     vgg_layers, vgg_layer_names = read_vgg_init(vgg_init_dir)
 
@@ -117,7 +117,7 @@ def build_convolutional_feature_extractor(inputs, weight_decay=0, vgg_init_dir=N
 
     return net
 
-def build(inputs, labels, num_classes, fully_connected=[], weight_decay=0, vgg_init_dir=None, is_training=True):
+def build(inputs, labels, num_classes, fully_connected=[], weight_decay=0.0, vgg_init_dir=None, is_training=True):
   bn_params = {
       'decay': 0.999,
       'center': True,
