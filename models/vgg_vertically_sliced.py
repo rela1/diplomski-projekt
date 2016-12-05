@@ -7,7 +7,7 @@ from tensorflow.contrib.layers.python.layers import initializers
 def loss(logits, labels, is_training):
   xent_loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits, labels))
   regularization_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
-  total_loss = tf.add_n(losses + regularization_losses, name='total_loss')
+  total_loss = tf.add_n([xent_loss] + regularization_losses, name='total_loss')
   return total_loss
 
 def create_init_op(vgg_layers):
