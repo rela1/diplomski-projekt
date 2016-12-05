@@ -4,15 +4,11 @@ import numpy as np
 from models.model_helper import read_vgg_init
 from tensorflow.contrib.layers.python.layers import initializers
 
-import losses
-
-def total_loss_sum(losses):
-  # Assemble all of the losses for the current tower only.
-  # Calculate the total loss for the current tower.
+def loss(logits, labels, is_training):
+  xent_loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits, labels))
   regularization_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
   total_loss = tf.add_n(losses + regularization_losses, name='total_loss')
   return total_loss
-
 
 def create_init_op(vgg_layers):
   variables = tf.contrib.framework.get_variables()
@@ -30,7 +26,7 @@ def create_init_op(vgg_layers):
   init_op, init_feed = tf.contrib.framework.assign_from_values(init_map)
   return init_op, init_feed
 
-def build_convolutional_pooled_feature_extractor(inputs, weight_decay, vgg_init_dir=None, is_training=True):
+def build_convolutional_pooled_feature_extractor(inputs, weight_decay=0, vgg_init_dir=None, is_training=True):
   if is_training:
     vgg_layers, vgg_layer_names = read_vgg_init(vgg_init_dir)
 
@@ -77,7 +73,7 @@ def build_convolutional_pooled_feature_extractor(inputs, weight_decay, vgg_init_
 
     return net
 
-def build_convolutional_feature_extractor(inputs, weight_decay, vgg_init_dir=None, is_training=True):
+def build_convolutional_feature_extractor(inputs, weight_decay=0, vgg_init_dir=None, is_training=True):
   if is_training:
     vgg_layers, vgg_layer_names = read_vgg_init(vgg_init_dir)
 
@@ -121,17 +117,12 @@ def build_convolutional_feature_extractor(inputs, weight_decay, vgg_init_dir=Non
 
     return net
 
-def build(inputs, labels, weight_decay, num_classes, vgg_init_dir=None, fully_connected=[], is_training=True):
-
-  # to big weight_decay = 5e-3
+def build(inputs, labels, num_classes, fully_connected=[], weight_decay=0, vgg_init_dir=None, is_training=True):
   bn_params = {
-      # Decay for the moving averages.
       'decay': 0.999,
       'center': True,
       'scale': True,
-      # epsilon to prevent 0s in variance.
       'epsilon': 0.001,
-      # None to force the updates
       'updates_collections': None,
       'is_training': is_training,
   }
@@ -157,13 +148,3 @@ def build(inputs, labels, weight_decay, num_classes, vgg_init_dir=None, fully_co
     return logits, total_loss, init_op, init_feed
 
   return logits, total_loss
-
-def loss(logits, labels, is_training):
-  xent_loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits, labels))
-  total_loss = total_loss_sum([xent_loss])
-  if is_training:
-    loss_averages_op = losses.add_loss_summaries(total_loss)
-    with tf.control_dependencies([loss_averages_op]):
-      total_loss = tf.identity(total_loss)
-
-  return total_loss
