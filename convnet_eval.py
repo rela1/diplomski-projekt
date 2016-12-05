@@ -1,14 +1,10 @@
 import os
 import sys
 import time
-from shutil import copyfile
 
 import numpy as np
 import tensorflow as tf
 
-import helper
-import eval_helper
-import train_helper
 import attributes_dataset as dataset
 from models import vgg_vertically_sliced
 import evaluate_helper
