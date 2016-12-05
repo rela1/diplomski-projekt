@@ -100,10 +100,8 @@ def evaluate_test(model, dataset_root):
 
   train_size = train_data.shape[0]
   test_size = test_data.shape[0]
-  validate_size = validate_data.shape[0]
   assert train_size % BATCH_SIZE == 0
   assert test_size % BATCH_SIZE == 0
-  assert validate_size % BATCH_SIZE == 0
 
   with tf.Graph().as_default():
     sess = tf.Session()
