@@ -115,8 +115,8 @@ def evaluate_test(model, dataset_root):
     with tf.variable_scope('model'):
       logits, loss = model.build(data_node, labels_node, WEIGHT_DECAY, NUM_CLASSES, fully_connected=FULLY_CONNECTED, is_training=False)
       saver.restore(sess, 'trained_models/best_convnet')
-    evaluate(sess, 'test', epoch_num, data_node, labels_node, logits_eval,
-                          loss_eval, test_data, test_labels)
+    evaluate(sess, 'test', 0, data_node, labels_node, logits,
+                          loss, test_data, test_labels)
 
 if __name__ == '__main__':
   dataset_root = sys.argv[1]
