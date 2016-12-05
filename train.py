@@ -162,9 +162,9 @@ def train(model, vgg_init_dir, dataset_root):
                           loss_eval, validate_data, validate_labels)
       if valid_accuracy > best_accuracy:
         best_accuracy = valid_accuracy
-        saver.save(sess, 'best_convnet')
+        saver.save(sess, 'trained_models/best_convnet')
       print('Best validate accuracy = %.2f' % best_accuracy)
-    saver.restore(sess, 'best_convnet')
+    saver.restore(sess, 'trained_models/best_convnet')
     evaluate(sess, 'test', epoch_num, data_node, labels_node, logits_eval,
                           loss_eval, test_data, test_labels)
 
