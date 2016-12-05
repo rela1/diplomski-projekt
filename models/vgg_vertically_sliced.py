@@ -30,8 +30,9 @@ def create_init_op(vgg_layers):
   init_op, init_feed = tf.contrib.framework.assign_from_values(init_map)
   return init_op, init_feed
 
-def build_convolutional_pooled_feature_extractor(inputs, weight_decay, vgg_init_dir, is_training=True):
-  vgg_layers, vgg_layer_names = read_vgg_init(vgg_init_dir)
+def build_convolutional_pooled_feature_extractor(inputs, weight_decay, vgg_init_dir=None, is_training=True):
+  if is_training:
+    vgg_layers, vgg_layer_names = read_vgg_init(vgg_init_dir)
 
   with tf.contrib.framework.arg_scope([layers.convolution2d],
       kernel_size=3, stride=1, padding='SAME', rate=1, activation_fn=tf.nn.relu,
@@ -76,8 +77,9 @@ def build_convolutional_pooled_feature_extractor(inputs, weight_decay, vgg_init_
 
     return net
 
-def build_convolutional_feature_extractor(inputs, weight_decay, vgg_init_dir, is_training=True):
-  vgg_layers, vgg_layer_names = read_vgg_init(vgg_init_dir)
+def build_convolutional_feature_extractor(inputs, weight_decay, vgg_init_dir=None, is_training=True):
+  if is_training:
+    vgg_layers, vgg_layer_names = read_vgg_init(vgg_init_dir)
 
   with tf.contrib.framework.arg_scope([layers.convolution2d],
       kernel_size=3, stride=1, padding='SAME', rate=1, activation_fn=tf.nn.relu,
