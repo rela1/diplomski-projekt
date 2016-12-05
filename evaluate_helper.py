@@ -5,6 +5,7 @@ import time
 METRIC_FUNCTIONS = (metrics.accuracy_score, metrics.precision_score, metrics.average_precision_score, metrics.recall_score)
 
 def print_metrics(metrics):
+  print('Results')
   for metric in metrics:
     print('\t{}={}'.format(metric, metrics[metric]))
 
@@ -27,7 +28,7 @@ def tf_predict_func(sess, inputs, logits):
 		return np.argmax(sess.run(logits, feed_dict={inputs:x}), axis=1)
 	return predict_func
 
-def evaluate(name, x, y, batch_size, predict_function):
+def evaluate(name, x, y, batch_size, predict_function, verbose=False):
   """
   Evaluates given predict function on given data in batches.
 
@@ -52,8 +53,8 @@ def evaluate(name, x, y, batch_size, predict_function):
     predict_batch_y = predict_function(batch_x)
     duration = time.time() - start_time
     y_predict.extend(predict_batch_y)
-    if (i+1) % 10 == 0:
-      print('step {}/{}, {} examples/sec, {} sec/batch'.format(i, num_batches, batch_size / duration, duration))
+    if (i+1) and verbose % 10 == 0:
+      print('step {}/{}, {} examples/sec, {} sec/batch'.format(i+1, num_batches, batch_size / duration, duration))
   metrics = evaluate_metric_functions(y, y_predict, METRIC_FUNCTIONS)
   print_metrics(metrics)
   return metrics
