@@ -61,9 +61,9 @@ def build_convolutional_pooled_feature_extractor(inputs, weight_decay, vgg_init_
     
     last_convolution_filter_size = net.get_shape()
     horizontal_slice_size = int(round(int(last_convolution_filter_size[2]) / 3))
-    vertical_slice_size = int(round(int(last_convolution_filter_size[1]) / 2))
-    net = tf.slice(net, begin=[0, 0, 0, 0], size=[-1, vertical_slice_size, horizontal_slice_size * 2, -1])
-    print("Created slice from ", [0, 0, 0, 0], "with size ", [-1, vertical_slice_size, horizontal_slice_size * 2, -1])
+    vertical_slice_size = int(round(int(last_convolution_filter_size[1]) / 3))
+    net = tf.slice(net, begin=[0, 0, 0, 0], size=[-1, vertical_slice_size * 2, horizontal_slice_size * 2, -1])
+    print("Created slice from ", [0, 0, 0, 0], "with size ", [-1, vertical_slice_size * 2, horizontal_slice_size * 2, -1])
     print("Shape before pooling tiles: ", net.get_shape())
     net = layers.max_pool2d(net, kernel_size=[2, 2], stride=2)
     print("Pooled tiles, new shape: ", net.get_shape())
@@ -135,9 +135,9 @@ def build(inputs, labels, weight_decay, num_classes, vgg_init_dir, fully_connect
   }
 
   if is_training:
-    net, init_op, init_feed = build_convolutional_feature_extractor(inputs, weight_decay, vgg_init_dir, is_training)
+    net, init_op, init_feed = build_convolutional_pooled_feature_extractor(inputs, weight_decay, vgg_init_dir, is_training)
   else:
-    net = build_convolutional_feature_extractor(inputs, weight_decay, vgg_init_dir, is_training)
+    net = build_convolutional_pooled_feature_extractor(inputs, weight_decay, vgg_init_dir, is_training)
 
   with tf.contrib.framework.arg_scope([layers.fully_connected],
       activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
