@@ -34,11 +34,11 @@ def evaluate(model, dataset_root, model_path):
     saver = tf.train.Saver()
     saver.restore(sess, model_path)
     evaluate_helper.evaluate('train', train_data, train_labels, BATCH_SIZE, 
-        evaluate_helper.tf_predict_func(sess, inputs, logits_eval))
+        evaluate_helper.tf_predict_func(sess, data_node, logits_eval))
     evaluate_helper.evaluate('validate', validate_data, validate_labels, BATCH_SIZE, 
-        evaluate_helper.tf_predict_func(sess, inputs, logits_eval))
+        evaluate_helper.tf_predict_func(sess, data_node, logits_eval))
     evaluate_helper.evaluate('test', test_data, test_labels, BATCH_SIZE, 
-        evaluate_helper.tf_predict_func(sess, inputs, logits_eval))
+        evaluate_helper.tf_predict_func(sess, data_node, logits_eval))
 
 if __name__ == '__main__':
   dataset_root = sys.argv[1]
