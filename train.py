@@ -14,12 +14,12 @@ from models import vgg_vertically_sliced
 
 np.set_printoptions(linewidth=250)
 
-BATCH_SIZE = 10
-WEIGHT_DECAY = 1e-4
+BATCH_SIZE = 20
+WEIGHT_DECAY = 1e-3
 LEARNING_RATE = 1e-6
 FULLY_CONNECTED = [200]
 NUM_CLASSES = 2
-EPOCHS = 30
+EPOCHS = 1
 
 
 def get_accuracy(predictions, labels):
