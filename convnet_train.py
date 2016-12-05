@@ -14,15 +14,11 @@ np.set_printoptions(linewidth=250)
 BATCH_SIZE = 10
 WEIGHT_DECAY = 1e-4
 LEARNING_RATE = 1e-4
-FULLY_CONNECTED = [200]
+FULLY_CONNECTED = []
 NUM_CLASSES = 2
 EPOCHS = 150
 
-def train(model, vgg_init_dir, dataset_root):
-  """ Trains the network
-  Args:
-    model: module containing model architecture
-  """
+def train(model, vgg_init_dir, dataset_root, model_path):
   train_data, train_labels, validate_data, validate_labels, test_data, test_labels = dataset.read_and_normalize_images(dataset_root)
 
   with tf.Graph().as_default():
@@ -80,16 +76,17 @@ def train(model, vgg_init_dir, dataset_root):
           print(format_str % (train_helper.get_expired_time(ex_start_time), epoch_num,
                               step+1, num_batches, loss_val, examples_per_sec, sec_per_batch))
       valid_accuracy = evaluate_helper.evaluate('validate', validate_data, validate_labels, BATCH_SIZE, 
-      	evaluate_helper.tf_predict_func(sess, inputs, logits_eval))['accuracy_score']
+      	evaluate_helper.tf_predict_func(sess, data_node, logits_eval), verbose=True)['accuracy_score']
       if valid_accuracy > best_accuracy:
         best_accuracy = valid_accuracy
-        saver.save(sess, sys.argv[3])
+        saver.save(sess, model_path)
       print('Best validate accuracy = %.2f' % best_accuracy)
-    saver.restore(sess, sys.argv[3])
+    saver.restore(sess, model_path)
     evaluate_helper.evaluate('test', test_data, test_labels, BATCH_SIZE, 
-      	evaluate_helper.tf_predict_func(sess, inputs, logits_eval))
+      	evaluate_helper.tf_predict_func(sess, data_node, logits_eval), verbose=True)
 
 if __name__ == '__main__':
   vgg_init_dir = sys.argv[1]
   dataset_root = sys.argv[2]
-  train(vgg_vertically_sliced, vgg_init_dir, dataset_root)
+  model_path = sys.argv[3]
+  train(vgg_vertically_sliced, vgg_init_dir, dataset_root, model_path)
