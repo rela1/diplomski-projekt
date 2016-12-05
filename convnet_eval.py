@@ -2,7 +2,8 @@ import os
 import sys
 import time
 from shutil import copyfile
-
+from sklearn import metrics
+import evaluate_helper
 import numpy as np
 import tensorflow as tf
 
@@ -20,13 +21,12 @@ LEARNING_RATE = 1e-4
 FULLY_CONNECTED = [200]
 NUM_CLASSES = 2
 EPOCHS = 150
+METRIC_FUNCTIONS = (metrics.accuracy_score, metrics.precision_score, metrics.average_precision_score, metrics.recall_score)
 
 
-def get_accuracy(predictions, labels):
-  """Return the error rate based on dense predictions and sparse labels."""
-  predicted_labels = np.argmax(predictions, 1)
-  assert predicted_labels.dtype == labels.dtype
-  return 100.0 * np.sum(predicted_labels == labels) / predictions.shape[0]
+def print_metrics(metrics):
+  for metric in metrics:
+    print('\t{}={}'.format(metric, metrics[metric]))
 
 
 def evaluate(sess, name, epoch_num, data_node, labels_node, logits, loss, data, labels):
@@ -41,7 +41,7 @@ def evaluate(sess, name, epoch_num, data_node, labels_node, logits, loss, data, 
   print('size = ', data_size)
   assert data_size % BATCH_SIZE == 0
   num_batches = data_size // BATCH_SIZE
-  correct_cnt = 0
+  predicted = []
   for step in range(num_batches):
     offset = step * BATCH_SIZE
     batch_data = data[offset:(offset + BATCH_SIZE), ...]
@@ -52,8 +52,8 @@ def evaluate(sess, name, epoch_num, data_node, labels_node, logits, loss, data, 
     duration = time.time() - start_time
     loss_avg += loss_val
     predicted_labels = out_logits.argmax(1)
+    predicted.extend(predicted_labels)
     assert predicted_labels.dtype == batch_labels.dtype
-    correct_cnt += np.sum(predicted_labels == batch_labels)
     if (step+1) % 10 == 0:
       num_examples_per_step = BATCH_SIZE
       examples_per_sec = num_examples_per_step / duration
@@ -63,8 +63,8 @@ def evaluate(sess, name, epoch_num, data_node, labels_node, logits, loss, data, 
       print(format_str % (epoch_num, step+1, num_batches, loss_val,
                           examples_per_sec, sec_per_batch))
   print('')
-  accuracy = 100 * correct_cnt / data_size
-  print('Accuracy = %.2f' % accuracy)
+  metrics = evaluate_helper.evaluate_metric_functions(labels, predicted, METRIC_FUNCTIONS)
+  print_metrics(metrics)
   return accuracy
 
 
