@@ -65,7 +65,6 @@ def evaluate(sess, name, epoch_num, data_node, labels_node, logits, loss, data, 
   print('')
   metrics = evaluate_helper.evaluate_metric_functions(labels, predicted, METRIC_FUNCTIONS)
   print_metrics(metrics)
-  return accuracy
 
 
 def train(model, vgg_init_dir, dataset_root):
