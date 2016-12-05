@@ -73,10 +73,9 @@ def train(model, vgg_init_dir, dataset_root, model_path):
           num_examples_per_step = BATCH_SIZE
           examples_per_sec = num_examples_per_step / duration
           sec_per_batch = float(duration)
-          format_str = '%s: epoch %d, batch %d / %d, loss = %.2f \
+          format_str = 'epoch %d, batch %d / %d, loss = %.2f \
             (%.1f examples/sec; %.3f sec/batch)'
-          print(format_str % (train_helper.get_expired_time(ex_start_time), epoch_num,
-                              step+1, num_batches, loss_val, examples_per_sec, sec_per_batch))
+          print(format_str % (epoch_num, step+1, num_batches, loss_val, examples_per_sec, sec_per_batch))
       valid_accuracy = evaluate_helper.evaluate('validate', validate_data, validate_labels, BATCH_SIZE, 
       	evaluate_helper.tf_predict_func(sess, data_node, logits_eval), verbose=True)['accuracy_score']
       if valid_accuracy > best_accuracy:
