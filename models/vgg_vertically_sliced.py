@@ -121,7 +121,7 @@ def build_convolutional_feature_extractor(inputs, weight_decay, vgg_init_dir=Non
 
     return net
 
-def build(inputs, labels, weight_decay, num_classes, vgg_init_dir, fully_connected=[], is_training=True):
+def build(inputs, labels, weight_decay, num_classes, vgg_init_dir=None, fully_connected=[], is_training=True):
 
   # to big weight_decay = 5e-3
   bn_params = {

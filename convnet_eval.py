@@ -113,7 +113,7 @@ def evaluate_test(model, dataset_root):
     labels_node = tf.placeholder(tf.int64, shape=(BATCH_SIZE,))
     saver = tf.train.Saver()
     with tf.variable_scope('model'):
-      logits, loss = model.build(data_node, labels_node, WEIGHT_DECAY, NUM_CLASSES, vgg_init_dir, fully_connected=FULLY_CONNECTED, is_training=False)
+      logits, loss = model.build(data_node, labels_node, WEIGHT_DECAY, NUM_CLASSES, fully_connected=FULLY_CONNECTED, is_training=False)
       saver.restore(sess, 'trained_models/best_convnet')
     evaluate(sess, 'test', epoch_num, data_node, labels_node, logits_eval,
                           loss_eval, test_data, test_labels)
