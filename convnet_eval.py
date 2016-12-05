@@ -12,7 +12,7 @@ import evaluate_helper
 np.set_printoptions(linewidth=250)
 
 BATCH_SIZE = 10
-FULLY_CONNECTED = [200, 20]
+FULLY_CONNECTED = [200]
 NUM_CLASSES = 2
 
 def evaluate(model, dataset_root, model_path):
