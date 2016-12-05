@@ -40,12 +40,12 @@ def read_images(data_dir, split_name):
   return np.ascontiguousarray(images)
 
 def read_and_normalize_images(data_dir):
-  train_data = dataset.read_images(data_dir, 'train').astype(np.float64)
-  test_data = dataset.read_images(data_dir, 'test').astype(np.float64)
-  validate_data = dataset.read_images(data_dir, 'validate').astype(np.float64)
-  train_labels = dataset.read_labels(data_dir, 'train').astype(np.int64)
-  test_labels = dataset.read_labels(data_dir, 'test').astype(np.int64)
-  validate_labels = dataset.read_labels(data_dir, 'validate').astype(np.int64)
+  train_data = read_images(data_dir, 'train').astype(np.float64)
+  test_data = read_images(data_dir, 'test').astype(np.float64)
+  validate_data = read_images(data_dir, 'validate').astype(np.float64)
+  train_labels = read_labels(data_dir, 'train').astype(np.int64)
+  test_labels = read_labels(data_dir, 'test').astype(np.int64)
+  validate_labels = read_labels(data_dir, 'validate').astype(np.int64)
 
   data_mean = train_data.reshape([-1, 3]).mean(0)
   data_std = train_data.reshape([-1, 3]).std(0)
