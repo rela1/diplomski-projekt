@@ -114,7 +114,7 @@ def evaluate_test(model, dataset_root):
     saver = tf.train.Saver()
     with tf.variable_scope('model'):
       logits, loss = model.build(data_node, labels_node, WEIGHT_DECAY, NUM_CLASSES, fully_connected=FULLY_CONNECTED, is_training=False)
-      saver.restore(sess, 'trained_models/best_convnet')
+    saver.restore(sess, 'trained_models/best_convnet')
     evaluate(sess, 'test', 0, data_node, labels_node, logits,
                           loss, test_data, test_labels)
 
