@@ -15,7 +15,7 @@ from models import vgg_vertically_sliced
 np.set_printoptions(linewidth=250)
 
 BATCH_SIZE = 10
-WEIGHT_DECAY = 1e-3
+WEIGHT_DECAY = 1e-5
 LEARNING_RATE = 1e-6
 FULLY_CONNECTED = [200]
 NUM_CLASSES = 2
@@ -162,7 +162,7 @@ def train(model, vgg_init_dir, dataset_root):
                           loss_eval, validate_data, validate_labels)
       if valid_accuracy > best_accuracy:
         best_accuracy = valid_accuracy
-        saver.save('best_convnet')
+        saver.save(sess, 'best_convnet')
       print('Best validate accuracy = %.2f' % best_accuracy)
     saver.restore(sess, 'best_convnet')
     evaluate(sess, 'test', epoch_num, data_node, labels_node, logits_eval,
