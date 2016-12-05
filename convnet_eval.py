@@ -137,11 +137,11 @@ def train(model, vgg_init_dir, dataset_root):
     best_accuracy = 0
     saver = tf.train.Saver()
     saver.restore(sess, 'trained_models/best_convnet')
-    evaluate(sess, 'train', epoch_num, data_node, labels_node, logits_eval,
+    evaluate(sess, 'train', 0, data_node, labels_node, logits_eval,
                           loss_eval, train_data, train_labels)
-    evaluate(sess, 'validate', epoch_num, data_node, labels_node, logits_eval,
+    evaluate(sess, 'validate', 0, data_node, labels_node, logits_eval,
                           loss_eval, validate_data, validate_labels)                    
-    evaluate(sess, 'test', epoch_num, data_node, labels_node, logits_eval,
+    evaluate(sess, 'test', 0, data_node, labels_node, logits_eval,
                           loss_eval, test_data, test_labels)
 
 if __name__ == '__main__':
