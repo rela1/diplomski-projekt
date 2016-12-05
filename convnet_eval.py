@@ -87,10 +87,8 @@ def evaluate_test(model, dataset_root):
   for c in range(train_data.shape[-1]):
     train_data[..., c] -= data_mean[c]
     test_data[..., c] -= data_mean[c]
-    validate_data[..., c] -= data_mean[c]
     # better without variance normalization
     #train_data[..., c] /= data_std[c]
-    #validate_data[..., c] /= data_std[c]
     #test_data[..., c] /= data_std[c]
 
   print(train_data.mean())
