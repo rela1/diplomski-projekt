@@ -46,7 +46,6 @@ def evaluate(name, x, y, batch_size, predict_function):
   y_predict = []
   for i in range(num_batches):
     batch_x = x[i*batch_size:(i+1)*batch_size, :]
-    batch_y = y[i*batch_size:(i+1)*batch_size, :]
     start_time = time.time()
     predict_batch_y = predict_function(batch_x)
     duration = time.time() - start_time
