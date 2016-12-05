@@ -68,15 +68,18 @@ def evaluate(sess, name, epoch_num, data_node, labels_node, logits, loss, data, 
   return accuracy
 
 
-def evaluate_test(model, dataset_root):
+def train(model, vgg_init_dir, dataset_root):
   """ Trains the network
   Args:
     model: module containing model architecture
   """
+  print(vgg_init_dir)
   train_data = dataset.read_images(dataset_root, 'train').astype(np.float64)
   test_data = dataset.read_images(dataset_root, 'test').astype(np.float64)
+  validate_data = dataset.read_images(dataset_root, 'validate').astype(np.float64)
   train_labels = dataset.read_labels(dataset_root, 'train').astype(np.int64)
   test_labels = dataset.read_labels(dataset_root, 'test').astype(np.int64)
+  validate_labels = dataset.read_labels(dataset_root, 'validate').astype(np.int64)
 
   data_mean = train_data.reshape([-1, 3]).mean(0)
   data_std = train_data.reshape([-1, 3]).std(0)
@@ -87,8 +90,10 @@ def evaluate_test(model, dataset_root):
   for c in range(train_data.shape[-1]):
     train_data[..., c] -= data_mean[c]
     test_data[..., c] -= data_mean[c]
+    validate_data[..., c] -= data_mean[c]
     # better without variance normalization
     #train_data[..., c] /= data_std[c]
+    #validate_data[..., c] /= data_std[c]
     #test_data[..., c] /= data_std[c]
 
   print(train_data.mean())
@@ -100,8 +105,10 @@ def evaluate_test(model, dataset_root):
 
   train_size = train_data.shape[0]
   test_size = test_data.shape[0]
+  validate_size = validate_data.shape[0]
   assert train_size % BATCH_SIZE == 0
   assert test_size % BATCH_SIZE == 0
+  assert validate_size % BATCH_SIZE == 0
 
   with tf.Graph().as_default():
     sess = tf.Session()
@@ -111,13 +118,33 @@ def evaluate_test(model, dataset_root):
     data_node = tf.placeholder(tf.float32,
         shape=(BATCH_SIZE, train_data.shape[1], train_data.shape[2], train_data.shape[3]))
     labels_node = tf.placeholder(tf.int64, shape=(BATCH_SIZE,))
-    saver = tf.train.Saver()
     with tf.variable_scope('model'):
-      logits, loss = model.build(data_node, labels_node, WEIGHT_DECAY, NUM_CLASSES, fully_connected=FULLY_CONNECTED, is_training=False)
+      logits, loss, init_op, init_feed = model.build(data_node, labels_node, WEIGHT_DECAY, NUM_CLASSES, vgg_init_dir, fully_connected=FULLY_CONNECTED)
+    with tf.variable_scope('model', reuse=True):
+      logits_eval, loss_eval = model.build(data_node, labels_node, WEIGHT_DECAY, NUM_CLASSES, vgg_init_dir, is_training=False, fully_connected=FULLY_CONNECTED)
+    exponential_learning_rate = tf.train.exponential_decay(LEARNING_RATE, global_step, 200, 0.96, staircase=True)
+    opt = tf.train.AdamOptimizer(exponential_learning_rate)
+    grads = opt.compute_gradients(loss)
+    apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
+    with tf.control_dependencies([apply_gradient_op]):
+      train_op = tf.no_op(name='train')
+    sess.run(tf.initialize_all_variables())
+    sess.run(tf.initialize_local_variables())
+    sess.run(init_op, feed_dict=init_feed)
+    ex_start_time = time.time()
+    num_batches = train_size // BATCH_SIZE
+    global_step_val = 0
+    best_accuracy = 0
+    saver = tf.train.Saver()
     saver.restore(sess, 'trained_models/best_convnet')
-    evaluate(sess, 'test', 0, data_node, labels_node, logits,
-                          loss, test_data, test_labels)
+    evaluate(sess, 'train', epoch_num, data_node, labels_node, logits_eval,
+                          loss_eval, train_data, train_labels)
+    evaluate(sess, 'validate', epoch_num, data_node, labels_node, logits_eval,
+                          loss_eval, validate_data, validate_labels)                    
+    evaluate(sess, 'test', epoch_num, data_node, labels_node, logits_eval,
+                          loss_eval, test_data, test_labels)
 
 if __name__ == '__main__':
-  dataset_root = sys.argv[1]
-  evaluate_test(vgg_vertically_sliced, dataset_root)
+  vgg_init_dir = sys.argv[1]
+  dataset_root = sys.argv[2]
+  train(vgg_vertically_sliced, vgg_init_dir, dataset_root)
