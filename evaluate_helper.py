@@ -1,3 +1,4 @@
+import numpy as np
 from sklearn import metrics
 import time
 
@@ -23,7 +24,7 @@ def evaluate_metric_functions(y_true, y_pred, metric_functions):
 
 def tf_predict_func(sess, inputs, logits):
 	def predict_func(x):
-		return np.argmax(sess.run(logits, feed_dict={inputs:x}))
+		return np.argmax(sess.run(logits, feed_dict={inputs:x}), axis=1)
 	return predict_func
 
 def evaluate(name, x, y, batch_size, predict_function):
