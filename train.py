@@ -19,7 +19,7 @@ WEIGHT_DECAY = 1e-4
 LEARNING_RATE = 1e-6
 FULLY_CONNECTED = [200]
 NUM_CLASSES = 2
-EPOCHS = 10
+EPOCHS = 30
 
 
 def get_accuracy(predictions, labels):
@@ -134,6 +134,7 @@ def train(model, vgg_init_dir, dataset_root):
     num_batches = train_size // BATCH_SIZE
     global_step_val = 0
     best_accuracy = 0
+    saver = tf.train.Saver()
     for epoch_num in range(1, EPOCHS + 1):
       indices = np.arange(train_size)
       np.random.shuffle(indices)
@@ -161,7 +162,9 @@ def train(model, vgg_init_dir, dataset_root):
                           loss_eval, validate_data, validate_labels)
       if valid_accuracy > best_accuracy:
         best_accuracy = valid_accuracy
+        saver.save('best_convnet')
       print('Best validate accuracy = %.2f' % best_accuracy)
+    saver.restore(sess, 'best_convnet')
     evaluate(sess, 'test', epoch_num, data_node, labels_node, logits_eval,
                           loss_eval, test_data, test_labels)
 
