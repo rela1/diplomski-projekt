@@ -30,7 +30,6 @@ def evaluate(model, dataset_root, model_path):
 
     sess.run(tf.initialize_all_variables())
     sess.run(tf.initialize_local_variables())
-    sess.run(init_op, feed_dict=init_feed)
 
     saver = tf.train.Saver()
     saver.restore(sess, model_path)
