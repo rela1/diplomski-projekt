@@ -21,6 +21,8 @@ EPOCHS = 150
 def train(model, vgg_init_dir, dataset_root, model_path):
   train_data, train_labels, validate_data, validate_labels, test_data, test_labels = dataset.read_and_normalize_images(dataset_root)
 
+  train_size = train_data.shape[0]
+
   with tf.Graph().as_default():
     sess = tf.Session()
     global_step = tf.get_variable('global_step', [], dtype=tf.int64,
