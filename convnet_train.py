@@ -32,7 +32,7 @@ def train(model, vgg_init_dir, dataset_root, model_path):
     labels_node = tf.placeholder(tf.int64, shape=(BATCH_SIZE,))
 
     with tf.variable_scope('model'):
-      logits, loss, init_op, init_feed = model.build(data_node, labels_node, NUM_CLASSES, fully_connected=FULLY_CONNECTED, WEIGHT_DECAY, vgg_init_dir)
+      logits, loss, init_op, init_feed = model.build(data_node, labels_node, NUM_CLASSES, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir)
     with tf.variable_scope('model', reuse=True):
       logits_eval, loss_eval = model.build(data_node, labels_node, NUM_CLASSES, fully_connected=FULLY_CONNECTED, is_training=False)
 
