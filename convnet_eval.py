@@ -28,6 +28,9 @@ def evaluate(model, dataset_root, model_path):
     with tf.variable_scope('model'):
       logits_eval, loss_eval = model.build(data_node, labels_node, NUM_CLASSES, fully_connected=FULLY_CONNECTED, is_training=False)
 
+	for var in tf.get_collection(tf.GraphKeys.VARIABLES, scope='model'):
+		print('name {}, shape {}'.format(var.name, var.get_shape()))   
+
     sess.run(tf.initialize_all_variables())
     sess.run(tf.initialize_local_variables())
 
