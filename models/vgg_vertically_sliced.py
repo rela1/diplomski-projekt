@@ -27,6 +27,15 @@ def create_init_op(vgg_layers):
   return init_op, init_feed
 
 def build_convolutional_pooled_feature_extractor(inputs, weight_decay=0.0, vgg_init_dir=None, is_training=True):
+  bn_params = {
+      'decay': 0.999,
+      'center': True,
+      'scale': True,
+      'epsilon': 0.001,
+      'updates_collections': None,
+      'is_training': is_training,
+  }
+
   if is_training:
     vgg_layers, vgg_layer_names = read_vgg_init(vgg_init_dir)
 
@@ -56,8 +65,8 @@ def build_convolutional_pooled_feature_extractor(inputs, weight_decay=0.0, vgg_i
     net = layers.max_pool2d(net, 2, 2, scope='pool4')
     net = layers.convolution2d(net, 512, scope='conv5_1')
     net = layers.convolution2d(net, 512, scope='conv5_2')
-    net = layers.convolution2d(net, 512, scope='conv5_3')
-    net = layers.max_pool2d(net, 2, 2, scope='pool5')
+    net = layers.convolution2d(net, 512, scope='conv5_3', normalizer_fn=layers.batch_norm, normalizer_params=bn_params)
+    net = layers.max_pool2d(net, 2, 2, scope='pool5', )
 
     #net = layers.convolution2d(net, 4096, kernel_size=7, scope='conv6_1')
     
