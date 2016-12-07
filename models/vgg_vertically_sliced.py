@@ -30,10 +30,12 @@ def build_convolutional_pooled_feature_extractor(inputs, weight_decay=0.0, vgg_i
   if is_training:
     vgg_layers, vgg_layer_names = read_vgg_init(vgg_init_dir)
 
+  """
   inputs_shape = inputs.get_shape()
   horizontal_slice_size = int(round(int(inputs_shape[2]) / 3))
   vertical_slice_size = int(round(int(inputs_shape[1]) / 3))
   inputs = tf.slice(inputs, begin=[0, 0, 0, 0], size=[-1, vertical_slice_size * 2, horizontal_slice_size * 2, -1])
+  """
 
   with tf.contrib.framework.arg_scope([layers.convolution2d],
       kernel_size=3, stride=1, padding='SAME', rate=1, activation_fn=tf.nn.relu,
@@ -61,14 +63,14 @@ def build_convolutional_pooled_feature_extractor(inputs, weight_decay=0.0, vgg_i
 
     #net = layers.convolution2d(net, 4096, kernel_size=7, scope='conv6_1')
     
-    """
+    
     last_convolution_filter_size = net.get_shape()
     horizontal_slice_size = int(round(int(last_convolution_filter_size[2]) / 3))
     vertical_slice_size = int(round(int(last_convolution_filter_size[1]) / 3))
     net = tf.slice(net, begin=[0, 0, 0, 0], size=[-1, vertical_slice_size * 2, horizontal_slice_size * 2, -1])
     print("Created slice from ", [0, 0, 0, 0], "with size ", [-1, vertical_slice_size * 2, horizontal_slice_size * 2, -1])
     print("Shape before pooling tiles: ", net.get_shape())
-    """
+    
     net = layers.max_pool2d(net, kernel_size=[2, 2], stride=2)
     print("Pooled tiles, new shape: ", net.get_shape())
 
