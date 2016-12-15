@@ -48,7 +48,7 @@ def evaluate(model, dataset_root, images_root, model_path, misclassified_output_
 
   for index, image in enumerate(test_images):
     if test_labels_pred[index] != test_labels[index]:
-      img.imsave(os.path.join(misclassified_output_folder, str(test_labels[index]) + "_" + str(index) + ".png", image))
+      img.imsave(os.path.join(misclassified_output_folder, str(test_labels[index]) + "_" + str(index) + ".png"), image)
 
   num_batches = len(test_data) // batch_size
   for i in range(num_batches):
