@@ -53,7 +53,7 @@ def evaluate(model, dataset_root, images_root, model_path, misclassified_output_
   num_batches = len(test_data) // BATCH_SIZE
   for i in range(num_batches):
     batch_images = test_data[i*BATCH_SIZE:(i+1)*BATCH_SIZE, :]
-    grads_operation = tf.gradients(logits_eval, data_node)
+    grads_operation = tf.gradients(logits_eval, [data_node])[0]
     batch_images_grads = sess.run(grads_operation, feed_dict={data_node:batch_images})
     print(batch_images_grads.get_shape())
 
