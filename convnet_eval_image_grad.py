@@ -15,7 +15,7 @@ BATCH_SIZE = 10
 FULLY_CONNECTED = [200]
 NUM_CLASSES = 2
 
-def evaluate(model, dataset_root, images_root, model_path, misclassified_output_folder):
+def evaluate(model, dataset_root, images_root, model_path, misclassified_output_folder, image_gradients_output_folder):
   train_data, train_labels, validate_data, validate_labels, test_data, test_labels = dataset.read_and_normalize_images(dataset_root)
 
   with tf.Graph().as_default():
@@ -45,14 +45,21 @@ def evaluate(model, dataset_root, images_root, model_path, misclassified_output_
 
     test_images = dataset.read_images(images_root, 'test')
 
-	for index, image in enumerate(test_images):
-		if test_labels_pred[index] != test_labels[index]:
-			img.imsave(os.path.join(misclassified_output_folder, str(test_labels[index]) + "_" + str(index) + ".png", image)			
+  for index, image in enumerate(test_images):
+    if test_labels_pred[index] != test_labels[index]:
+      img.imsave(os.path.join(misclassified_output_folder, str(test_labels[index]) + "_" + str(index) + ".png", image))
 
+  num_batches = len(test_data) // batch_size
+  for i in range(num_batches):
+    batch_images = test_data[i*batch_size:(i+1)*batch_size, :]
+    grads_operation = tf.gradients(data_node, logits_eval)
+    batch_images_grads = sess.run(grads_operation, feed_dict={data_node:batch_images})
+    print(batch_size.get_shape())
 
 if __name__ == '__main__':
   dataset_root = sys.argv[1]
   images_root = sys.argv[2]
   model_path = sys.argv[3]
   misclassified_output_folder = sys.argv[4]
-  evaluate(vgg_vertically_sliced, dataset_root, images_root, model_path, misclassified_output_folder)
+  image_gradients_output_folder = sys.argv[5]
+  evaluate(vgg_vertically_sliced, dataset_root, images_root, model_path, misclassified_output_folder, image_gradients_output_folder)

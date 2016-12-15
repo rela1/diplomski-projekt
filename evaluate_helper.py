@@ -57,4 +57,4 @@ def evaluate(name, x, y, batch_size, predict_function, verbose=False):
       print('step {}/{}, {} examples/sec, {} sec/batch'.format(i+1, num_batches, batch_size / duration, duration))
   metrics = evaluate_metric_functions(y, y_predict, METRIC_FUNCTIONS)
   print_metrics(metrics)
-  return metrics
+  return metrics, y_predict
