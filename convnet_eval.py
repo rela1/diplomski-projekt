@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import matplotlib.image as img
 
 import numpy as np
 import tensorflow as tf
