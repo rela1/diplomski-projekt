@@ -51,11 +51,16 @@ def evaluate(model, dataset_root, images_root, model_path, misclassified_output_
       img.imsave(os.path.join(misclassified_output_folder, str(test_labels[index]) + "_" + str(index) + ".png"), image)
 
   num_batches = len(test_data) // BATCH_SIZE
+  img_index = 0
   for i in range(num_batches):
     batch_images = test_data[i*BATCH_SIZE:(i+1)*BATCH_SIZE, :]
+    batch_labels = test_labels[i*BATCH_SIZE:(i+1)*BATCH_SIZE, :]
     grads_operation = tf.gradients(logits_eval, [data_node])[0]
     batch_images_grads = sess.run(grads_operation, feed_dict={data_node:batch_images})
-    print(batch_images_grads.shape)
+    for index, batch_image_grads, image in enumerate(zip(batch_images_grads, batch_images)):
+      img.imsave(os.path.join(image_gradients_output_folder, str(batch_labels[index]) + "_" + str(img_index) + ".png"), image)
+      img.imsave(os.path.join(image_gradients_output_folder, str(batch_labels[index]) + "_" + str(img_index) + "_gradients.png"), batch_image_grads)
+      img_index += 1
 
 if __name__ == '__main__':
   dataset_root = sys.argv[1]
