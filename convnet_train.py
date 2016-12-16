@@ -34,9 +34,9 @@ def train(model, vgg_init_dir, dataset_root, model_path):
     labels_node = tf.placeholder(tf.int64, shape=(BATCH_SIZE,))
 
     with tf.variable_scope('model'):
-      sliced_data_node, logits, loss, init_op, init_feed = model.build(data_node, labels_node, NUM_CLASSES, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir)
+      logits, loss, init_op, init_feed = model.build(data_node, labels_node, NUM_CLASSES, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir)
     with tf.variable_scope('model', reuse=True):
-      sliced_data_node, logits_eval, loss_eval = model.build(data_node, labels_node, NUM_CLASSES, fully_connected=FULLY_CONNECTED, is_training=False)
+      logits_eval, loss_eval = model.build(data_node, labels_node, NUM_CLASSES, fully_connected=FULLY_CONNECTED, is_training=False)
 
     exponential_learning_rate = tf.train.exponential_decay(LEARNING_RATE, global_step, 200, 0.94, staircase=True)
     opt = tf.train.AdamOptimizer(exponential_learning_rate)
