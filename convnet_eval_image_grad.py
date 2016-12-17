@@ -13,7 +13,7 @@ import evaluate_helper
 np.set_printoptions(linewidth=250)
 
 BATCH_SIZE = 10
-FULLY_CONNECTED = [200]
+FULLY_CONNECTED = [100, 10]
 NUM_CLASSES = 2
 
 def evaluate(model, dataset_root, images_root, model_path, misclassified_output_folder, image_gradients_output_folder):
