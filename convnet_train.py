@@ -12,8 +12,8 @@ import evaluate_helper
 np.set_printoptions(linewidth=250)
 
 BATCH_SIZE = 10
-WEIGHT_DECAY = 5e-4
-LEARNING_RATE = 1e-4
+WEIGHT_DECAY = 1e-4
+LEARNING_RATE = 5e-4
 FULLY_CONNECTED = [200]
 NUM_CLASSES = 2
 EPOCHS = 150
