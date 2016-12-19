@@ -46,9 +46,10 @@ def evaluate(model, dataset_root, images_root, model_path, misclassified_output_
 
     test_images = dataset.read_images(images_root, 'test')
 
-	for index, image in enumerate(test_images):
-		if test_labels_pred[index] != test_labels[index]:
-			img.imsave(os.path.join(misclassified_output_folder, str(test_labels[index]) + "_" + str(index) + ".png", image)			
+  if len(sys.argv) > 4:
+    for index, image in enumerate(test_images):
+      if test_labels_pred[index] != test_labels[index]:
+        img.imsave(os.path.join(misclassified_output_folder, str(test_labels[index]) + "_" + str(index) + ".png", image)      
 
 
 if __name__ == '__main__':
