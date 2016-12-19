@@ -56,5 +56,5 @@ if __name__ == '__main__':
   dataset_root = sys.argv[1]
   images_root = sys.argv[2]
   model_path = sys.argv[3]
-  misclassified_output_folder = sys.argv[4]
+  misclassified_output_folder = sys.argv[4] if len(sys.argv) > 4 else None
   evaluate(vgg_vertically_sliced, dataset_root, images_root, model_path, misclassified_output_folder)
