@@ -12,8 +12,8 @@ import evaluate_helper
 np.set_printoptions(linewidth=250)
 
 BATCH_SIZE = 10
-WEIGHT_DECAY = 1e-5
-LEARNING_RATE = 5e-4
+WEIGHT_DECAY = 5e-4
+LEARNING_RATE = 1e-5
 FULLY_CONNECTED = [200]
 NUM_CLASSES = 2
 EPOCHS = 150
@@ -38,7 +38,7 @@ def train(model, vgg_init_dir, dataset_root, model_path):
     with tf.variable_scope('model', reuse=True):
       logits_eval, loss_eval = model.build(data_node, labels_node, NUM_CLASSES, fully_connected=FULLY_CONNECTED, is_training=False)
 
-    exponential_learning_rate = tf.train.exponential_decay(LEARNING_RATE, global_step, 200, 0.94, staircase=True)
+    #exponential_learning_rate = tf.train.exponential_decay(LEARNING_RATE, global_step, 200, 0.94, staircase=True)
     opt = tf.train.AdamOptimizer(LEARNING_RATE)
     grads = opt.compute_gradients(loss)
     apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
