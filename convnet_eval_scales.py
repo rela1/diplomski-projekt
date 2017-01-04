@@ -12,7 +12,7 @@ import evaluate_helper
 
 np.set_printoptions(linewidth=250)
 
-BATCH_SIZE = 10
+BATCH_SIZE = 5
 FULLY_CONNECTED = [200]
 NUM_CLASSES = 2
 

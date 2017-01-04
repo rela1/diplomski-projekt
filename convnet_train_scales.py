@@ -16,7 +16,7 @@ WEIGHT_DECAY = 1e-3
 LEARNING_RATE = 1e-4
 FULLY_CONNECTED = [200]
 NUM_CLASSES = 2
-EPOCHS = 150
+EPOCHS = 200
 
 def train(model, vgg_init_dir, dataset_root, model_path):
   train_data, train_labels, validate_data, validate_labels, test_data, test_labels = dataset.read_and_normalize_images(dataset_root)
