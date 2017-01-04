@@ -45,6 +45,8 @@ def evaluate(model, dataset_root, images_root, model_path, misclassified_output_
         evaluate_helper.tf_probability_func(sess, data_node, logits_eval), verbose=True)
 
     test_images = dataset.read_images(images_root, 'test')
+    a = test_labels_prob[20][1]
+    print(a, type(a))
 
     for index, image in enumerate(test_images):
       if test_labels_pred[index] != test_labels[index]:
