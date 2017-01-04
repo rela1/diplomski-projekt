@@ -34,10 +34,10 @@ def build_convolutional_scaled_pooled_feature_extractor(inputs, scales=[1, 2], w
 
   for scale in scales:
     inputs_shape = inputs.get_shape()
-    inputs_shape[1] = inputs_shape[1] / scale
-    inputs_shape[2] = inputs_shape[2] / scale
-    final_map_width = inputs_shape[2] // 32
-    final_map_height = inputs_shape[1] // 32
+    height = int(inputs_shape[1]) / scale
+    width = int(inputs_shape[2]) / scale
+    final_map_width = int(round(width / 32))
+    final_map_height = int(round(height / 32))
     if final_map_height < height_tiles or final_map_width < width_tiles:
         raise Exception('Tiles (width, height) is :{}, final output map (width, height) on scale {} is: {}'.format((width_tiles, height_tiles), scale, (final_map_width, final_map_height)))
 
