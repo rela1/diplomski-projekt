@@ -43,6 +43,7 @@ def evaluate(model, dataset_root, images_root, model_path, misclassified_output_
         evaluate_helper.tf_probability_func(sess, data_node, logits_eval), verbose=True)
     test_metrics, test_labels_pred, test_labels_prob = evaluate_helper.evaluate('test', test_data, test_labels, BATCH_SIZE, evaluate_helper.tf_proba_predict_func,
         evaluate_helper.tf_probability_func(sess, data_node, logits_eval), verbose=True)
+    print("test probs:", test_labels_prob)
 
     test_images = dataset.read_images(images_root, 'test')
 
