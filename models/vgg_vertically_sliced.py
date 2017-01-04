@@ -44,7 +44,7 @@ def build_convolutional_scaled_pooled_feature_extractor(inputs, scales=[1, 2], w
   with tf.variable_scope('operations', reuse=True):
     for scale in scales:
         inputs_shape = inputs.get_shape()
-        if scale not 1:
+        if scale != 1:
             scaled_inputs = tf.image.resize_images(inputs, [inputs_shape[0], inputs_shape[1] / scale, inputs_shape[2] / scale, inputs_shape[3]])
         else:
             scaled_inputs = inputs
