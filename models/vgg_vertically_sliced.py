@@ -35,8 +35,8 @@ def build_convolutional_scaled_pooled_feature_extractor(inputs, scales=[1, 2], w
   reuse = False
   for scale in scales:
     inputs_shape = inputs.get_shape()
-    height = int(inputs_shape[1]) / scale
-    width = int(inputs_shape[2]) / scale
+    height = int(inputs_shape[1]) // scale
+    width = int(inputs_shape[2]) // scale
     final_map_width = int(round(width / 32))
     final_map_height = int(round(height / 32))
     if final_map_height < height_tiles or final_map_width < width_tiles:
@@ -46,7 +46,7 @@ def build_convolutional_scaled_pooled_feature_extractor(inputs, scales=[1, 2], w
         with tf.variable_scope('operations', reuse=reuse):
             inputs_shape = inputs.get_shape()
             if scale != 1:
-                scaled_inputs = tf.image.resize_images(inputs, [inputs_shape[0], inputs_shape[1] / scale, inputs_shape[2] / scale, inputs_shape[3]])
+                scaled_inputs = tf.image.resize_images(inputs, [inputs_shape[0], int(inputs_shape[1]) // scale, int(inputs_shape[2]) // scale, inputs_shape[3]])
             else:
                 scaled_inputs = inputs
             scaled_inputs_shape = scaled_inputs.get_shape()
@@ -79,12 +79,12 @@ def build_convolutional_scaled_pooled_feature_extractor(inputs, scales=[1, 2], w
                 net = layers.max_pool2d(net, 2, 2, scope='pool5')
 
                 net_shape = net.get_shape()
-                pool_height = int(round(net_shape[1] / height_tiles))
-                pool_width = int(round(net_shape[2] / width_tiles))
+                pool_height = int(round(int(net_shape[1]) / height_tiles))
+                pool_width = int(round(int(net_shape[2]) / width_tiles))
                 kernel = [pool_height, pool_width]
                 net = layers.max_pool2d(net, kernel_size=kernel, stride=kernel)
                 output_maps.append(net)
-                
+
                 reuse=True
       
     packed_output_maps = tf.pack(output_maps)
