@@ -27,7 +27,7 @@ def evaluate(model, dataset_root, images_root, model_path, misclassified_output_
     labels_node = tf.placeholder(tf.int64, shape=(BATCH_SIZE,))
 
     with tf.variable_scope('model'):
-      logits_eval, loss_eval = model.build(data_node, labels_node, NUM_CLASSES, fully_connected=FULLY_CONNECTED, is_training=False)
+      logits_eval, loss_eval = model.build_scaled(data_node, labels_node, NUM_CLASSES, scales=[1,2], width_tiles=7, height_tiles=2, fully_connected=FULLY_CONNECTED, is_training=False)
 
     for var in tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope='model'):
         print('name {}, shape {}'.format(var.name, var.get_shape()))   

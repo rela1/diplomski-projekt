@@ -37,19 +37,19 @@ def evaluate(model, dataset_root, images_root, model_path, misclassified_output_
 
     saver = tf.train.Saver()
     saver.restore(sess, model_path)
-    evaluate_helper.evaluate('train', train_data, train_labels, BATCH_SIZE, 
-        evaluate_helper.tf_predict_func(sess, data_node, logits_eval), verbose=True)
-    evaluate_helper.evaluate('validate', validate_data, validate_labels, BATCH_SIZE, 
-        evaluate_helper.tf_predict_func(sess, data_node, logits_eval), verbose=True)
-    test_metrics, test_labels_pred = evaluate_helper.evaluate('test', test_data, test_labels, BATCH_SIZE, 
-        evaluate_helper.tf_predict_func(sess, data_node, logits_eval), verbose=True)
+    evaluate_helper.evaluate('train', train_data, train_labels, BATCH_SIZE, evaluate_helper.tf_proba_predict_func,
+        evaluate_helper.tf_probability_func(sess, data_node, logits_eval), verbose=True)
+    evaluate_helper.evaluate('validate', validate_data, validate_labels, BATCH_SIZE, evaluate_helper.tf_proba_predict_func,
+        evaluate_helper.tf_probability_func(sess, data_node, logits_eval), verbose=True)
+    test_metrics, test_labels_pred, test_labels_prob = evaluate_helper.evaluate('test', test_data, test_labels, BATCH_SIZE, evaluate_helper.tf_proba_predict_func,
+        evaluate_helper.tf_probability_func(sess, data_node, logits_eval), verbose=True)
 
     test_images = dataset.read_images(images_root, 'test')
 
   if len(sys.argv) > 4:
     for index, image in enumerate(test_images):
       if test_labels_pred[index] != test_labels[index]:
-        img.imsave(os.path.join(misclassified_output_folder, str(test_labels[index]) + "_" + str(index) + ".png", image))   
+        img.imsave(os.path.join(misclassified_output_folder, str(test_labels[index]) + "_" + str(index) + "_" + "{:1.5f}".format(test_labels_prob[index]) + ".png", image))   
 
 
 if __name__ == '__main__':

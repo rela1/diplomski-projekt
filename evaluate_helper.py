@@ -23,12 +23,17 @@ def evaluate_metric_functions(y_true, y_pred, metric_functions):
 	"""
 	return {metric_function.__name__ : metric_function(y_true, y_pred) for metric_function in metric_functions}
 
-def tf_predict_func(sess, inputs, logits):
-	def predict_func(x):
-		return np.argmax(sess.run(logits, feed_dict={inputs:x}), axis=1)
-	return predict_func
+def tf_proba_predict_func(probabilities):
+  return np.argmax(probabilities, axis=1)
 
-def evaluate(name, x, y, batch_size, predict_function, verbose=False):
+def tf_probability_func(sess, inputs, logits):
+  def probability_func(x):
+    logits_val = sess.run(logits, feed_dict={inputs:x})
+    logits_exp = np.exp(logits_val)
+    logits_exp_sum = np.sum(logits_exp, axis=1, keepdims=True)
+    return logits_exp / logits_exp_sum
+
+def evaluate(name, x, y, batch_size, predict_function, probability_function=None, verbose=False):
   """
   Evaluates given predict function on given data in batches.
 
@@ -38,6 +43,7 @@ def evaluate(name, x, y, batch_size, predict_function, verbose=False):
   y -- true densely stored classes
   batch_size -- size of evaluate batch
   predict_function -- function used for prediction; called as predict_function(x) on batch of data x
+  probability_function -- function used for probability calculation; called as probability_function(x) on batch of data x; if probability functon is given, predict function is called on batch of probabilities of data x instead of batch of data x
 
   Returns:
   dictionary mapping metric function name to metric score on given data with given predict function
@@ -47,14 +53,24 @@ def evaluate(name, x, y, batch_size, predict_function, verbose=False):
   assert num_examples % batch_size == 0
   num_batches = num_examples // batch_size
   y_predict = []
+  if not probability_function == None:
+    y_probabilities = []
   for i in range(num_batches):
     batch_x = x[i*batch_size:(i+1)*batch_size, :]
     start_time = time.time()
-    predict_batch_y = predict_function(batch_x)
+    if not probability_function == None:
+      probabilities_batch_y = probability_function(batch_x)
+      y_probabilities.extend(probabilities_batch_y)
+      predict_batch_y = predict_function(probabilities_batch_y)
+    else:
+      predict_batch_y = predict_function(batch_x)
     duration = time.time() - start_time
     y_predict.extend(predict_batch_y)
     if (i+1) % 10 == 0 and verbose:
       print('step {}/{}, {} examples/sec, {} sec/batch'.format(i+1, num_batches, batch_size / duration, duration))
   metrics = evaluate_metric_functions(y, y_predict, METRIC_FUNCTIONS)
   print_metrics(metrics)
-  return metrics, y_predict
+  if not probability_function == None:
+    return metrics, y_predict, y_probabilities
+  else:
+    return metrics, y_predict

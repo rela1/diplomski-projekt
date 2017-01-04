@@ -76,15 +76,15 @@ def train(model, vgg_init_dir, dataset_root, model_path):
           format_str = 'epoch %d, batch %d / %d, loss = %.2f \
             (%.1f examples/sec; %.3f sec/batch)'
           print(format_str % (epoch_num, step+1, num_batches, loss_val, examples_per_sec, sec_per_batch))
-      valid_accuracy = evaluate_helper.evaluate('validate', validate_data, validate_labels, BATCH_SIZE, 
-      	evaluate_helper.tf_predict_func(sess, data_node, logits_eval), verbose=True)[0]['accuracy_score']
+      valid_accuracy = evaluate_helper.evaluate('validate', validate_data, validate_labels, BATCH_SIZE, evaluate_helper.tf_proba_predict_func,
+        evaluate_helper.tf_probability_func(sess, data_node, logits_eval), verbose=True)[0]['accuracy_score']
       if valid_accuracy > best_accuracy:
         best_accuracy = valid_accuracy
         saver.save(sess, model_path)
       print('Best validate accuracy = %.2f' % best_accuracy)
     saver.restore(sess, model_path)
-    evaluate_helper.evaluate('test', test_data, test_labels, BATCH_SIZE, 
-      	evaluate_helper.tf_predict_func(sess, data_node, logits_eval), verbose=True)
+    evaluate_helper.evaluate('test', test_data, test_labels, BATCH_SIZE, evaluate_helper.tf_proba_predict_func,
+        evaluate_helper.tf_probability_func(sess, data_node, logits_eval), verbose=True)
 
 if __name__ == '__main__':
   vgg_init_dir = sys.argv[1]
