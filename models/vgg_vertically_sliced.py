@@ -32,6 +32,7 @@ def build_convolutional_scaled_pooled_feature_extractor(inputs, scales=[1, 2], w
 
   output_maps = []
 
+  reuse = False
   for scale in scales:
     inputs_shape = inputs.get_shape()
     height = int(inputs_shape[1]) / scale
@@ -41,48 +42,50 @@ def build_convolutional_scaled_pooled_feature_extractor(inputs, scales=[1, 2], w
     if final_map_height < height_tiles or final_map_width < width_tiles:
         raise Exception('Tiles (width, height) is :{}, final output map (width, height) on scale {} is: {}'.format((width_tiles, height_tiles), scale, (final_map_width, final_map_height)))
 
-  with tf.variable_scope('operations', reuse=True):
     for scale in scales:
-        inputs_shape = inputs.get_shape()
-        if scale != 1:
-            scaled_inputs = tf.image.resize_images(inputs, [inputs_shape[0], inputs_shape[1] / scale, inputs_shape[2] / scale, inputs_shape[3]])
-        else:
-            scaled_inputs = inputs
-        scaled_inputs_shape = scaled_inputs.get_shape()
-        horizontal_slice_size = int(round(int(scaled_inputs_shape[2]) / 3))
-        vertical_slice_size = int(round(int(scaled_inputs_shape[1]) / 3))
-        scaled_inputs = tf.slice(scaled_inputs, begin=[0, vertical_slice_size, 0, 0], size=[-1, vertical_slice_size, horizontal_slice_size * 2, -1])
+        with tf.variable_scope('operations', reuse=reuse):
+            inputs_shape = inputs.get_shape()
+            if scale != 1:
+                scaled_inputs = tf.image.resize_images(inputs, [inputs_shape[0], inputs_shape[1] / scale, inputs_shape[2] / scale, inputs_shape[3]])
+            else:
+                scaled_inputs = inputs
+            scaled_inputs_shape = scaled_inputs.get_shape()
+            horizontal_slice_size = int(round(int(scaled_inputs_shape[2]) / 3))
+            vertical_slice_size = int(round(int(scaled_inputs_shape[1]) / 3))
+            scaled_inputs = tf.slice(scaled_inputs, begin=[0, vertical_slice_size, 0, 0], size=[-1, vertical_slice_size, horizontal_slice_size * 2, -1])
 
-        with tf.contrib.framework.arg_scope([layers.convolution2d],
-              kernel_size=3, stride=1, padding='SAME', rate=1, activation_fn=tf.nn.relu,
-              normalizer_fn=None, weights_initializer=None,
-              weights_regularizer=layers.l2_regularizer(weight_decay)):
+            with tf.contrib.framework.arg_scope([layers.convolution2d],
+                  kernel_size=3, stride=1, padding='SAME', rate=1, activation_fn=tf.nn.relu,
+                  normalizer_fn=None, weights_initializer=None,
+                  weights_regularizer=layers.l2_regularizer(weight_decay)):
 
-            net = layers.convolution2d(inputs, 64, scope='conv1_1')
-            net = layers.convolution2d(net, 64, scope='conv1_2')
-            net = layers.max_pool2d(net, 2, 2, scope='pool1')
-            net = layers.convolution2d(net, 128, scope='conv2_1')
-            net = layers.convolution2d(net, 128, scope='conv2_2')
-            net = layers.max_pool2d(net, 2, 2, scope='pool2')
-            net = layers.convolution2d(net, 256, scope='conv3_1')
-            net = layers.convolution2d(net, 256, scope='conv3_2')
-            net = layers.convolution2d(net, 256, scope='conv3_3')
-            net = layers.max_pool2d(net, 2, 2, scope='pool3')
-            net = layers.convolution2d(net, 512, scope='conv4_1')
-            net = layers.convolution2d(net, 512, scope='conv4_2')
-            net = layers.convolution2d(net, 512, scope='conv4_3')
-            net = layers.max_pool2d(net, 2, 2, scope='pool4')
-            net = layers.convolution2d(net, 512, scope='conv5_1')
-            net = layers.convolution2d(net, 512, scope='conv5_2')
-            net = layers.convolution2d(net, 512, scope='conv5_3')
-            net = layers.max_pool2d(net, 2, 2, scope='pool5')
+                net = layers.convolution2d(inputs, 64, scope='conv1_1')
+                net = layers.convolution2d(net, 64, scope='conv1_2')
+                net = layers.max_pool2d(net, 2, 2, scope='pool1')
+                net = layers.convolution2d(net, 128, scope='conv2_1')
+                net = layers.convolution2d(net, 128, scope='conv2_2')
+                net = layers.max_pool2d(net, 2, 2, scope='pool2')
+                net = layers.convolution2d(net, 256, scope='conv3_1')
+                net = layers.convolution2d(net, 256, scope='conv3_2')
+                net = layers.convolution2d(net, 256, scope='conv3_3')
+                net = layers.max_pool2d(net, 2, 2, scope='pool3')
+                net = layers.convolution2d(net, 512, scope='conv4_1')
+                net = layers.convolution2d(net, 512, scope='conv4_2')
+                net = layers.convolution2d(net, 512, scope='conv4_3')
+                net = layers.max_pool2d(net, 2, 2, scope='pool4')
+                net = layers.convolution2d(net, 512, scope='conv5_1')
+                net = layers.convolution2d(net, 512, scope='conv5_2')
+                net = layers.convolution2d(net, 512, scope='conv5_3')
+                net = layers.max_pool2d(net, 2, 2, scope='pool5')
 
-            net_shape = net.get_shape()
-            pool_height = int(round(net_shape[1] / height_tiles))
-            pool_width = int(round(net_shape[2] / width_tiles))
-            kernel = [pool_height, pool_width]
-            net = layers.max_pool2d(net, kernel_size=kernel, stride=kernel)
-            output_maps.append(net)
+                net_shape = net.get_shape()
+                pool_height = int(round(net_shape[1] / height_tiles))
+                pool_width = int(round(net_shape[2] / width_tiles))
+                kernel = [pool_height, pool_width]
+                net = layers.max_pool2d(net, kernel_size=kernel, stride=kernel)
+                output_maps.append(net)
+                
+                reuse=True
       
     packed_output_maps = tf.pack(output_maps)
     averaged_output_maps = tf.reduce_mean(packed_output_maps, reduction_indices=0)
