@@ -32,6 +32,7 @@ def tf_probability_func(sess, inputs, logits):
     logits_exp = np.exp(logits_val)
     logits_exp_sum = np.sum(logits_exp, axis=1, keepdims=True)
     return logits_exp / logits_exp_sum
+  return probability_func
 
 def evaluate(name, x, y, batch_size, predict_function, probability_function=None, verbose=False):
   """
