@@ -38,7 +38,7 @@ def train(model, vgg_init_dir, dataset_root, model_path):
     with tf.variable_scope('model', reuse=True):
       logits_eval, loss_eval = model.build_scaled(data_node, labels_node, NUM_CLASSES, scales=[1,2], width_tiles=7, height_tiles=2, fully_connected=FULLY_CONNECTED, is_training=False)
 
-    exponential_learning_rate = tf.train.exponential_decay(LEARNING_RATE, global_step, 2000, 0.5, staircase=True)
+    exponential_learning_rate = tf.train.exponential_decay(LEARNING_RATE, global_step, 5000, 0.5, staircase=True)
     opt = tf.train.AdamOptimizer(exponential_learning_rate)
     grads = opt.compute_gradients(loss)
     apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
