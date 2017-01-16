@@ -42,7 +42,7 @@ def label(model, images_root_folder, model_path, model_input_size):
     image_paths = os.listdir(images_root_folder)
     image_paths = [os.path.join(images_root_folder, image_path) for image_path in image_paths]
     num_images = len(image_paths)
-    num_batches = math.ceil(image_paths / BATCH_SIZE)
+    num_batches = math.ceil(num_images / BATCH_SIZE)
     for batch in range(num_batches):
       print('Batch {}/{}'.format(batch + 1, num_batches))
       batch_image_paths = image_paths[batch * BATCH_SIZE : (batch + 1) * BATCH_SIZE]
