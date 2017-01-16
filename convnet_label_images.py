@@ -55,7 +55,7 @@ def label(model, images_root_folder, model_path, model_input_size):
         batch_image_name, batch_image_extension = os.path.splitext(batch_image_names[index])
         new_batch_image_path = os.path.join(images_root_folder, batch_image_name + '_' + str(batch_images_predicted[index]) + "." + batch_image_extension)
         print('Saved image {} as {}'.format(batch_image_paths, new_batch_image_path))
-        os.rename(batch_image_path, new_batch_image_path)
+        #os.rename(batch_image_path, new_batch_image_path)
 
 
 if __name__ == '__main__':
