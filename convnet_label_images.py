@@ -61,5 +61,7 @@ def label(model, images_root_folder, model_path, model_input_size):
 if __name__ == '__main__':
   images_root_folder = sys.argv[1]
   model_path = sys.argv[2]
-  model_input_size = eval(sys.argv[3])
-  label(vgg_vertically_sliced, images_root_folder, model_path, model_input_size)
+  model_input_height = int(sys.argv[3])
+  model_input_width = int(sys.argv[4])
+  model_input_channels = int(sys.argv[5])
+  label(vgg_vertically_sliced, images_root_folder, model_path, (model_input_height, model_input_width, model_input_channels))
