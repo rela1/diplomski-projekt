@@ -2,7 +2,7 @@ import math
 import os
 import sys
 import time
-import matplotlib.image as mpimg
+from PIL import Image
 from skimage import exposure
 import scipy as sp
 
@@ -48,7 +48,7 @@ def label(model, images_root_folder, model_path, model_input_size):
       print('Batch {}/{}'.format(batch + 1, num_batches))
       batch_image_paths = image_paths[batch * BATCH_SIZE : (batch + 1) * BATCH_SIZE]
       batch_image_names = [os.path.basename(batch_image_path) for batch_image_path in batch_image_paths]
-      batch_images = np.array([mpimg.imread(batch_image_path) for batch_image_path in batch_image_paths])
+      batch_images = np.array([Image.open(batch_image_path) for batch_image_path in batch_image_paths])
       batch_images = np.array([sp.misc.imresize(batch_image_path, size=model_input_size) for batch_image_path in batch_image_paths])
       batch_images = np.array([exposure.equalize_adapthist(batch_image, clip_limit=0.03) for batch_image in batch_images])
       batch_images_logits = sess.run(logits_eval, feed_dict={data_node : batch_images})
