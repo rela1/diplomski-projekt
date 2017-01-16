@@ -19,7 +19,7 @@ BATCH_SIZE = 5
 FULLY_CONNECTED = [200]
 NUM_CLASSES = 2
 
-def label(model, images_root_folder, model_path, model_input_size):
+def label(model, labels_root_folder, image_paths, model_path, model_input_size):
 
   with tf.Graph().as_default():
     sess = tf.Session()
@@ -40,8 +40,6 @@ def label(model, images_root_folder, model_path, model_input_size):
     saver = tf.train.Saver()
     saver.restore(sess, model_path)
 
-    image_paths = os.listdir(images_root_folder)
-    image_paths = [os.path.join(images_root_folder, image_path) for image_path in image_paths]
     num_images = len(image_paths)
     num_batches = math.ceil(num_images / BATCH_SIZE)
     for batch in range(num_batches):
@@ -53,15 +51,16 @@ def label(model, images_root_folder, model_path, model_input_size):
       batch_images_predicted = np.argmax(batch_images_logits, axis=1)
       for index, batch_image_path in enumerate(batch_image_paths):
         batch_image_name, batch_image_extension = os.path.splitext(batch_image_names[index])
-        batch_label_path = os.path.join(images_root_folder, batch_image_name + '.txt')
+        batch_label_path = os.path.join(labels_root_folder, batch_image_name + '.txt')
         with open(batch_label_path, 'w') as f:
           f.write(str(batch_images_predicted[index]))
 
 
 if __name__ == '__main__':
-  images_root_folder = sys.argv[1]
+  labels_root_folder = sys.argv[1]
   model_path = sys.argv[2]
   model_input_height = int(sys.argv[3])
   model_input_width = int(sys.argv[4])
   model_input_channels = int(sys.argv[5])
-  label(vgg_vertically_sliced, images_root_folder, model_path, (model_input_height, model_input_width, model_input_channels))
+  image_paths = sys.argv[6:]
+  label(vgg_vertically_sliced, labels_root_folder, image_paths, model_path, (model_input_height, model_input_width, model_input_channels))
