@@ -54,9 +54,9 @@ def label(model, images_root_folder, model_path, model_input_size):
       batch_images_predicted = np.argmax(batch_images_logits, axis=1)
       for index, batch_image_path in enumerate(batch_image_paths):
         batch_image_name, batch_image_extension = os.path.splitext(batch_image_names[index])
-        new_batch_image_path = os.path.join(images_root_folder, batch_image_name + '_' + str(batch_images_predicted[index]) + "." + batch_image_extension)
-        print('Saved image {} as {}'.format(batch_image_path, new_batch_image_path))
-        os.rename(batch_image_path, new_batch_image_path)
+        batch_label_path = os.path.join(images_root_folder, batch_image_name + '.txt')
+        with open(batch_label_path, 'w') as f:
+          f.write(str(batch_images_predicted[index]))
 
 
 if __name__ == '__main__':
