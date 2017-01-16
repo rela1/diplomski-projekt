@@ -51,8 +51,7 @@ def label(model, images_root_folder, model_path, model_input_size):
       batch_images = sess.run(tf.image.resize_images(batch_images, (model_input_size[0], model_input_size[1])))
       batch_images = np.array([exposure.equalize_adapthist(batch_image, clip_limit=0.03) for batch_image in batch_images])
       batch_images_logits = sess.run(logits_eval, feed_dict={data_node : batch_images})
-      print(batch_images_logits)
-      batch_images_predicted = np.argmax(logits_eval, axis=1)
+      batch_images_predicted = np.argmax(batch_images_logits, axis=1)
       for index, batch_image_path in enumerate(batch_image_paths):
         batch_image_name, batch_image_extension = os.path.splitext(batch_image_names[index])
         new_batch_image_path = os.path.join(images_root_folder, batch_image_name + '_' + str(batch_images_predicted[index]) + "." + batch_image_extension)
