@@ -7,7 +7,7 @@ if __name__ == '__main__':
     num_len = len(sys.argv[2])
     for i in range(1, int(sys.argv[2]) + 1):
         file_path = str(i) + '.txt'
-        file_path = 'true_' + '0' * (num_len - len(file_path) + 3) + file_path
+        file_path = 'true_' + ('0' * (num_len - len(str(i)))) + file_path
         file_path = os.path.join(sys.argv[3], file_path)
         positive_image = False
         for r in ranges:
