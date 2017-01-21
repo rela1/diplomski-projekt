@@ -10,7 +10,7 @@ if __name__ == '__main__':
         file_path = 'true_' + '0' * (num_len - len(file_path) + 3) + file_path
         positive_image = False
         for r in ranges:
-            if i >= r[0] and r <= r[1]:
+            if i >= r[0] and i <= r[1]:
                 with open(file_path, 'w') as f:
                     f.write('1')
                 positive_image = True
