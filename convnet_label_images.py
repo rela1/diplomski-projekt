@@ -2,7 +2,7 @@ import math
 import os
 import sys
 import time
-from PIL import Image
+import matplotlib.image as mpimg
 from skimage import exposure
 import scipy as sp
 
@@ -25,8 +25,8 @@ def label(model, labels_root_folder, image_paths, model_path, model_input_size):
     sess = tf.Session()
 
     data_node = tf.placeholder(tf.float32,
-        shape=(BATCH_SIZE, model_input_size[0], model_input_size[1], model_input_size[2]))
-    labels_node = tf.placeholder(tf.int64, shape=(BATCH_SIZE,))
+        shape=(None, model_input_size[0], model_input_size[1], model_input_size[2]))
+    labels_node = tf.placeholder(tf.int64, shape=(None,))
 
     with tf.variable_scope('model'):
       logits_eval, loss_eval = model.build(data_node, labels_node, NUM_CLASSES, fully_connected=FULLY_CONNECTED, is_training=False)
@@ -41,17 +41,19 @@ def label(model, labels_root_folder, image_paths, model_path, model_input_size):
     saver.restore(sess, model_path)
 
     num_images = len(image_paths)
+    padd_len = len(str(num_images))
     num_batches = math.ceil(num_images / BATCH_SIZE)
     for batch in range(num_batches):
       print('Batch {}/{}'.format(batch + 1, num_batches))
       batch_image_paths = image_paths[batch * BATCH_SIZE : (batch + 1) * BATCH_SIZE]
       batch_image_names = [os.path.basename(batch_image_path) for batch_image_path in batch_image_paths]
-      batch_images = np.array([exposure.equalize_adapthist(np.asarray(Image.open(batch_image_path).resize((model_input_size[1], model_input_size[0]), Image.ANTIALIAS)), clip_limit=0.03) for batch_image_path in batch_image_paths])
+      batch_images = np.array([exposure.equalize_adapthist(mpimg.imread(img_path), clip_limit=0.03) for batch_image_path in batch_image_paths])
       batch_images_logits = sess.run(logits_eval, feed_dict={data_node : batch_images})
       batch_images_predicted = np.argmax(batch_images_logits, axis=1)
       for index, batch_image_path in enumerate(batch_image_paths):
         batch_image_name, batch_image_extension = os.path.splitext(batch_image_names[index])
         batch_label_path = os.path.join(labels_root_folder, batch_image_name + '.txt')
+        batch_label_path = '0' * (padd_len - len(batch_label_path) + 3) + batch_label_path
         with open(batch_label_path, 'w') as f:
           f.write(str(batch_images_predicted[index]))
 
