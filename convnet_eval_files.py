@@ -2,8 +2,6 @@ import os
 import sys
 
 if __name__ == '__main__':
-    with open(sys.argv[1], 'r') as f:
-        ranges = [(int(line.split('-')[0]), int(line.split('-')[1])) for line in f.read().splitlines()]
     num_len = len(sys.argv[2])
     images = 0
     correct = 0
