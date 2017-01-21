@@ -11,7 +11,7 @@ if __name__ == '__main__':
         true_file_path = os.path.join(sys.argv[1], true_file_path)
         pred_file_path = 'pred_' + ('0' * (num_len - len(str(i)))) + file_path
         pred_file_path = os.path.join(sys.argv[1], pred_file_path)
-        with open(true_file_path), open(pred_file_path) as f_true, f_pred:
+        with open(true_file_path) as f_true , open(pred_file_path) as f_pred:
             if f_true.read() == f_pred.read():
                 correct += 1
         images += 1
