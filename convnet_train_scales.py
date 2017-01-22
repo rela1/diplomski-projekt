@@ -34,9 +34,9 @@ def train(model, vgg_init_dir, dataset_root, model_path):
     labels_node = tf.placeholder(tf.int64, shape=(BATCH_SIZE,))
 
     with tf.variable_scope('model'):      
-      logits, loss, init_op, init_feed = model.build_scaled(data_node, labels_node, NUM_CLASSES, scales=[1,2], width_tiles=7, height_tiles=2, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=True)
+      logits, loss, init_op, init_feed = model.build_scaled(data_node, labels_node, NUM_CLASSES, scales=[1,2,4], width_tiles=7, height_tiles=2, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=True)
     with tf.variable_scope('model', reuse=True):
-      logits_eval, loss_eval = model.build_scaled(data_node, labels_node, NUM_CLASSES, scales=[1,2], width_tiles=7, height_tiles=2, fully_connected=FULLY_CONNECTED, is_training=False)
+      logits_eval, loss_eval = model.build_scaled(data_node, labels_node, NUM_CLASSES, scales=[1,2,4], width_tiles=7, height_tiles=2, fully_connected=FULLY_CONNECTED, is_training=False)
 
     exponential_learning_rate = tf.train.exponential_decay(LEARNING_RATE, global_step, 5000, 0.5, staircase=True)
     opt = tf.train.AdamOptimizer(exponential_learning_rate)

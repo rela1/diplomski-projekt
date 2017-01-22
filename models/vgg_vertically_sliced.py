@@ -26,7 +26,7 @@ def create_init_op(vgg_layers):
   init_op, init_feed = tf.contrib.framework.assign_from_values(init_map)
   return init_op, init_feed
 
-def build_convolutional_scaled_pooled_feature_extractor(inputs, scales=[1, 2], width_tiles=7, height_tiles=2, weight_decay=0.0, vgg_init_dir=None, is_training=True):
+def build_convolutional_scaled_pooled_feature_extractor(inputs, scales=[1, 2, 4], width_tiles=7, height_tiles=2, weight_decay=0.0, vgg_init_dir=None, is_training=True):
   if is_training:
     vgg_layers, vgg_layer_names = read_vgg_init(vgg_init_dir)
 
@@ -129,7 +129,7 @@ def build_convolutional_pooled_feature_extractor(inputs, weight_decay=0.0, vgg_i
     net = layers.convolution2d(net, 512, scope='conv5_1')
     net = layers.convolution2d(net, 512, scope='conv5_2')
     net = layers.convolution2d(net, 512, scope='conv5_3')
-    net = layers.max_pool2d(net, 2, 2, scope='pool5', )
+    net = layers.max_pool2d(net, 2, 2, scope='pool5')
 
     #net = layers.convolution2d(net, 4096, kernel_size=7, scope='conv6_1')
     
@@ -196,7 +196,7 @@ def build_convolutional_feature_extractor(inputs, weight_decay=0.0, vgg_init_dir
 
     return net
 
-def build_scaled(inputs, labels, num_classes, scales=[1,2], width_tiles=7, height_tiles=2, fully_connected=[], weight_decay=0.0, vgg_init_dir=None, is_training=True):
+def build_scaled(inputs, labels, num_classes, scales=[1,2,4], width_tiles=7, height_tiles=2, fully_connected=[], weight_decay=0.0, vgg_init_dir=None, is_training=True):
   bn_params = {
       'decay': 0.999,
       'center': True,
