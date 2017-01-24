@@ -52,7 +52,7 @@ def build_convolutional_scaled_pooled_feature_extractor(inputs, scales=[1, 2, 4]
             scaled_inputs_shape = scaled_inputs.get_shape()
             horizontal_slice_size = int(round(int(scaled_inputs_shape[2]) / 3))
             vertical_slice_size = int(round(int(scaled_inputs_shape[1]) / 3))
-            scaled_inputs = tf.slice(scaled_inputs, begin=[0, vertical_slice_size, 0, 0], size=[-1, vertical_slice_size, horizontal_slice_size * 2, -1])
+            scaled_inputs = tf.slice(scaled_inputs, begin=[0, vertical_slice_size, 0, 0], size=[-1, vertical_slice_size * 2, horizontal_slice_size * 2, -1])
 
             with tf.contrib.framework.arg_scope([layers.convolution2d],
                   kernel_size=3, stride=1, padding='SAME', rate=1, activation_fn=tf.nn.relu,
