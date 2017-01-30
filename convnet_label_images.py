@@ -15,11 +15,11 @@ import evaluate_helper
 
 np.set_printoptions(linewidth=250)
 
-BATCH_SIZE = 5
+BATCH_SIZE = 10
 FULLY_CONNECTED = [200]
 NUM_CLASSES = 2
 
-def label(model, labels_root_folder, image_paths, model_path, model_input_size):
+def label(model, labels_root_folder, image_paths, model_path, model_input_size, rgb_mean):
 
   with tf.Graph().as_default():
     sess = tf.Session()
@@ -48,6 +48,8 @@ def label(model, labels_root_folder, image_paths, model_path, model_input_size):
       batch_image_paths = image_paths[batch * BATCH_SIZE : (batch + 1) * BATCH_SIZE]
       batch_image_names = [os.path.basename(batch_image_path) for batch_image_path in batch_image_paths]
       batch_images = np.array([exposure.equalize_adapthist(mpimg.imread(batch_image_path), clip_limit=0.03) for batch_image_path in batch_image_paths])
+      for c in range(batch_images.shape[-1]):
+      	batch_images[..., c] -= rgb_mean[c]
       batch_images_logits = sess.run(logits_eval, feed_dict={data_node : batch_images})
       batch_images_predicted = np.argmax(batch_images_logits, axis=1)
       for index, batch_image_path in enumerate(batch_image_paths):
@@ -65,5 +67,6 @@ if __name__ == '__main__':
   model_input_height = int(sys.argv[3])
   model_input_width = int(sys.argv[4])
   model_input_channels = int(sys.argv[5])
-  image_paths = sys.argv[6:]
+  rgb_mean = np.array(eval(sys.argv[6]))
+  image_paths = sys.argv[7:]
   label(vgg_vertically_sliced, labels_root_folder, image_paths, model_path, (model_input_height, model_input_width, model_input_channels))
