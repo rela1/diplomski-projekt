@@ -21,7 +21,7 @@ if __name__ == '__main__':
             true = int(f_true.read())
             pred = int(f_pred.read())
             for r in ranges:
-                if i + 3 >= r[0] and i - 3 <= r[1]:
+                if i + 1 >= r[0] and i - 1 <= r[1]:
                     true = 1
                     pred = 1
             if true == 1:
