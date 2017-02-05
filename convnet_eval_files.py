@@ -24,6 +24,7 @@ if __name__ == '__main__':
                 if (i + 1) >= r[0] and (i - 1) <= r[1]:
                     true = 1
                     pred = 1
+                    break
             if true == 1:
                 if pred == 1:
                     tp += 1
