@@ -21,7 +21,7 @@ if __name__ == '__main__':
             true = int(f_true.read())
             pred = int(f_pred.read())
             for r in ranges:
-                if abs(r[0] - i) < 20  or abs(r[1] - i) < 20:
+                if abs(r[0] - i) < 30  or abs(r[1] - i) < 30:
                     true = 1
                     pred = 1
                     break
