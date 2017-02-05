@@ -2,7 +2,7 @@ import os
 import sys
 
 if __name__ == '__main__':
-	with open(sys.argv[3], 'r') as f:
+    with open(sys.argv[3], 'r') as f:
         ranges = [(int(line.split('-')[0]), int(line.split('-')[1])) for line in f.read().splitlines()]
     num_len = len(sys.argv[2])
     images = 0
@@ -21,7 +21,7 @@ if __name__ == '__main__':
             true = int(f_true.read())
             pred = int(f_pred.read())
             for r in ranges:
-            	if i + 10 >= r[0] and i - 10 <= r[1]:
+                if i + 10 >= r[0] and i - 10 <= r[1]:
                 true = 1
                 pred = 1
             if true == 1:
