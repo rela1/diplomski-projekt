@@ -11,6 +11,7 @@ if __name__ == '__main__':
     tp = 0
     tn = 0
     fn = 0
+    fns = []
     for i in range(1, int(sys.argv[2]) + 1):
         file_path = str(i) + '.txt'
         true_file_path = 'true_' + ('0' * (num_len - len(str(i)))) + file_path
@@ -21,7 +22,7 @@ if __name__ == '__main__':
             true = int(f_true.read())
             pred = int(f_pred.read())
             for r in ranges:
-                if abs(r[0] - i) < 25  or abs(r[1] - i) < 25:
+                if abs(r[0] - i) < 10  or abs(r[1] - i) < 10:
                     pred = true
                     break
             if true == 1:
@@ -30,6 +31,7 @@ if __name__ == '__main__':
                     correct += 1
                 else:
                     fn += 1
+                    fns.append(i)
             else:
                 if pred == 0:
                     tn += 1
@@ -41,3 +43,4 @@ if __name__ == '__main__':
     print('Recall {}'.format((tp) / (tp + fn)))
     print('Precision {}'.format((tp) / (tp + fp)))
     print('TP: {}, TN: {}, FP: {}, FN: {}'.format(tp, tn, fp, fn))
+    print('FN indexes: {}'.format(fns))
