@@ -22,8 +22,8 @@ if __name__ == '__main__':
             pred = int(f_pred.read())
             for r in ranges:
                 if i + 10 >= r[0] and i - 10 <= r[1]:
-                true = 1
-                pred = 1
+                    true = 1
+                    pred = 1
             if true == 1:
                 if pred == 1:
                     tp += 1
