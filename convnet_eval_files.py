@@ -21,7 +21,7 @@ if __name__ == '__main__':
             true = int(f_true.read())
             pred = int(f_pred.read())
             for r in ranges:
-                if (i + 1) >= r[0] and (i - 1) <= r[1]:
+                if abs(r[0] - i) < 5  and abs(r[1] - i) < 5:
                     true = 1
                     pred = 1
                     break
