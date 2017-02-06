@@ -51,7 +51,7 @@ def evaluate(model, dataset_root, images_root, model_path, misclassified_output_
       if test_labels_pred[index] != test_labels[index]:
         img.imsave(os.path.join(misclassified_output_folder, str(test_labels[index]) + "_" + str(index) + "_" + "{:1.5f}".format(test_labels_prob[index][1]) + ".png"), image)  
     with open(os.path.join(misclassified_output_folder, 'probs.txt'), 'w') as probs_file:
-    	probs_file.writelines(map(lambda x: x[0] + ':' + str(x[1][1]) + '\n', enumerate(test_labels_prob)))
+    	probs_file.writelines(map(lambda x: str(x[0]) + ':' + str(x[1][1]) + '\n', enumerate(test_labels_prob)))
 
 
 if __name__ == '__main__':
