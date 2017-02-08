@@ -46,10 +46,6 @@ def read_and_normalize_images(data_dir):
   train_labels = read_labels(data_dir, 'train').astype(np.int64)
   test_labels = read_labels(data_dir, 'test').astype(np.int64)
   validate_labels = read_labels(data_dir, 'validate').astype(np.int64)
-  
-  train_data = np.append(train_data, test_data, axis=0)
-  train_labels = np.append(train_labels, test_labels, axis=0)
-
 
   data_mean = train_data.reshape([-1, 3]).mean(0)
   data_std = train_data.reshape([-1, 3]).std(0)
