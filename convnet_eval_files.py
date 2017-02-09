@@ -12,6 +12,7 @@ if __name__ == '__main__':
     tn = 0
     fn = 0
     fns = []
+    fps = []
     for i in range(1, int(sys.argv[2]) + 1):
         file_path = str(i) + '.txt'
         true_file_path = 'true_' + ('0' * (num_len - len(str(i)))) + file_path
@@ -38,9 +39,11 @@ if __name__ == '__main__':
                     correct += 1
                 else:
                     fp += 1
+                    fps.append(i)
         images += 1
     print('Accuracy {}'.format(correct / images))
     print('Recall {}'.format((tp) / (tp + fn)))
     print('Precision {}'.format((tp) / (tp + fp)))
     print('TP: {}, TN: {}, FP: {}, FN: {}'.format(tp, tn, fp, fn))
     print('FN indexes: {}'.format(fns))
+    print('FP indexes: {}'.format(fps))
