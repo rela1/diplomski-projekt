@@ -129,7 +129,7 @@ def build_convolutional_pooled_feature_extractor(inputs, weight_decay=0.0, vgg_i
     net = layers.convolution2d(net, 512, scope='conv5_1')
     net = layers.convolution2d(net, 512, scope='conv5_2')
     net = layers.convolution2d(net, 512, scope='conv5_3')
-    net = layers.max_pool2d(net, 1, 2, scope='pool5')
+    #net = layers.max_pool2d(net, 2, 2, scope='pool5')
 
     #net = layers.convolution2d(net, 4096, kernel_size=7, scope='conv6_1')
     
