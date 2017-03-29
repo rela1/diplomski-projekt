@@ -5,7 +5,7 @@ from models.model_helper import read_vgg_init
 from tensorflow.contrib.layers.python.layers import initializers
 
 def loss(logits, labels, is_training):
-  xent_loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits, labels))
+  xent_loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits, labels=labels))
   regularization_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
   total_loss = tf.add_n([xent_loss] + regularization_losses, name='total_loss')
   return total_loss
@@ -129,7 +129,7 @@ def build_convolutional_pooled_feature_extractor(inputs, weight_decay=0.0, vgg_i
     net = layers.convolution2d(net, 512, scope='conv5_1')
     net = layers.convolution2d(net, 512, scope='conv5_2')
     net = layers.convolution2d(net, 512, scope='conv5_3')
-    net = layers.max_pool2d(net, 2, 2, scope='pool5')
+    net = layers.max_pool2d(net, 1, 2, scope='pool5')
 
     #net = layers.convolution2d(net, 4096, kernel_size=7, scope='conv6_1')
     
@@ -141,7 +141,7 @@ def build_convolutional_pooled_feature_extractor(inputs, weight_decay=0.0, vgg_i
     print("Created slice from ", [0, 0, 0, 0], "with size ", [-1, vertical_slice_size * 2, horizontal_slice_size * 2, -1])
     print("Shape before pooling tiles: ", net.get_shape())
     """
-    net = layers.max_pool2d(net, kernel_size=[2, 2], stride=2)
+    #net = layers.max_pool2d(net, kernel_size=[2, 2], stride=2)
     print("Pooled tiles, new shape: ", net.get_shape())
 
     net = tf.contrib.layers.flatten(net, scope='flatten')
@@ -226,7 +226,7 @@ def build_scaled(inputs, labels, num_classes, scales=[1,2,4], width_tiles=7, hei
   if is_training:
     return logits, total_loss, init_op, init_feed
 
-  return logits, total_loss   
+  return logits, total_loss
 
 def build(inputs, labels, num_classes, fully_connected=[], weight_decay=0.0, vgg_init_dir=None, is_training=True):
   bn_params = {
