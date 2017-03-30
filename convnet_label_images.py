@@ -69,5 +69,5 @@ if __name__ == '__main__':
   model_input_width = int(sys.argv[4])
   model_input_channels = int(sys.argv[5])
   rgb_mean = np.array(eval(sys.argv[6]))
-  image_paths = glob.glob(sys.argv[7:])
+  image_paths = glob.glob(sys.argv[7])
   label(vgg_vertically_sliced, labels_root_folder, image_paths, model_path, (model_input_height, model_input_width, model_input_channels), rgb_mean)
