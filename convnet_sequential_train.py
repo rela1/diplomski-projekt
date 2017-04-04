@@ -107,7 +107,7 @@ def train(model, vgg_init_dir, dataset_root, model_path):
         initializer=tf.constant_initializer(0), trainable=False)
 
     with tf.variable_scope('model'):
-      logit, loss, init_op, init_feed = model.build(data_node, labels_node, NUM_CLASSES, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir)
+      logit, loss, init_op, init_feed = model.build_sequential(train_images, train_label, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=True)
     with tf.variable_scope('model', reuse=True):
       test_logit_eval, test_loss_eval = model.build_sequential(test_images, test_label, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
       valid_logit_eval, valid_loss_eval = model.build_sequential(valid_images, valid_label, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
