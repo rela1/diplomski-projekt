@@ -6,7 +6,7 @@ import numpy as np
 import tensorflow as tf
 
 from models import vgg_vertically_sliced
-from evaluate_helper import evaluate_default_metric_functions
+from evaluate_helper import evaluate_default_metric_functions, print_metrics
 
 np.set_printoptions(linewidth=250)
 
@@ -66,6 +66,7 @@ def evaluate(name, sess, logit, loss, label, num_examples):
   losses = []
   for i in range(num_examples):
     logit_val, loss_val, label_val = sess.run([logit, loss, label])
+    print(logit_val, loss_val, label_val)
     pred = np.argmax(logit_val, axis=1)
     y_pred.append(pred)
     y_true.append(label_val)
