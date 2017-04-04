@@ -11,7 +11,7 @@ from evaluate_helper import evaluate_default_metric_functions, print_metrics
 np.set_printoptions(linewidth=250)
 
 WEIGHT_DECAY = 1e-3
-LEARNING_RATE = 1e-4
+LEARNING_RATE = 1e-2
 FULLY_CONNECTED = [400]
 EPOCHS = 5
 INFO_STEP = 20
