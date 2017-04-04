@@ -86,22 +86,23 @@ def train(model, vgg_init_dir, dataset_root, model_path):
   valid_examples = number_of_examples(valid_dir)
   test_examples = number_of_examples(test_dir)
 
-  train_file_queue = tf.train.string_input_producer([os.path.join(train_dir, file) for file in os.listdir(train_dir)], num_epochs=EPOCHS)
-  valid_file_queue = tf.train.string_input_producer([os.path.join(valid_dir, file) for file in os.listdir(valid_dir)])
-  test_file_queue = tf.train.string_input_producer([os.path.join(test_dir, file) for file in os.listdir(test_dir)])
-
-  train_images, train_label = input_decoder(train_file_queue)
-  min_after_dequeue = 10000
-  capacity = min_after_dequeue + 3 * 1
-  train_images, train_label = tf.train.shuffle_batch(
-      [train_images, train_label], batch_size=1, capacity=capacity,
-      min_after_dequeue=min_after_dequeue, shapes=SHAPES)
-
-  valid_images, valid_label = input_decoder(valid_file_queue)
-
-  test_images, test_label = input_decoder(test_file_queue)
-
   with tf.Graph().as_default():
+    
+    train_file_queue = tf.train.string_input_producer([os.path.join(train_dir, file) for file in os.listdir(train_dir)], num_epochs=EPOCHS)
+    valid_file_queue = tf.train.string_input_producer([os.path.join(valid_dir, file) for file in os.listdir(valid_dir)])
+    test_file_queue = tf.train.string_input_producer([os.path.join(test_dir, file) for file in os.listdir(test_dir)])
+
+    train_images, train_label = input_decoder(train_file_queue)
+    min_after_dequeue = 10000
+    capacity = min_after_dequeue + 3 * 1
+    train_images, train_label = tf.train.shuffle_batch(
+        [train_images, train_label], batch_size=1, capacity=capacity,
+        min_after_dequeue=min_after_dequeue, shapes=SHAPES)
+
+    valid_images, valid_label = input_decoder(valid_file_queue)
+
+    test_images, test_label = input_decoder(test_file_queue)
+
     sess = tf.Session()
     global_step = tf.get_variable('global_step', [], dtype=tf.int64,
         initializer=tf.constant_initializer(0), trainable=False)
@@ -126,16 +127,14 @@ def train(model, vgg_init_dir, dataset_root, model_path):
     coord = tf.train.Coordinator()
     threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
-    ex_start_time = time.time()
-    global_step_val = 0
     best_accuracy = 0
     saver = tf.train.Saver()
 
     losses = []
     step = 0
     best_valid_accuracy = 0
+    start_time = time.time()
     try:
-      start_time = time.time()
       while not coord.should_stop():
 
           _, loss_val = sess.run([train_op, loss])
@@ -147,6 +146,7 @@ def train(model, vgg_init_dir, dataset_root, model_path):
             duration = time.time() - start_time
             print('Average loss: {}, examples/sec: {}, sec/step: {}'.format(np.mean(losses), INFO_STEP / duration, float(duration)))
             start_time = time.time()
+            losses.clear()
 
           if not step % train_examples:
             metrics = evaluate(sess, valid_logit_eval, valid_loss_eval, valid_label, valid_examples)
