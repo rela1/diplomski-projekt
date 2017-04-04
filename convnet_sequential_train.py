@@ -52,7 +52,7 @@ def input_decoder(filename_queue):
 def number_of_examples(directory):
   examples = 0
   for fn in [os.path.join(directory, file) for file in os.listdir(directory)]:
-    for record in tf.python_io.tf_record_iterator(fn):
+    for record in tf.python_io.tf_record_iterator(fn, options=tf.python_io.TFRecordOptions(tf.python_io.TFRecordCompressionType.GZIP)):
       examples += 1
   return examples
 
