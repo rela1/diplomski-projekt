@@ -207,8 +207,8 @@ def build_convolutional_sequential_feature_extractor(inputs, weight_decay, vgg_i
         vgg_layers, vgg_layer_names = read_vgg_init(vgg_init_dir)
 
     inputs_shape = inputs.get_shape()
-    horizontal_slice_size = inputs_shape[2] / 3
-    vertical_slice_size = inputs_shape[1] / 3
+    horizontal_slice_size = tf.round(tf.divide(inputs_shape[2], 3))
+    vertical_slice_size = tf.round(tf.divide(inputs_shape[1], 3))
     inputs = tf.slice(inputs, begin=[0, vertical_slice_size, 0, 0], size=[-1, -1, horizontal_slice_size * 2, -1])
 
     with tf.contrib.framework.arg_scope([layers.convolution2d],
