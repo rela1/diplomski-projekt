@@ -15,6 +15,7 @@ LEARNING_RATE = 1e-4
 FULLY_CONNECTED = [200]
 EPOCHS = 1
 INFO_STEP = 20
+SHAPES = [25, 40, 100, 3]
 
 
 def parse_example(record_string):
@@ -94,7 +95,7 @@ def train(model, vgg_init_dir, dataset_root, model_path):
   capacity = min_after_dequeue + 3 * 1
   train_images, train_label = tf.train.shuffle_batch(
       [train_images, train_label], batch_size=1, capacity=capacity,
-      min_after_dequeue=min_after_dequeue)
+      min_after_dequeue=min_after_dequeue, shapes=SHAPES)
 
   valid_images, valid_label = input_decoder(valid_file_queue)
 
