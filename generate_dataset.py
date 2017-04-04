@@ -66,7 +66,7 @@ def write_sequenced_and_middle_example(image_frame, label, sequential_tf_records
             images_sequence.append(img)
             added_images += 1
 
-    images_sequence = np.array(images_sequence)
+    images_sequence = np.array(images_sequence, dtype=np.float32)
     images_sequence_raw = images_sequence.tostring()
     sequence_example = tf.train.Example(
         features=tf.train.Features(
