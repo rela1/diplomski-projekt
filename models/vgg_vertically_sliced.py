@@ -236,9 +236,11 @@ def build_convolutional_sequential_feature_extractor(inputs, weight_decay, vgg_i
         net = layers.convolution2d(net, 512, scope='conv5_2')
         net = layers.convolution2d(net, 512, scope='conv5_3')
 
-        net = tf.reshape(net, [int(inputs_shape[0]), -1])
+        net = tf.reshape(net, [1, int(inputs_shape[0]), -1, 1])
 
         net = layers.max_pool2d(net, 2, 2, scope='pool5')
+
+        net = tf.contrib.layers.flatten(net, scope='flatten')
 
         if is_training:
             init_op, init_feed = create_init_op(vgg_layers)
