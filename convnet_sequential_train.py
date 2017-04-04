@@ -11,7 +11,7 @@ from evaluate_helper import evaluate_default_metric_functions, print_metrics
 np.set_printoptions(linewidth=250)
 
 WEIGHT_DECAY = 1e-3
-LEARNING_RATE = 1e-2
+LEARNING_RATE = 1e-3
 FULLY_CONNECTED = [400]
 EPOCHS = 5
 INFO_STEP = 20
@@ -118,7 +118,7 @@ def train(model, vgg_init_dir, dataset_root, model_path):
       valid_logit_eval, valid_loss_eval = model.build_sequential(valid_images, valid_label, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
 
     exponential_learning_rate = tf.train.exponential_decay(LEARNING_RATE, global_step, 2000, 0.5, staircase=True)
-    opt = tf.train.AdamOptimizer(exponential_learning_rate)
+    opt = tf.train.AdamOptimizer(LEARNING_RATE)
     grads = opt.compute_gradients(loss)
     apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
     with tf.control_dependencies([apply_gradient_op]):
