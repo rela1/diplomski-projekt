@@ -15,7 +15,7 @@ LEARNING_RATE = 1e-4
 FULLY_CONNECTED = [200]
 EPOCHS = 1
 INFO_STEP = 20
-SHAPES = [25, 40, 100, 3]
+SHAPES = [[25, 40, 100, 3], [1]]
 
 
 def parse_example(record_string):
