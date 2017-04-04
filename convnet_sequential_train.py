@@ -15,7 +15,8 @@ LEARNING_RATE = 1e-4
 FULLY_CONNECTED = [200]
 EPOCHS = 1
 INFO_STEP = 20
-SHAPES = [[25, 40, 100, 3], []]
+INPUT_SHAPE = [25, 40, 100, 3]
+SHAPES = [INPUT_SHAPE, []]
 
 
 def parse_example(record_string):
@@ -108,10 +109,10 @@ def train(model, vgg_init_dir, dataset_root, model_path):
         initializer=tf.constant_initializer(0), trainable=False)
 
     with tf.variable_scope('model'):
-      logit, loss, init_op, init_feed = model.build_sequential(train_images, train_label, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=True)
+      logit, loss, init_op, init_feed = model.build_sequential(train_images, INPUT_SHAPE, train_label, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=True)
     with tf.variable_scope('model', reuse=True):
-      test_logit_eval, test_loss_eval = model.build_sequential(test_images, test_label, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
-      valid_logit_eval, valid_loss_eval = model.build_sequential(valid_images, valid_label, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
+      test_logit_eval, test_loss_eval = model.build_sequential(test_images, INPUT_SHAPE, test_label, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
+      valid_logit_eval, valid_loss_eval = model.build_sequential(valid_images, INPUT_SHAPE, valid_label, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
 
     exponential_learning_rate = tf.train.exponential_decay(LEARNING_RATE, global_step, 2000, 0.5, staircase=True)
     opt = tf.train.AdamOptimizer(exponential_learning_rate)

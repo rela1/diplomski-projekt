@@ -202,16 +202,14 @@ def build_convolutional_feature_extractor(inputs, weight_decay=0.0, vgg_init_dir
     return net
 
 
-def build_convolutional_sequential_feature_extractor(inputs, weight_decay, vgg_init_dir, is_training):
+def build_convolutional_sequential_feature_extractor(inputs, inputs_shape, weight_decay, vgg_init_dir, is_training):
     if is_training:
         vgg_layers, vgg_layer_names = read_vgg_init(vgg_init_dir)
 
     inputs = tf.squeeze(inputs)
-    inputs_shape = inputs.get_shape()
     horizontal_slice_size = int(round(int(inputs_shape[2]) / 3))
     vertical_slice_size = int(round(int(inputs_shape[1]) / 3))
     inputs = tf.slice(inputs, begin=[0, vertical_slice_size, 0, 0], size=[-1, vertical_slice_size * 2, horizontal_slice_size * 2, -1])
-    print(inputs.get_shape())
 
     with tf.contrib.framework.arg_scope([layers.convolution2d],
       kernel_size=3, stride=1, padding='SAME', rate=1, activation_fn=tf.nn.relu,
@@ -315,7 +313,7 @@ def build(inputs, labels, num_classes, fully_connected=[], weight_decay=0.0, vgg
   return logits, total_loss
 
 
-def build_sequential(images, label, fully_connected=[], weight_decay=0.0, vgg_init_dir=None, is_training=True):
+def build_sequential(images, inputs_shape, label, fully_connected=[], weight_decay=0.0, vgg_init_dir=None, is_training=True):
     bn_params = {
         'decay': 0.999,
         'center': True,
@@ -326,9 +324,9 @@ def build_sequential(images, label, fully_connected=[], weight_decay=0.0, vgg_in
     }
 
     if is_training:
-        net, init_op, init_feed = build_convolutional_sequential_feature_extractor(images, weight_decay, vgg_init_dir, is_training)
+        net, init_op, init_feed = build_convolutional_sequential_feature_extractor(images, inputs_shape, weight_decay, vgg_init_dir, is_training)
     else:
-        net = build_convolutional_sequential_feature_extractor(images, weight_decay, vgg_init_dir, is_training)
+        net = build_convolutional_sequential_feature_extractor(images, inputs_shape, weight_decay, vgg_init_dir, is_training)
 
     with tf.contrib.framework.arg_scope([layers.fully_connected],
         activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
