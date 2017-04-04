@@ -105,8 +105,7 @@ def train(model, vgg_init_dir, dataset_root, model_path):
 
     test_images, test_label = input_decoder(test_file_queue)
     test_images, test_label = tf.train.batch(
-        [test_images, test_label], batch_size=1, capacity=capacity,
-        min_after_dequeue=min_after_dequeue, shapes=SHAPES)
+        [test_images, test_label], batch_size=1, capacity=capacity, shapes=SHAPES)
 
     sess = tf.Session()
     global_step = tf.get_variable('global_step', [], dtype=tf.int64,
