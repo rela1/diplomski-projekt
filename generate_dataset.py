@@ -12,7 +12,6 @@ import random
 
 from fastkml import kml
 from geopy.distance import vincenty
-from shapely.geometry import shape, Point
 from sklearn.neighbors import KDTree
 import tensorflow as tf
 from matplotlib.image import imread
@@ -168,7 +167,7 @@ if __name__ == '__main__':
         k.from_string(f.read())
     document = next(k.features())
     folder = next(document.features())
-    intersection_lines = [shape(placemark.geometry) for placemark in folder.features()]
+    intersection_lines = [placemark.geometry for placemark in folder.features()]
 
     # download video geoinformation
     with urllib.request.urlopen(JSON_GEOINFORMATION_FORMAT.format(video_name)) as response:
