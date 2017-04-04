@@ -338,7 +338,7 @@ def build_sequential(images, inputs_shape, label, fully_connected=[], weight_dec
             net = layers.fully_connected(net, fully_connected_num, scope='fc{}'.format(layer_num))
             layer_num += 1
 
-    logit = tf.squeeze(layers.fully_connected(net, 2, activation_fn=None, scope='logits'))
+    logit = layers.fully_connected(net, 2, activation_fn=None, scope='logits')
     label = tf.one_hot(label, 2)
     print(logit.get_shape(), label.get_shape())
     total_loss = loss(logit, label, is_training)
