@@ -101,18 +101,24 @@ def train(model, vgg_init_dir, dataset_root, model_path):
         min_after_dequeue=min_after_dequeue, shapes=SHAPES)
 
     valid_images, valid_label = input_decoder(valid_file_queue)
+    valid_images, valid_label = tf.train.shuffle_batch(
+        [valid_images, valid_label], batch_size=1, capacity=capacity,
+        min_after_dequeue=min_after_dequeue, shapes=SHAPES)
 
     test_images, test_label = input_decoder(test_file_queue)
+    test_images, test_label = tf.train.shuffle_batch(
+        [test_images, test_label], batch_size=1, capacity=capacity,
+        min_after_dequeue=min_after_dequeue, shapes=SHAPES)
 
     sess = tf.Session()
     global_step = tf.get_variable('global_step', [], dtype=tf.int64,
         initializer=tf.constant_initializer(0), trainable=False)
 
     with tf.variable_scope('model'):
-      logit, loss, init_op, init_feed = model.build_sequential(train_images, INPUT_SHAPE, train_label, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=True)
+      logit, loss, init_op, init_feed = model.build_sequential(train_images, train_label, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=True)
     with tf.variable_scope('model', reuse=True):
-      test_logit_eval, test_loss_eval = model.build_sequential(test_images, INPUT_SHAPE, test_label, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
-      valid_logit_eval, valid_loss_eval = model.build_sequential(valid_images, INPUT_SHAPE, valid_label, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
+      test_logit_eval, test_loss_eval = model.build_sequential(test_images, test_label, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
+      valid_logit_eval, valid_loss_eval = model.build_sequential(valid_images, valid_label, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
 
     exponential_learning_rate = tf.train.exponential_decay(LEARNING_RATE, global_step, 2000, 0.5, staircase=True)
     opt = tf.train.AdamOptimizer(exponential_learning_rate)
