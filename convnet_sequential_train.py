@@ -156,14 +156,14 @@ def train(model, vgg_init_dir, dataset_root, model_path):
             losses.clear()
 
           if not step % train_examples:
-            metrics = evaluate(sess, valid_logit_eval, valid_loss_eval, valid_label, valid_examples)
+            metrics = evaluate('Validate', sess, valid_logit_eval, valid_loss_eval, valid_label, valid_examples)
             if metrics['accuracy_score'] > best_valid_accuracy:
               best_valid_accuracy = metrics['accuracy_score']
               saver.save(sess, model_path)
     except tf.errors.OutOfRangeError:
       print('Done training -- epoch limit reached')
       saver.restore(sess, model_path)
-      evaluate(sess, test_logit_eval, test_loss_eval, test_label, test_examples)
+      evaluate('Test', sess, test_logit_eval, test_loss_eval, test_label, test_examples)
     finally:
       coord.request_stop()
 
