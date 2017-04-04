@@ -157,8 +157,8 @@ if __name__ == '__main__':
     if not os.path.exists(frames_dir):
         os.mkdir(frames_dir)
     zero_pad_number = len(str(approximate_number_of_frames))
-    frame_extract_info = subprocess.getoutput('ffmpeg -i "{}" -s {}x{} {}/frames/%0{}d.png'.format(video_full_path, sys.argv[3], sys.argv[4], video_name, zero_pad_number))
-    #number_of_frames = len(os.listdir(frames_dir))
+    #frame_extract_info = subprocess.getoutput('ffmpeg -i "{}" -s {}x{} {}/frames/%0{}d.png'.format(video_full_path, sys.argv[3], sys.argv[4], video_name, zero_pad_number))
+    number_of_frames = len(os.listdir(frames_dir))
     frames_resolution = int(sys.argv[3]) * int(sys.argv[4])
     print('Number of frames', number_of_frames, 'FPS', frames_per_second)
     print('Done!', flush=True)
