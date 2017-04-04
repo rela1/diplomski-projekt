@@ -40,7 +40,7 @@ def parse_example(record_string):
 
 
 def input_decoder(filename_queue):
-  reader = tf.RecordReader(
+  reader = tf.TFRecordReader(
     options=tf.python_io.TFRecordOptions(
             tf.python_io.TFRecordCompressionType.GZIP
     )
