@@ -13,7 +13,7 @@ np.set_printoptions(linewidth=250)
 WEIGHT_DECAY = 1e-3
 LEARNING_RATE = 1e-4
 FULLY_CONNECTED = [200]
-EPOCHS = 1
+EPOCHS = 25
 INFO_STEP = 20
 INPUT_SHAPE = [25, 40, 100, 3]
 SHAPES = [INPUT_SHAPE, []]
@@ -77,8 +77,6 @@ def evaluate(name, sess, logit, loss, label, num_examples):
   return metrics
 
 
-
-
 def train(model, vgg_init_dir, dataset_root, model_path):
   train_dir = os.path.join(dataset_root, 'train')
   valid_dir = os.path.join(dataset_root, 'validate')
@@ -102,12 +100,11 @@ def train(model, vgg_init_dir, dataset_root, model_path):
         min_after_dequeue=min_after_dequeue, shapes=SHAPES)
 
     valid_images, valid_label = input_decoder(valid_file_queue)
-    valid_images, valid_label = tf.train.shuffle_batch(
-        [valid_images, valid_label], batch_size=1, capacity=capacity,
-        min_after_dequeue=min_after_dequeue, shapes=SHAPES)
+    valid_images, valid_label = tf.train.batch(
+        [valid_images, valid_label], batch_size=1, capacity=capacity, shapes=SHAPES)
 
     test_images, test_label = input_decoder(test_file_queue)
-    test_images, test_label = tf.train.shuffle_batch(
+    test_images, test_label = tf.train.batch(
         [test_images, test_label], batch_size=1, capacity=capacity,
         min_after_dequeue=min_after_dequeue, shapes=SHAPES)
 
