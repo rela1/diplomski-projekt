@@ -30,7 +30,7 @@ def parse_example(record_string):
                         'sequence_length' : tf.FixedLenFeature([], tf.int64)
                     }
   )
-  images = tf.decode_raw(features['images_raw'], tf.float64)
+  images = tf.decode_raw(features['images_raw'], tf.float32)
   width = tf.cast(features['width'], tf.int32)
   height = tf.cast(features['height'], tf.int32)
   depth = tf.cast(features['depth'], tf.int32)
@@ -87,7 +87,7 @@ def train(model, vgg_init_dir, dataset_root, model_path):
   test_examples = number_of_examples(test_dir)
 
   with tf.Graph().as_default():
-    
+
     train_file_queue = tf.train.string_input_producer([os.path.join(train_dir, file) for file in os.listdir(train_dir)], num_epochs=EPOCHS)
     valid_file_queue = tf.train.string_input_producer([os.path.join(valid_dir, file) for file in os.listdir(valid_dir)])
     test_file_queue = tf.train.string_input_producer([os.path.join(test_dir, file) for file in os.listdir(test_dir)])
