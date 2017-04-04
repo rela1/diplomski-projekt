@@ -197,10 +197,8 @@ if __name__ == '__main__':
     positive_images_ranges = []
     max_distance_to_intersection = float(sys.argv[5])
     for intersection_line in intersection_lines:
-        import pdb
-        pdb.set_trace()
-        intersection_start = (intersection_line.coords.xy[0][0], intersection_line.coords.xy[1][0])
-        intersection_end = (intersection_line.coords.xy[0][-1], intersection_line.coords.xy[1][-1])
+        intersection_start = (intersection_line.coords[0][0], intersection_line.coords[0][1])
+        intersection_end = (intersection_line.coords[-1][0], intersection_line.coords[-1][1])
         start_time_frame = get_frame_closest_to(intersection_start, frames_per_second, tree, points, time_offset, times, speeds, max_distance_to_intersection)
         end_time_frame = get_frame_closest_to(intersection_end, frames_per_second, tree, points, time_offset, times, speeds, max_distance_to_intersection)
         if start_time_frame is not None and end_time_frame is not None:
