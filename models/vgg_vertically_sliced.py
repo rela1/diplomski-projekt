@@ -325,9 +325,9 @@ def build_sequential(images, label, fully_connected=[], weight_decay=0.0, vgg_in
     }
 
     if is_training:
-        net, init_op, init_feed = build_convolutional_sequential_feature_extractor(images, inputs_shape, weight_decay, vgg_init_dir, is_training)
+        net, init_op, init_feed = build_convolutional_sequential_feature_extractor(images, weight_decay, vgg_init_dir, is_training)
     else:
-        net = build_convolutional_sequential_feature_extractor(images, inputs_shape, weight_decay, vgg_init_dir, is_training)
+        net = build_convolutional_sequential_feature_extractor(images, weight_decay, vgg_init_dir, is_training)
 
     with tf.contrib.framework.arg_scope([layers.fully_connected],
         activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
