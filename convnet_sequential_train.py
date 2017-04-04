@@ -12,7 +12,7 @@ np.set_printoptions(linewidth=250)
 
 WEIGHT_DECAY = 1e-3
 LEARNING_RATE = 1e-4
-FULLY_CONNECTED = [200]
+FULLY_CONNECTED = [400]
 EPOCHS = 25
 INFO_STEP = 20
 INPUT_SHAPE = [25, 40, 100, 3]
@@ -124,8 +124,8 @@ def train(model, vgg_init_dir, dataset_root, model_path):
     with tf.control_dependencies([apply_gradient_op]):
       train_op = tf.no_op(name='train')
 
-    sess.run(tf.initialize_all_variables())
-    sess.run(tf.initialize_local_variables())
+    sess.run(tf.global_variables_initializer())
+    sess.run(tf.local_variables_initializer())
     sess.run(init_op, feed_dict=init_feed)
 
     coord = tf.train.Coordinator()
