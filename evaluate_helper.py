@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn import metrics
 import time
+import tensorflow as tf
 
 METRIC_FUNCTIONS = (metrics.accuracy_score, metrics.precision_score, metrics.average_precision_score, metrics.recall_score)
 
@@ -22,6 +23,21 @@ def evaluate_metric_functions(y_true, y_pred, metric_functions):
 	dictionary mapping metric function name to metric score
 	"""
 	return {metric_function.__name__ : metric_function(y_true, y_pred) for metric_function in metric_functions}
+
+
+def evaluate_default_metric_functions(y_true, y_pred):
+  """
+  Evaluates given metric functions on given true and predicted dense data.
+
+  Keyword arguments:
+  y_true -- true densely stored classes
+  y_pred -- predicted densely stored classes
+
+  Returns:
+  dictionary mapping metric function name to metric score
+  """
+  return evaluate_metric_functions(y_true, y_pred, METRIC_FUNCTIONS)
+
 
 def tf_proba_predict_func(probabilities):
   return np.argmax(probabilities, axis=1)
