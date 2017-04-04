@@ -19,7 +19,7 @@ INFO_STEP = 20
 
 def parse_example(record_string):
   features = tf.parse_single_example(
-                    serialized_example,
+                    record_string,
                     features={
                         'images_raw': tf.FixedLenFeature([], tf.string),
                         'label': tf.FixedLenFeature([], tf.int64),
