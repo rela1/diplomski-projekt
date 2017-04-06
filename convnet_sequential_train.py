@@ -59,18 +59,20 @@ def number_of_examples(directory):
   return examples
 
 
-def evaluate(name, sess, logit, loss, label, images, num_examples):
+def evaluate(name, sess, logit, loss, tf_records_files, input_placeholder, label_placeholder):
   print("\nRunning evaluation: ", name)
   y_true = []
   y_pred = []
   losses = []
-  for i in range(num_examples):
-    logit_val, loss_val, label_val, images_val = sess.run([logit, loss, label, images])
-    print(logit_val, loss_val, label_val, images_val[0][0][0][0])
-    pred = np.argmax(logit_val, axis=1)
-    y_pred.append(pred)
-    y_true.append(label_val)
-    losses.append(loss_val)
+  for tf_records_file in tf_records_files:
+    for record_string in tf.python_io.tf_record_iterator(tf_records_file, options=tf.python_io.TFRecordOptions(tf.python_io.TFRecordCompressionType.GZIP)):
+        images, label = parse_example(record_string)
+        logit_val, loss_val = sess.run([logit, loss], feed_dict={input_placeholder: images, label_placeholder: label})
+        print(logit_val, loss_val, label_val, images_val[0][0][0][0])
+        pred = np.argmax(logit_val, axis=1)
+        y_pred.append(pred)
+        y_true.append(label_val)
+        losses.append(loss_val)
   metrics = evaluate_default_metric_functions(y_true, y_pred)
   print_metrics(metrics)
   print('\taverage loss={}'.format(np.mean(losses)))
@@ -93,8 +95,6 @@ def train(model, vgg_init_dir, dataset_root, model_path):
     test_tfrecords = [os.path.join(test_dir, file) for file in os.listdir(test_dir)]
 
     train_file_queue = tf.train.string_input_producer(train_tfrecords, num_epochs=EPOCHS)
-    valid_file_queue = tf.train.string_input_producer(valid_tfrecords)
-    test_file_queue = tf.train.string_input_producer(test_tfrecords)
 
     print('Train tfrecords: {}, valid tfrecords: {}, test tfrecords: {}'.format(train_tfrecords, valid_tfrecords, test_tfrecords))
     print('Train num examples: {}, valid num examples: {}, test num examples: {}'.format(train_examples, valid_examples, test_examples))
@@ -106,23 +106,17 @@ def train(model, vgg_init_dir, dataset_root, model_path):
         [train_images, train_label], batch_size=1, capacity=capacity,
         min_after_dequeue=min_after_dequeue, shapes=SHAPES)
 
-    valid_images, valid_label = input_decoder(valid_file_queue)
-    valid_images, valid_label = tf.train.batch(
-        [valid_images, valid_label], batch_size=1, capacity=capacity, shapes=SHAPES)
-
-    test_images, test_label = input_decoder(test_file_queue)
-    test_images, test_label = tf.train.batch(
-        [test_images, test_label], batch_size=1, capacity=capacity, shapes=SHAPES)
+    input_placeholder = tf.placeholder_with_default(train_images, shape=[1] + INPUT_SHAPE)
+    label_placeholder = tf.placeholder_with_default(train_label, shape=[1])
 
     sess = tf.Session()
     global_step = tf.get_variable('global_step', [], dtype=tf.int64,
         initializer=tf.constant_initializer(0), trainable=False)
 
     with tf.variable_scope('model'):
-      logit, loss, init_op, init_feed = model.build_sequential(train_images, train_label, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=True)
+      logit, loss, init_op, init_feed = model.build_sequential(input_placeholder, label_placeholder, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=True)
     with tf.variable_scope('model', reuse=True):
-      test_logit_eval, test_loss_eval = model.build_sequential(test_images, test_label, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
-      valid_logit_eval, valid_loss_eval = model.build_sequential(valid_images, valid_label, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
+      logit_eval, loss_eval = model.build_sequential(input_placeholder, label_placeholder, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
 
     opt = tf.train.AdamOptimizer(LEARNING_RATE)
     grads = opt.compute_gradients(loss)
@@ -166,14 +160,14 @@ def train(model, vgg_init_dir, dataset_root, model_path):
             total = 0
 
           if not step % train_examples:
-            metrics = evaluate('Validate', sess, valid_logit_eval, valid_loss_eval, valid_label, valid_images, valid_examples)
+            metrics = evaluate('Validate', sess, logit_eval, loss_eval, valid_tfrecords, input_placeholder, label_placeholder)
             if metrics['accuracy_score'] > best_valid_accuracy:
               best_valid_accuracy = metrics['accuracy_score']
               saver.save(sess, model_path)
     except tf.errors.OutOfRangeError:
       print('Done training -- epoch limit reached')
       saver.restore(sess, model_path)
-      evaluate('Test', sess, test_logit_eval, test_loss_eval, test_label, test_images, test_examples)
+      evaluate('Test', sess, logit_eval, loss_eval, test_tfrecords, input_placeholder, label_placeholder)
     finally:
       coord.request_stop()
 

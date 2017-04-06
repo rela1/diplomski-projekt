@@ -202,22 +202,22 @@ def build_convolutional_feature_extractor(inputs, weight_decay=0.0, vgg_init_dir
     return net
 
 
-def build_convolutional_sequential_feature_extractor(inputs, weight_decay, vgg_init_dir, is_training):
+def build_convolutional_sequential_feature_extractor(input_placeholder, weight_decay, vgg_init_dir, is_training):
     if is_training:
         vgg_layers, vgg_layer_names = read_vgg_init(vgg_init_dir)
 
-    inputs = tf.squeeze(inputs)
-    inputs_shape = inputs.get_shape()
+    input_placeholder = tf.squeeze(input_placeholder)
+    inputs_shape = input_placeholder.get_shape()
     horizontal_slice_size = int(round(int(inputs_shape[2]) / 3))
     vertical_slice_size = int(round(int(inputs_shape[1]) / 3))
-    inputs = tf.slice(inputs, begin=[0, vertical_slice_size, 0, 0], size=[-1, vertical_slice_size * 2, horizontal_slice_size * 2, -1])
+    input_placeholder = tf.slice(input_placeholder, begin=[0, vertical_slice_size, 0, 0], size=[-1, vertical_slice_size * 2, horizontal_slice_size * 2, -1])
 
     with tf.contrib.framework.arg_scope([layers.convolution2d],
       kernel_size=3, stride=1, padding='SAME', rate=1, activation_fn=tf.nn.relu,
       normalizer_fn=None, weights_initializer=None,
       weights_regularizer=layers.l2_regularizer(weight_decay)):
 
-        net = layers.convolution2d(inputs, 64, scope='conv1_1')
+        net = layers.convolution2d(input_placeholder, 64, scope='conv1_1')
         net = layers.convolution2d(net, 64, scope='conv1_2')
         net = layers.max_pool2d(net, 2, 2, scope='pool1')
         net = layers.convolution2d(net, 128, scope='conv2_1')
@@ -314,7 +314,7 @@ def build(inputs, labels, num_classes, fully_connected=[], weight_decay=0.0, vgg
   return logits, total_loss
 
 
-def build_sequential(images, label, fully_connected=[], weight_decay=0.0, vgg_init_dir=None, is_training=True):
+def build_sequential(input_placeholder, label, fully_connected=[], weight_decay=0.0, vgg_init_dir=None, is_training=True):
     bn_params = {
         'decay': 0.999,
         'center': True,
@@ -325,9 +325,9 @@ def build_sequential(images, label, fully_connected=[], weight_decay=0.0, vgg_in
     }
 
     if is_training:
-        net, init_op, init_feed = build_convolutional_sequential_feature_extractor(images, weight_decay, vgg_init_dir, is_training)
+        net, init_op, init_feed = build_convolutional_sequential_feature_extractor(input_placeholder, weight_decay, vgg_init_dir, is_training)
     else:
-        net = build_convolutional_sequential_feature_extractor(images, weight_decay, vgg_init_dir, is_training)
+        net = build_convolutional_sequential_feature_extractor(input_placeholder, weight_decay, vgg_init_dir, is_training)
 
     with tf.contrib.framework.arg_scope([layers.fully_connected],
         activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
