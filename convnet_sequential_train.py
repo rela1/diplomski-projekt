@@ -10,8 +10,8 @@ from evaluate_helper import evaluate_default_metric_functions, print_metrics
 
 np.set_printoptions(linewidth=250)
 
-WEIGHT_DECAY = 1e-3
-LEARNING_RATE = 1e-3
+WEIGHT_DECAY = 1e-2
+LEARNING_RATE = 1e-4
 FULLY_CONNECTED = [400]
 EPOCHS = 5
 INFO_STEP = 20
@@ -59,14 +59,14 @@ def number_of_examples(directory):
   return examples
 
 
-def evaluate(name, sess, logit, loss, label, num_examples):
+def evaluate(name, sess, logit, loss, label, images, num_examples):
   print("\nRunning evaluation: ", name)
   y_true = []
   y_pred = []
   losses = []
   for i in range(num_examples):
-    logit_val, loss_val, label_val = sess.run([logit, loss, label])
-    print(logit_val, loss_val, label_val)
+    logit_val, loss_val, label_val, images_val = sess.run([logit, loss, label, images])
+    print(logit_val, loss_val, label_val, images_val[0][0][0])
     pred = np.argmax(logit_val, axis=1)
     y_pred.append(pred)
     y_true.append(label_val)
@@ -124,7 +124,6 @@ def train(model, vgg_init_dir, dataset_root, model_path):
       test_logit_eval, test_loss_eval = model.build_sequential(test_images, test_label, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
       valid_logit_eval, valid_loss_eval = model.build_sequential(valid_images, valid_label, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
 
-    exponential_learning_rate = tf.train.exponential_decay(LEARNING_RATE, global_step, 2000, 0.5, staircase=True)
     opt = tf.train.AdamOptimizer(LEARNING_RATE)
     grads = opt.compute_gradients(loss)
     apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
@@ -160,14 +159,14 @@ def train(model, vgg_init_dir, dataset_root, model_path):
             losses.clear()
 
           if not step % train_examples:
-            metrics = evaluate('Validate', sess, valid_logit_eval, valid_loss_eval, valid_label, valid_examples)
+            metrics = evaluate('Validate', sess, valid_logit_eval, valid_loss_eval, valid_label, valid_images, valid_examples)
             if metrics['accuracy_score'] > best_valid_accuracy:
               best_valid_accuracy = metrics['accuracy_score']
               saver.save(sess, model_path)
     except tf.errors.OutOfRangeError:
       print('Done training -- epoch limit reached')
       saver.restore(sess, model_path)
-      evaluate('Test', sess, test_logit_eval, test_loss_eval, test_label, test_examples)
+      evaluate('Test', sess, test_logit_eval, test_loss_eval, test_label, test_images, test_examples)
     finally:
       coord.request_stop()
 
