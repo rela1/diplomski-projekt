@@ -71,9 +71,9 @@ def write_sequenced_and_single_example(single_image_frame, label, images_before_
     sequence_example = tf.train.Example(
         features=tf.train.Features(
             feature={
-                'height': _int64_feature(middle_img.shape[0]),
-                'width': _int64_feature(middle_img.shape[1]),
-                'depth': _int64_feature(middle_img.shape[2]),
+                'height': _int64_feature(single_img.shape[0]),
+                'width': _int64_feature(single_img.shape[1]),
+                'depth': _int64_feature(single_img.shape[2]),
                 'label': _int64_feature(label),
                 'sequence_length': _int64_feature(images_sequence.shape[0]),
                 'images_raw': _bytes_feature(images_sequence_raw)
@@ -85,15 +85,15 @@ def write_sequenced_and_single_example(single_image_frame, label, images_before_
     single_image_example = tf.train.Example(
         features=tf.train.Features(
             feature={
-                'height': _int64_feature(middle_img.shape[0]),
-                'width': _int64_feature(middle_img.shape[1]),
-                'depth': _int64_feature(middle_img.shape[2]),
+                'height': _int64_feature(single_img.shape[0]),
+                'width': _int64_feature(single_img.shape[1]),
+                'depth': _int64_feature(single_img.shape[2]),
                 'label': _int64_feature(label),
-                'image_raw': _bytes_feature(middle_img_eq.tostring())
+                'image_raw': _bytes_feature(single_img_eq.tostring())
             }
         )
     )
-    single_tf_records_writer.write(middle_image_example.SerializeToString())
+    single_tf_records_writer.write(single_image_example.SerializeToString())
 
     return True
 
