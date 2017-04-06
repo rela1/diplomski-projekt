@@ -284,8 +284,6 @@ def build(inputs, labels, num_classes, fully_connected=[], weight_decay=0.0, vgg
       'is_training': is_training,
   }
 
-  inputs_shape = inputs.get_shape()
-
   if is_training:
     net, init_op, init_feed = build_convolutional_pooled_feature_extractor(inputs, weight_decay, vgg_init_dir, is_training)
   else:
@@ -325,6 +323,8 @@ def build_sequential(input_placeholder, label, fully_connected=[], weight_decay=
         net = build_convolutional_sequential_feature_extractor(input_placeholder, weight_decay, vgg_init_dir, is_training)
 
     print(net.get_shape())
+
+    inputs_shape = inputs.get_shape()
 
     net = tf.reshape(net, [1, int(inputs_shape[0]), -1, 1])
 
