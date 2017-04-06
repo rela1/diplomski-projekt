@@ -291,20 +291,6 @@ def build(inputs, labels, num_classes, fully_connected=[], weight_decay=0.0, vgg
   else:
     net = build_convolutional_pooled_feature_extractor(inputs, weight_decay, vgg_init_dir, is_training)
 
-  print(net.get_shape())
-
-  net = tf.reshape(net, [1, int(inputs_shape[0]), -1, 1])
-
-  print(net.get_shape())
-
-  net = layers.max_pool2d(net, kernel_size=[1, int(net.get_shape()[2])], stride=1, scope='pool5')
-
-  print(net.get_shape())
-
-  net = tf.contrib.layers.flatten(net, scope='flatten')
-
-  print(net.get_shape())
-
   with tf.contrib.framework.arg_scope([layers.fully_connected],
       activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
       weights_initializer=initializers.xavier_initializer(),
@@ -337,6 +323,20 @@ def build_sequential(input_placeholder, label, fully_connected=[], weight_decay=
         net, init_op, init_feed = build_convolutional_sequential_feature_extractor(input_placeholder, weight_decay, vgg_init_dir, is_training)
     else:
         net = build_convolutional_sequential_feature_extractor(input_placeholder, weight_decay, vgg_init_dir, is_training)
+
+    print(net.get_shape())
+
+    net = tf.reshape(net, [1, int(inputs_shape[0]), -1, 1])
+
+    print(net.get_shape())
+
+    net = layers.max_pool2d(net, kernel_size=[1, int(net.get_shape()[2])], stride=1, scope='pool5')
+
+    print(net.get_shape())
+
+    net = tf.contrib.layers.flatten(net, scope='flatten')
+
+    print(net.get_shape())
 
     with tf.contrib.framework.arg_scope([layers.fully_connected],
         activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
