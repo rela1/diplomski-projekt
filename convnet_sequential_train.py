@@ -67,7 +67,6 @@ def evaluate(name, sess, logit, loss, tf_records_files, input_placeholder, label
   for tf_records_file in tf_records_files:
     for record_string in tf.python_io.tf_record_iterator(tf_records_file, options=tf.python_io.TFRecordOptions(tf.python_io.TFRecordCompressionType.GZIP)):
         images, label = parse_example(record_string)
-        images_val, label_val 
         logit_val, loss_val = sess.run([logit, loss], feed_dict={input_placeholder: images.eval(), label_placeholder: label.eval()})
         print(logit_val, loss_val, label_val, images_val[0][0][0][0])
         pred = np.argmax(logit_val, axis=1)
@@ -118,6 +117,10 @@ def train(model, vgg_init_dir, dataset_root, model_path):
       logit, loss, init_op, init_feed = model.build_sequential(input_placeholder, label_placeholder, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=True)
     with tf.variable_scope('model', reuse=True):
       logit_eval, loss_eval = model.build_sequential(input_placeholder, label_placeholder, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
+
+    variables = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope='model')
+    for variable in variables:
+        print(variable.name)
 
     opt = tf.train.AdamOptimizer(LEARNING_RATE)
     grads = opt.compute_gradients(loss)
