@@ -88,9 +88,9 @@ def train(model, vgg_init_dir, dataset_root, model_path):
 
   with tf.Graph().as_default():
 
-  	train_tfrecords = [os.path.join(train_dir, file) for file in os.listdir(train_dir)]
-  	valid_tfrecords = [os.path.join(valid_dir, file) for file in os.listdir(valid_dir)]
-  	test_tfrecords = [os.path.join(test_dir, file) for file in os.listdir(test_dir)]
+    train_tfrecords = [os.path.join(train_dir, file) for file in os.listdir(train_dir)]
+    valid_tfrecords = [os.path.join(valid_dir, file) for file in os.listdir(valid_dir)]
+    test_tfrecords = [os.path.join(test_dir, file) for file in os.listdir(test_dir)]
 
     train_file_queue = tf.train.string_input_producer(train_tfrecords, num_epochs=EPOCHS)
     valid_file_queue = tf.train.string_input_producer(valid_tfrecords)
