@@ -66,7 +66,7 @@ def evaluate(name, sess, logit, loss, label, images, num_examples):
   losses = []
   for i in range(num_examples):
     logit_val, loss_val, label_val, images_val = sess.run([logit, loss, label, images])
-    print(logit_val, loss_val, label_val, images_val[0][0][0])
+    print(logit_val, loss_val, label_val, images_val[0][0][0][0])
     pred = np.argmax(logit_val, axis=1)
     y_pred.append(pred)
     y_true.append(label_val)
