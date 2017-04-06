@@ -109,7 +109,7 @@ def get_frame_closest_to(point, frames_per_second, points_index_tree, points, ti
         further_time = times[ind[0][1]]
         closer_speed = speeds[ind[0][0]]
         time_diff = closer_distance / closer_speed
-        log_file.write('Closer time {}, closer distance {}, further time {}, further distance {}, closer speed {}, timediff {}'.format(closer_time, closer_distance, further_time, further_distance, closer_speed, time_diff))
+        log_file.write('Closer time {}, closer distance {}, further time {}, further distance {}, closer speed {}, timediff {}\n'.format(closer_time, closer_distance, further_time, further_distance, closer_speed, time_diff))
         if closer_time < further_time:
             point_time = time_offset + closer_time + time_diff
         else:
@@ -204,7 +204,7 @@ if __name__ == '__main__':
                 else:
                     positive_images_ranges.append((end_time_frame[1], start_time_frame[1]))
         positive_images_ranges = sorted(positive_images_ranges)
-        log_file.write('Positive images ranges {}'.format(positive_images_ranges))
+        log_file.write('Positive images ranges {}\n'.format(positive_images_ranges))
 
         # create .tfrecords dataset files (sequence and middle files)
         sequential_tf_records_filename = os.path.join(video_name, video_name + '_sequential.tfrecords')
@@ -236,7 +236,7 @@ if __name__ == '__main__':
                 prev_img = img
                 if write_sequenced_and_single_example(positive_image, 1, SEQUENCE_HALF_LENGTH, SEQUENCE_HALF_LENGTH, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
                     positive_examples += 1
-        log_file.write('Positive examples {}'.format(positive_examples))
+        log_file.write('Positive examples {}\n'.format(positive_examples))
 
         average_speed = np.mean(speeds)
         min_frame_diff_to_positive = (MIN_DISTANCE_TO_POSITIVE / average_speed) * frames_per_second + 2 * SEQUENCE_HALF_LENGTH
@@ -250,7 +250,7 @@ if __name__ == '__main__':
                     continue
             if write_sequenced_and_single_example(image, 0, SEQUENCE_HALF_LENGTH, SEQUENCE_HALF_LENGTH, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
                 selected_middle_images.add(image)
-        log_file.write('Number of examples {}'.format(positive_examples * 2))
+        log_file.write('Number of examples {}\n'.format(positive_examples * 2))
 
         # delete frames and video file
         shutil.rmtree(frames_dir)
