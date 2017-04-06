@@ -88,9 +88,16 @@ def train(model, vgg_init_dir, dataset_root, model_path):
 
   with tf.Graph().as_default():
 
-    train_file_queue = tf.train.string_input_producer([os.path.join(train_dir, file) for file in os.listdir(train_dir)], num_epochs=EPOCHS)
-    valid_file_queue = tf.train.string_input_producer([os.path.join(valid_dir, file) for file in os.listdir(valid_dir)])
-    test_file_queue = tf.train.string_input_producer([os.path.join(test_dir, file) for file in os.listdir(test_dir)])
+  	train_tfrecords = [os.path.join(train_dir, file) for file in os.listdir(train_dir)]
+  	valid_tfrecords = [os.path.join(valid_dir, file) for file in os.listdir(valid_dir)]
+  	test_tfrecords = [os.path.join(test_dir, file) for file in os.listdir(test_dir)]
+
+    train_file_queue = tf.train.string_input_producer(train_tfrecords, num_epochs=EPOCHS)
+    valid_file_queue = tf.train.string_input_producer(valid_tfrecords)
+    test_file_queue = tf.train.string_input_producer(test_tfrecords)
+
+    print('Train tfrecords: {}, valid tfrecords: {}, test tfrecords: {}'.format(train_tfrecords, valid_tfrecords, test_tfrecords))
+    print('Train num examples: {}, valid num examples: {}, test num examples: {}'.format(train_examples, valid_examples, test_examples))
 
     train_images, train_label = input_decoder(train_file_queue)
     min_after_dequeue = 10000
