@@ -24,18 +24,17 @@ SEQUENCE_HALF_LENGTH = 12
 MIN_DISTANCE_TO_POSITIVE = 100 #meters
 
 
-def write_sequenced_and_middle_example(image_frame, label, sequential_tf_records_writer, middle_tf_records_writer, zero_pad_number, treshold, number_of_frames):
-    
+def write_sequenced_and_single_example(single_image_frame, label, images_before_single, images_after_single, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
     images_sequence = []
-    middle_img = imread(os.path.join(video_name, 'frames', str(positive_image).zfill(zero_pad_number) + '.png'))
+    single_img = imread(os.path.join(video_name, 'frames', str(single_image_frame).zfill(zero_pad_number) + '.png'))
 
     i = 1
-    prev_img = middle_img
+    prev_img = single_img
     added_images = 0
-    while added_images < SEQUENCE_HALF_LENGTH:
+    while added_images < images_before_single:
         if image_frame - i <= 0:
             return False
-        img = imread(os.path.join(video_name, 'frames', str(image_frame - i).zfill(zero_pad_number) + '.png'))
+        img = imread(os.path.join(video_name, 'frames', str(single_image_frame - i).zfill(zero_pad_number) + '.png'))
         diff = np.sum(np.abs(img - prev_img))
         i += 1
         if diff < treshold:
@@ -46,16 +45,16 @@ def write_sequenced_and_middle_example(image_frame, label, sequential_tf_records
             images_sequence.insert(0, img)
             added_images += 1
 
-    middle_img_eq = equalize_adapthist(middle_img, clip_limit=0.03)
-    images_sequence.append(middle_img_eq)
+    single_img_eq = equalize_adapthist(single_img, clip_limit=0.03)
+    images_sequence.append(single_img_eq)
 
     i = 1
-    prev_img = middle_img
+    prev_img = single_img
     added_images = 0
-    while added_images < SEQUENCE_HALF_LENGTH:
+    while added_images < images_after_single:
         if image_frame + i > number_of_frames:
             return False
-        img = imread(os.path.join(video_name, 'frames', str(image_frame + i).zfill(zero_pad_number) + '.png'))
+        img = imread(os.path.join(video_name, 'frames', str(single_image_frame + i).zfill(zero_pad_number) + '.png'))
         diff = np.sum(np.abs(img - prev_img))
         i += 1
         if diff < treshold:
@@ -66,8 +65,9 @@ def write_sequenced_and_middle_example(image_frame, label, sequential_tf_records
             images_sequence.append(img)
             added_images += 1
 
-    images_sequence = np.array(images_sequence, dtype=np.float32)
+    images_sequence = np.array(images_sequence)
     images_sequence_raw = images_sequence.tostring()
+
     sequence_example = tf.train.Example(
         features=tf.train.Features(
             feature={
@@ -81,7 +81,8 @@ def write_sequenced_and_middle_example(image_frame, label, sequential_tf_records
         )
     )
     sequential_tf_records_writer.write(sequence_example.SerializeToString())
-    middle_image_example = tf.train.Example(
+
+    single_image_example = tf.train.Example(
         features=tf.train.Features(
             feature={
                 'height': _int64_feature(middle_img.shape[0]),
@@ -92,7 +93,8 @@ def write_sequenced_and_middle_example(image_frame, label, sequential_tf_records
             }
         )
     )
-    middle_tf_records_writer.write(middle_image_example.SerializeToString())
+    single_tf_records_writer.write(middle_image_example.SerializeToString())
+
     return True
 
 
@@ -107,7 +109,7 @@ def get_frame_closest_to(point, frames_per_second, points_index_tree, points, ti
         further_time = times[ind[0][1]]
         closer_speed = speeds[ind[0][0]]
         time_diff = closer_distance / closer_speed
-        print('Closer time {}, closer distance {}, further time {}, further distance {}, closer speed {}, timediff {}'.format(closer_time, closer_distance, further_time, further_distance, closer_speed, time_diff))
+        write('Closer time {}, closer distance {}, further time {}, further distance {}, closer speed {}, timediff {}'.format(closer_time, closer_distance, further_time, further_distance, closer_speed, time_diff))
         if closer_time < further_time:
             point_time = time_offset + closer_time + time_diff
         else:
@@ -135,120 +137,121 @@ if __name__ == '__main__':
 
     video_full_path = os.path.join(video_name, video_name + '.mp4')
 
-    # download video
-    print('Downloading video...', end=' ', flush=True)
-    with urllib.request.urlopen(MP4_VIDEO_FORMAT.format(video_name)) as response, open(video_full_path, 'wb') as out_file:
-        shutil.copyfileobj(response, out_file)
-    print('Done!', flush=True)
+    with open(os.path.join(video_name, 'log.txt'), 'w') as log_file:
 
-    # get video info
-    video_info = subprocess.getoutput('ffprobe "{}"'.format(video_full_path))
-    video_duration_string = re.search('Duration: (.*?),', video_info).group(1)
-    frames_per_second = int(re.search('([0-9]+?) tbr', video_info).group(1))
-    
-    # extract video frames
-    video_duration = datetime.strptime(video_duration_string, '%H:%M:%S.%f')
-    video_duration_seconds = video_duration.hour * 3600 + video_duration.minute * 60 + video_duration.second + round(video_duration.microsecond / 1000000)
-    approximate_number_of_frames = video_duration_seconds * frames_per_second
-    print('Extracting video frames. Approximate number of frames {}...'.format(approximate_number_of_frames), end=' ', flush=True)
-    frames_dir = os.path.join(video_name, 'frames')
-    if not os.path.exists(frames_dir):
-        os.mkdir(frames_dir)
-    zero_pad_number = len(str(approximate_number_of_frames))
-    frame_extract_info = subprocess.getoutput('ffmpeg -i "{}" -s {}x{} {}/frames/%0{}d.png'.format(video_full_path, sys.argv[3], sys.argv[4], video_name, zero_pad_number))
-    number_of_frames = len(os.listdir(frames_dir))
-    frames_resolution = int(sys.argv[3]) * int(sys.argv[4])
-    print('Number of frames', number_of_frames, 'FPS', frames_per_second)
-    print('Done!', flush=True)
+        # download video
+        with urllib.request.urlopen(MP4_VIDEO_FORMAT.format(video_name)) as response, open(video_full_path, 'wb') as out_file:
+            shutil.copyfileobj(response, out_file)
 
-    # load intersection data
-    k = kml.KML()
-    with open(sys.argv[2], 'rb') as f:
-        k.from_string(f.read())
-    document = next(k.features())
-    folder = next(document.features())
-    intersection_lines = [placemark.geometry for placemark in folder.features()]
+        # get video info
+        video_info = subprocess.getoutput('ffprobe "{}"'.format(video_full_path))
+        video_duration_string = re.search('Duration: (.*?),', video_info).group(1)
+        frames_per_second = int(re.search('([0-9]+?) tbr', video_info).group(1))
+        
+        # extract video frames
+        video_duration = datetime.strptime(video_duration_string, '%H:%M:%S.%f')
+        video_duration_seconds = video_duration.hour * 3600 + video_duration.minute * 60 + video_duration.second + round(video_duration.microsecond / 1000000)
+        approximate_number_of_frames = video_duration_seconds * frames_per_second
+        frames_dir = os.path.join(video_name, 'frames')
+        if not os.path.exists(frames_dir):
+            os.mkdir(frames_dir)
+        zero_pad_number = len(str(approximate_number_of_frames))
+        frame_extract_info = subprocess.getoutput('ffmpeg -i "{}" -s {}x{} {}/frames/%0{}d.png'.format(video_full_path, sys.argv[3], sys.argv[4], video_name, zero_pad_number))
+        number_of_frames = len(os.listdir(frames_dir))
+        frames_resolution = int(sys.argv[3]) * int(sys.argv[4])
 
-    # download video geoinformation
-    with urllib.request.urlopen(JSON_GEOINFORMATION_FORMAT.format(video_name)) as response:
-        json_geoinformation = json.loads(response.read().decode('utf-8'))
+        # load intersection data
+        k = kml.KML()
+        with open(sys.argv[2], 'rb') as f:
+            k.from_string(f.read())
+        document = next(k.features())
+        folder = next(document.features())
+        intersection_lines = [placemark.geometry for placemark in folder.features()]
 
-    # index geodata points
-    points = []
-    times = []
-    speeds = []
-    time_offset = json_geoinformation[0]['timeoffset']
-    data_len = len(json_geoinformation)
-    last_item_index = data_len - 1
-    for i in range(1, data_len):
-        points.append(json_geoinformation[i]['coordinates'])
-        times.append(json_geoinformation[i]['time'])
-        if i < last_item_index:
-            distance = vincenty(json_geoinformation[i]['coordinates'], json_geoinformation[i + 1]['coordinates']).meters
-            time = json_geoinformation[i + 1]['time'] - json_geoinformation[i]['time']
-            speeds.append(distance / time)
-        else:
-            speeds.append(speeds[-1])
-    tree = KDTree(points)
+        # download video geoinformation
+        with urllib.request.urlopen(JSON_GEOINFORMATION_FORMAT.format(video_name)) as response:
+            json_geoinformation = json.loads(response.read().decode('utf-8'))
 
-    # calculate positive image ranges
-    positive_images_ranges = []
-    max_distance_to_intersection = float(sys.argv[5])
-    for intersection_line in intersection_lines:
-        intersection_start = (intersection_line.coords[0][0], intersection_line.coords[0][1])
-        intersection_end = (intersection_line.coords[-1][0], intersection_line.coords[-1][1])
-        start_time_frame = get_frame_closest_to(intersection_start, frames_per_second, tree, points, time_offset, times, speeds, max_distance_to_intersection)
-        end_time_frame = get_frame_closest_to(intersection_end, frames_per_second, tree, points, time_offset, times, speeds, max_distance_to_intersection)
-        if start_time_frame is not None and end_time_frame is not None:
-            if start_time_frame[0] < end_time_frame[0]:
-                positive_images_ranges.append((start_time_frame[1], end_time_frame[1]))
+        # index geodata points
+        points = []
+        times = []
+        speeds = []
+        time_offset = json_geoinformation[0]['timeoffset']
+        data_len = len(json_geoinformation)
+        last_item_index = data_len - 1
+        for i in range(1, data_len):
+            points.append(json_geoinformation[i]['coordinates'])
+            times.append(json_geoinformation[i]['time'])
+            if i < last_item_index:
+                distance = vincenty(json_geoinformation[i]['coordinates'], json_geoinformation[i + 1]['coordinates']).meters
+                time = json_geoinformation[i + 1]['time'] - json_geoinformation[i]['time']
+                speeds.append(distance / time)
             else:
-                positive_images_ranges.append((end_time_frame[1], start_time_frame[1]))
-    positive_images_ranges = sorted(positive_images_ranges)
-    print(positive_images_ranges)
+                speeds.append(speeds[-1])
+        tree = KDTree(points)
 
-    # create .tfrecords dataset files (sequence and middle files)
-    sequential_tf_records_filename = os.path.join(video_name, video_name + '_sequential.tfrecords')
-    middle_tf_records_filename = os.path.join(video_name, video_name + '_middle.tfrecords')
+        # calculate positive image ranges
+        positive_images_ranges = []
+        max_distance_to_intersection = float(sys.argv[5])
+        for intersection_line in intersection_lines:
+            intersection_start = (intersection_line.coords[0][0], intersection_line.coords[0][1])
+            intersection_end = (intersection_line.coords[-1][0], intersection_line.coords[-1][1])
+            start_time_frame = get_frame_closest_to(intersection_start, frames_per_second, tree, points, time_offset, times, speeds, max_distance_to_intersection)
+            end_time_frame = get_frame_closest_to(intersection_end, frames_per_second, tree, points, time_offset, times, speeds, max_distance_to_intersection)
+            if start_time_frame is not None and end_time_frame is not None:
+                if start_time_frame[0] < end_time_frame[0]:
+                    positive_images_ranges.append((start_time_frame[1], end_time_frame[1]))
+                else:
+                    positive_images_ranges.append((end_time_frame[1], start_time_frame[1]))
+        positive_images_ranges = sorted(positive_images_ranges)
+        write(positive_images_ranges)
 
-    sequential_tf_records_writer = tf.python_io.TFRecordWriter(
-        sequential_tf_records_filename, 
-        options=tf.python_io.TFRecordOptions(
-            tf.python_io.TFRecordCompressionType.GZIP
+        # create .tfrecords dataset files (sequence and middle files)
+        sequential_tf_records_filename = os.path.join(video_name, video_name + '_sequential.tfrecords')
+        middle_tf_records_filename = os.path.join(video_name, video_name + '_middle.tfrecords')
+
+        sequential_tf_records_writer = tf.python_io.TFRecordWriter(
+            sequential_tf_records_filename, 
+            options=tf.python_io.TFRecordOptions(
+                tf.python_io.TFRecordCompressionType.GZIP
+            )
         )
-    )
-    middle_tf_records_writer = tf.python_io.TFRecordWriter(
-        middle_tf_records_filename, 
-        options=tf.python_io.TFRecordOptions(
-            tf.python_io.TFRecordCompressionType.GZIP
+        single_tf_records_writer = tf.python_io.TFRecordWriter(
+            middle_tf_records_filename, 
+            options=tf.python_io.TFRecordOptions(
+                tf.python_io.TFRecordCompressionType.GZIP
+            )
         )
-    )
 
-    positive_examples = 0
-    treshold = 0.005 * frames_resolution
-    for positive_images_range in positive_images_ranges:
-        prev_img = None
-        for positive_image in range(positive_images_range[0], positive_images_range[1]):
-            img = imread(os.path.join(video_name, 'frames', str(positive_image).zfill(zero_pad_number) + '.png'))
-            if prev_img is not None:
-                diff = np.sum(np.abs(img - prev_img))
-                if diff < treshold:
-                    continue
-            prev_img = img
-            if write_sequenced_and_middle_example(positive_image, 1, sequential_tf_records_writer, middle_tf_records_writer, zero_pad_number, treshold, number_of_frames):
-                positive_examples += 1
-    print('Positive examples', positive_examples)
+        positive_examples = 0
+        treshold = 0.005 * frames_resolution
+        for positive_images_range in positive_images_ranges:
+            prev_img = None
+            for positive_image in range(positive_images_range[0], positive_images_range[1]):
+                img = imread(os.path.join(video_name, 'frames', str(positive_image).zfill(zero_pad_number) + '.png'))
+                if prev_img is not None:
+                    diff = np.sum(np.abs(img - prev_img))
+                    if diff < treshold:
+                        continue
+                prev_img = img
+                if write_sequenced_and_single_example(positive_image, 1, SEQUENCE_HALF_LENGTH, SEQUENCE_HALF_LENGTH, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
+                    positive_examples += 1
+        write('Positive examples', positive_examples)
 
-    average_speed = np.mean(speeds)
-    min_frame_diff_to_positive = (MIN_DISTANCE_TO_POSITIVE / average_speed) * frames_per_second + 2 * SEQUENCE_HALF_LENGTH
-    selected_middle_images = set()
-    while len(selected_middle_images) < positive_examples:
-        image = random.randint(1, number_of_frames)
-        if image in selected_middle_images:
-            continue
-        if any([abs(image - positive_images_range[0]) < min_frame_diff_to_positive or abs(image - positive_images_range[1]) < min_frame_diff_to_positive 
-            for positive_images_range in positive_images_ranges]):
+        average_speed = np.mean(speeds)
+        min_frame_diff_to_positive = (MIN_DISTANCE_TO_POSITIVE / average_speed) * frames_per_second + 2 * SEQUENCE_HALF_LENGTH
+        selected_middle_images = set()
+        while len(selected_middle_images) < positive_examples:
+            image = random.randint(1, number_of_frames)
+            if image in selected_middle_images:
                 continue
-        if write_sequenced_and_middle_example(image, 0, sequential_tf_records_writer, middle_tf_records_writer, zero_pad_number, treshold, number_of_frames):
-            selected_middle_images.add(image)
-    print('Number of examples ', positive_examples * 2)
+            if any([abs(image - positive_images_range[0]) < min_frame_diff_to_positive or abs(image - positive_images_range[1]) < min_frame_diff_to_positive 
+                for positive_images_range in positive_images_ranges]):
+                    continue
+            if write_sequenced_and_single_example(image, 0, SEQUENCE_HALF_LENGTH, SEQUENCE_HALF_LENGTH, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
+                selected_middle_images.add(image)
+        write('Number of examples ', positive_examples * 2)
+
+        # delete frames and video file
+        shutil.rmtree(frames_dir)
+        os.remove(video_full_path)

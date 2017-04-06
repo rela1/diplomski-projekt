@@ -145,7 +145,6 @@ def train(model, vgg_init_dir, dataset_root, model_path):
       while not coord.should_stop():
 
           _, logit_val, loss_val, label_val = sess.run([train_op, logit, loss, train_label])
-          print(logit_val)
           if np.argmax(logit_val, axis=1) == label_val:
             correct += 1
           total += 1
