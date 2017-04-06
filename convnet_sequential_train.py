@@ -141,22 +141,29 @@ def train(model, vgg_init_dir, dataset_root, model_path):
     saver = tf.train.Saver()
 
     losses = []
+    correct = 0
+    total = 0
     step = 0
     best_valid_accuracy = 0
     start_time = time.time()
     try:
       while not coord.should_stop():
 
-          _, loss_val = sess.run([train_op, loss])
+          _, logit_val, loss_val, label_val = sess.run([train_op, logit, loss, train_label])
+          if np.argmax(logit_val, axis=1) == label_val:
+            correct += 1
+          total += 1
           assert not np.isnan(loss_val), 'Model diverged with loss = NaN'
           losses.append(loss_val)
           step += 1
 
           if not step % INFO_STEP:
             duration = time.time() - start_time
-            print('Average loss: {}, examples/sec: {}, sec/step: {}'.format(np.mean(losses), INFO_STEP / duration, float(duration)))
+            print('Average loss: {}, average accuracy: {}, examples/sec: {}, sec/step: {}'.format(np.mean(losses), correct / total, INFO_STEP / duration, float(duration)))
             start_time = time.time()
             losses.clear()
+            correct = 0
+            total = 0
 
           if not step % train_examples:
             metrics = evaluate('Validate', sess, valid_logit_eval, valid_loss_eval, valid_label, valid_images, valid_examples)
