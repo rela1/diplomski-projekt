@@ -206,7 +206,6 @@ def build_convolutional_sequential_feature_extractor(input_placeholder, weight_d
     if is_training:
         vgg_layers, vgg_layer_names = read_vgg_init(vgg_init_dir)
 
-    input_placeholder = tf.squeeze(input_placeholder)
     inputs_shape = input_placeholder.get_shape()
     horizontal_slice_size = int(round(int(inputs_shape[2]) / 3))
     vertical_slice_size = int(round(int(inputs_shape[1]) / 3))
@@ -234,12 +233,6 @@ def build_convolutional_sequential_feature_extractor(input_placeholder, weight_d
         net = layers.convolution2d(net, 512, scope='conv5_1')
         net = layers.convolution2d(net, 512, scope='conv5_2')
         net = layers.convolution2d(net, 512, scope='conv5_3')
-
-        net = tf.reshape(net, [1, int(inputs_shape[0]), -1, 512])
-
-        net = layers.max_pool2d(net, 2, 2, scope='pool5')
-
-        net = tf.contrib.layers.flatten(net, scope='flatten')
 
         if is_training:
             init_op, init_feed = create_init_op(vgg_layers)
@@ -291,10 +284,18 @@ def build(inputs, labels, num_classes, fully_connected=[], weight_decay=0.0, vgg
       'is_training': is_training,
   }
 
+  inputs_shape = inputs.get_shape()
+
   if is_training:
     net, init_op, init_feed = build_convolutional_pooled_feature_extractor(inputs, weight_decay, vgg_init_dir, is_training)
   else:
     net = build_convolutional_pooled_feature_extractor(inputs, weight_decay, vgg_init_dir, is_training)
+
+  net = tf.reshape(net, [1, int(inputs_shape[0]), -1, 1])
+
+  net = layers.max_pool2d(net, kernel_size=[1, int(net.get_shape()[2])], stride=1, scope='pool5')
+
+  net = tf.contrib.layers.flatten(net, scope='flatten')
 
   with tf.contrib.framework.arg_scope([layers.fully_connected],
       activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,

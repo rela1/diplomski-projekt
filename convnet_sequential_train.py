@@ -12,7 +12,7 @@ np.set_printoptions(linewidth=250)
 
 WEIGHT_DECAY = 1e-3
 LEARNING_RATE = 5e-4
-FULLY_CONNECTED = [400]
+FULLY_CONNECTED = [400, 50]
 EPOCHS = 5
 INFO_STEP = 20
 INPUT_SHAPE = [25, 40, 100, 3]
@@ -107,8 +107,8 @@ def train(model, vgg_init_dir, dataset_root, model_path):
         [train_images, train_label], batch_size=1, capacity=capacity,
         min_after_dequeue=min_after_dequeue, shapes=SHAPES)
 
-    input_placeholder = tf.placeholder_with_default(train_images, shape=[1] + INPUT_SHAPE)
-    label_placeholder = tf.placeholder_with_default(train_label, shape=[1])
+    input_placeholder = tf.placeholder_with_default(train_images, shape=INPUT_SHAPE)
+    label_placeholder = tf.placeholder_with_default(train_label, shape=(1, ))
 
     sess = tf.Session()
     global_step = tf.get_variable('global_step', [], dtype=tf.int64,
