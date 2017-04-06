@@ -330,7 +330,7 @@ def build_sequential(input_placeholder, label, fully_connected=[], weight_decay=
 
     print(net.get_shape())
 
-    net = layers.max_pool2d(net, kernel_size=[1, int(net.get_shape()[2])], stride=1, scope='pool5')
+    net = layers.max_pool2d(net, kernel_size=2, stride=2, scope='pool5')
 
     print(net.get_shape())
 
