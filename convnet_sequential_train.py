@@ -67,7 +67,8 @@ def evaluate(name, sess, logit, loss, tf_records_files, input_placeholder, label
   for tf_records_file in tf_records_files:
     for record_string in tf.python_io.tf_record_iterator(tf_records_file, options=tf.python_io.TFRecordOptions(tf.python_io.TFRecordCompressionType.GZIP)):
         images, label = parse_example(record_string)
-        logit_val, loss_val = sess.run([logit, loss], feed_dict={input_placeholder: [images.eval(session=sess)], label_placeholder: [label.eval(session=sess)]})
+        images_val, label_val = sess.run([images, label])
+        logit_val, loss_val = sess.run([logit, loss], feed_dict={input_placeholder: [images_val], label_placeholder: [label_val]})
         print(logit_val, loss_val)
         pred = np.argmax(logit_val, axis=1)
         y_pred.append(pred)
