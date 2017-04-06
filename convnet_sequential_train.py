@@ -108,7 +108,7 @@ def train(model, vgg_init_dir, dataset_root, model_path):
         min_after_dequeue=min_after_dequeue, shapes=SHAPES)
 
     input_placeholder = tf.placeholder_with_default(train_images[0], shape=INPUT_SHAPE)
-    label_placeholder = tf.placeholder_with_default(train_label[0], shape=(1, ))
+    label_placeholder = tf.placeholder_with_default(train_label, shape=(1, ))
 
     sess = tf.Session()
     global_step = tf.get_variable('global_step', [], dtype=tf.int64,
