@@ -67,7 +67,7 @@ def evaluate(name, sess, logit, loss, tf_records_files, input_placeholder, label
   for tf_records_file in tf_records_files:
     for record_string in tf.python_io.tf_record_iterator(tf_records_file, options=tf.python_io.TFRecordOptions(tf.python_io.TFRecordCompressionType.GZIP)):
         images, label = parse_example(record_string)
-        logit_val, loss_val = sess.run([logit, loss], feed_dict={input_placeholder: images.eval(session=sess), label_placeholder: label.eval(session=sess)})
+        logit_val, loss_val = sess.run([logit, loss], feed_dict={input_placeholder: [images.eval(session=sess)], label_placeholder: [label.eval(session=sess)]})
         print(logit_val, loss_val, label_val, images_val[0][0][0][0])
         pred = np.argmax(logit_val, axis=1)
         y_pred.append(pred)
@@ -119,8 +119,13 @@ def train(model, vgg_init_dir, dataset_root, model_path):
       logit_eval, loss_eval = model.build_sequential(input_placeholder, label_placeholder, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
 
     variables = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope='model')
+    conv1 = None
+    fc1 = None
     for variable in variables:
-        print(variable.name)
+        if variable.name == 'model/fc1/weights:0':
+            fc1 = variable
+        if variable.name == 'model/conv1_1/weights:0':
+            conv1 = variable
 
     opt = tf.train.AdamOptimizer(LEARNING_RATE)
     grads = opt.compute_gradients(loss)
@@ -144,10 +149,15 @@ def train(model, vgg_init_dir, dataset_root, model_path):
     step = 0
     best_valid_accuracy = 0
     start_time = time.time()
+    fc1_val = fc1.eval(session=sess)
+    conv1_val = conv1.eval(session=sess)
     try:
       while not coord.should_stop():
 
-          _, logit_val, loss_val, label_val = sess.run([train_op, logit, loss, train_label])
+          _, logit_val, loss_val, label_val, fc1_val2, conv1_val2 = sess.run([train_op, logit, loss, train_label, fc1, conv1])
+          print('fc1 diff: ', np.sum(np.abs(fc1_val2 - fc1_val)), 'conv1 diff: ', np.sum(np.abs(conv1_val2 - conv1_val)))
+          fc1_val = fc1_val2
+          conv1_val = conv1_val2
           if np.argmax(logit_val, axis=1) == label_val:
             correct += 1
           total += 1
