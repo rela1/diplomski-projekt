@@ -98,7 +98,7 @@ def write_sequenced_and_single_example(single_image_frame, label, images_before_
     return True
 
 
-def get_frame_closest_to(point, frames_per_second, points_index_tree, points, time_offset, times, speeds, max_distance_to_intersection):
+def get_frame_closest_to(point, frames_per_second, points_index_tree, points, time_offset, times, speeds, max_distance_to_intersection, log_file):
     dist, ind = tree.query([point], k=2)
     closer_point = points[ind[0][0]]
     further_point = points[ind[0][1]]
@@ -109,7 +109,7 @@ def get_frame_closest_to(point, frames_per_second, points_index_tree, points, ti
         further_time = times[ind[0][1]]
         closer_speed = speeds[ind[0][0]]
         time_diff = closer_distance / closer_speed
-        write('Closer time {}, closer distance {}, further time {}, further distance {}, closer speed {}, timediff {}'.format(closer_time, closer_distance, further_time, further_distance, closer_speed, time_diff))
+        log_file.write('Closer time {}, closer distance {}, further time {}, further distance {}, closer speed {}, timediff {}'.format(closer_time, closer_distance, further_time, further_distance, closer_speed, time_diff))
         if closer_time < further_time:
             point_time = time_offset + closer_time + time_diff
         else:
@@ -196,15 +196,15 @@ if __name__ == '__main__':
         for intersection_line in intersection_lines:
             intersection_start = (intersection_line.coords[0][0], intersection_line.coords[0][1])
             intersection_end = (intersection_line.coords[-1][0], intersection_line.coords[-1][1])
-            start_time_frame = get_frame_closest_to(intersection_start, frames_per_second, tree, points, time_offset, times, speeds, max_distance_to_intersection)
-            end_time_frame = get_frame_closest_to(intersection_end, frames_per_second, tree, points, time_offset, times, speeds, max_distance_to_intersection)
+            start_time_frame = get_frame_closest_to(intersection_start, frames_per_second, tree, points, time_offset, times, speeds, max_distance_to_intersection, log_file)
+            end_time_frame = get_frame_closest_to(intersection_end, frames_per_second, tree, points, time_offset, times, speeds, max_distance_to_intersection, log_file)
             if start_time_frame is not None and end_time_frame is not None:
                 if start_time_frame[0] < end_time_frame[0]:
                     positive_images_ranges.append((start_time_frame[1], end_time_frame[1]))
                 else:
                     positive_images_ranges.append((end_time_frame[1], start_time_frame[1]))
         positive_images_ranges = sorted(positive_images_ranges)
-        write(positive_images_ranges)
+        log_file.write('Positive images ranges {}'.format(positive_images_ranges))
 
         # create .tfrecords dataset files (sequence and middle files)
         sequential_tf_records_filename = os.path.join(video_name, video_name + '_sequential.tfrecords')
@@ -236,7 +236,7 @@ if __name__ == '__main__':
                 prev_img = img
                 if write_sequenced_and_single_example(positive_image, 1, SEQUENCE_HALF_LENGTH, SEQUENCE_HALF_LENGTH, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
                     positive_examples += 1
-        write('Positive examples', positive_examples)
+        log_file.write('Positive examples {}'.format(positive_examples))
 
         average_speed = np.mean(speeds)
         min_frame_diff_to_positive = (MIN_DISTANCE_TO_POSITIVE / average_speed) * frames_per_second + 2 * SEQUENCE_HALF_LENGTH
@@ -250,7 +250,7 @@ if __name__ == '__main__':
                     continue
             if write_sequenced_and_single_example(image, 0, SEQUENCE_HALF_LENGTH, SEQUENCE_HALF_LENGTH, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
                 selected_middle_images.add(image)
-        write('Number of examples ', positive_examples * 2)
+        log_file.write('Number of examples {}'.format(positive_examples * 2))
 
         # delete frames and video file
         shutil.rmtree(frames_dir)
