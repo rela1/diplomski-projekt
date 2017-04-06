@@ -324,7 +324,7 @@ def build_sequential(input_placeholder, label, fully_connected=[], weight_decay=
 
     print(net.get_shape())
 
-    inputs_shape = inputs.get_shape()
+    inputs_shape = input_placeholder.get_shape()
 
     net = tf.reshape(net, [1, int(inputs_shape[0]), -1, 1])
 
