@@ -32,7 +32,7 @@ def write_sequenced_and_single_example(single_image_frame, label, images_before_
     prev_img = single_img
     added_images = 0
     while added_images < images_before_single:
-        if image_frame - i <= 0:
+        if single_image_frame - i <= 0:
             return False
         img = imread(os.path.join(video_name, 'frames', str(single_image_frame - i).zfill(zero_pad_number) + '.png'))
         diff = np.sum(np.abs(img - prev_img))
@@ -52,7 +52,7 @@ def write_sequenced_and_single_example(single_image_frame, label, images_before_
     prev_img = single_img
     added_images = 0
     while added_images < images_after_single:
-        if image_frame + i > number_of_frames:
+        if single_image_frame + i > number_of_frames:
             return False
         img = imread(os.path.join(video_name, 'frames', str(single_image_frame + i).zfill(zero_pad_number) + '.png'))
         diff = np.sum(np.abs(img - prev_img))
