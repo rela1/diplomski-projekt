@@ -65,7 +65,7 @@ def write_sequenced_and_single_example(single_image_frame, label, images_before_
             images_sequence.append(img)
             added_images += 1
 
-    images_sequence = np.array(images_sequence)
+    images_sequence = np.array(images_sequence, dtype=np.float32)
     images_sequence_raw = images_sequence.tostring()
 
     sequence_example = tf.train.Example(
