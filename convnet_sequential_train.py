@@ -121,6 +121,7 @@ def train(model, vgg_init_dir, dataset_root, model_path):
 
     opt = tf.train.AdamOptimizer(LEARNING_RATE)
     grads = opt.compute_gradients(loss)
+    print(grads)
     apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
     with tf.control_dependencies([apply_gradient_op]):
       train_op = tf.no_op(name='train')
@@ -145,7 +146,6 @@ def train(model, vgg_init_dir, dataset_root, model_path):
       while not coord.should_stop():
 
           _, logit_val, loss_val, label_val = sess.run([train_op, logit, loss, train_label])
-          print(logit_val)
           if np.argmax(logit_val, axis=1) == label_val:
             correct += 1
           total += 1
