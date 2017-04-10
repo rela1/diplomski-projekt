@@ -64,18 +64,11 @@ def evaluate(name, sess, logit, loss, tf_records_files, input_placeholder, label
   y_true = []
   y_pred = []
   losses = []
-  last_img = None
   for tf_records_file in tf_records_files:
     for record_string in tf.python_io.tf_record_iterator(tf_records_file, options=tf.python_io.TFRecordOptions(tf.python_io.TFRecordCompressionType.GZIP)):
         images, label = parse_example(record_string)
         images_val, label_val = sess.run([images, label])
         logit_val, loss_val = sess.run([logit, loss], feed_dict={input_placeholder: images_val, label_placeholder: [label_val]})
-        if last_img is not None:
-        	diff = np.sum(np.abs(images_val - last_img))
-        else:
-        	diff = None
-        last_img = images_val
-        print(logit_val, loss_val, diff)
         pred = np.argmax(logit_val, axis=1)
         y_pred.append(pred)
         y_true.append(label_val)
