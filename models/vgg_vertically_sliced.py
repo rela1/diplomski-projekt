@@ -6,7 +6,7 @@ from tensorflow.contrib.layers.python.layers import initializers
 
 
 def loss(logits, labels, is_training):
-  unreduced_xent_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits, labels=labels)
+  unreduced_xent_loss = tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=labels)
   print(unreduced_xent_loss.get_shape())
   xent_loss = tf.reduce_mean(unreduced_xent_loss)
   regularization_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
