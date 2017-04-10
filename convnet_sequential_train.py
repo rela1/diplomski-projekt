@@ -10,7 +10,7 @@ from evaluate_helper import evaluate_default_metric_functions, print_metrics
 
 np.set_printoptions(linewidth=250)
 
-WEIGHT_DECAY = 1e-3
+WEIGHT_DECAY = 1e-1
 LEARNING_RATE = 5e-4
 FULLY_CONNECTED = [400, 50]
 EPOCHS = 5
@@ -144,8 +144,7 @@ def train(model, vgg_init_dir, dataset_root, model_path):
     try:
       while not coord.should_stop():
 
-          _, logit_val, loss_val, label_val, grads_val = sess.run([train_op, logit, loss, train_label, grads])
-          print(grads_val)
+          _, logit_val, loss_val, label_val = sess.run([train_op, logit, loss, train_label])
           if np.argmax(logit_val, axis=1) == label_val:
             correct += 1
           total += 1
