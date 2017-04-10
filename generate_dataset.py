@@ -234,7 +234,7 @@ if __name__ == '__main__':
                     if diff < treshold:
                         continue
                 prev_img = img
-                if write_sequenced_and_single_example(positive_image, 1, SEQUENCE_HALF_LENGTH, SEQUENCE_HALF_LENGTH, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
+                if write_sequenced_and_single_example(positive_image, 1, SEQUENCE_HALF_LENGTH * 2, 0, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
                     positive_examples += 1
         log_file.write('Positive examples {}\n'.format(positive_examples))
 
@@ -248,7 +248,7 @@ if __name__ == '__main__':
             if any([abs(image - positive_images_range[0]) < min_frame_diff_to_positive or abs(image - positive_images_range[1]) < min_frame_diff_to_positive 
                 for positive_images_range in positive_images_ranges]):
                     continue
-            if write_sequenced_and_single_example(image, 0, SEQUENCE_HALF_LENGTH, SEQUENCE_HALF_LENGTH, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
+            if write_sequenced_and_single_example(image, 0, SEQUENCE_HALF_LENGTH * 2, 0, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
                 selected_middle_images.add(image)
         log_file.write('Number of examples {}\n'.format(positive_examples * 2))
 

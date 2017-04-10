@@ -125,8 +125,8 @@ def train(model, vgg_init_dir, dataset_root, model_path):
     with tf.control_dependencies([apply_gradient_op]):
       train_op = tf.no_op(name='train')
 
-    sess.run(tf.global_variables_initializer())
-    sess.run(tf.local_variables_initializer())
+    sess.run(tf.initialize_all_variables())
+    sess.run(tf.initialize_local_variables())
     sess.run(init_op, feed_dict=init_feed)
 
     coord = tf.train.Coordinator()
@@ -164,6 +164,7 @@ def train(model, vgg_init_dir, dataset_root, model_path):
             metrics = evaluate('Validate', sess, logit_eval, loss_eval, valid_tfrecords, input_placeholder, label_placeholder)
             if metrics['accuracy_score'] > best_valid_accuracy:
               best_valid_accuracy = metrics['accuracy_score']
+              print('New best validation accuracy', best_valid_accuracy)
               saver.save(sess, model_path)
     except tf.errors.OutOfRangeError:
       print('Done training -- epoch limit reached')
