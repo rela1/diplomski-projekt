@@ -302,7 +302,7 @@ def process_video(video_name, intersection_lines, image_width, image_height, max
 
         if found_intersections:
             log_file.write('Positive images ranges {}\n'.format(positive_images_ranges))
-            frames_dir, number_of_frames, zero_pad_number = extract_video_frames(video_full_path, video_duration_seconds, frames_per_second, image_width, image_height)
+            frames_dir, number_of_frames, zero_pad_number = extract_video_frames(video_name, video_full_path, video_duration_seconds, frames_per_second, image_width, image_height)
             frames_resolution = image_width * image_height
 
             sequential_tf_records_writer, single_tf_records_writer = create_tf_records_writers(video_name)
