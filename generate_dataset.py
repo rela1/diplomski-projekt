@@ -217,7 +217,6 @@ def extract_video_frames(video_name, video_full_path, video_duration_seconds, fr
 
     if not os.path.exists(frames_dir):
         os.mkdir(frames_dir)
-    else:
         frame_extract_info = subprocess.getoutput('ffmpeg -i "{}" -s {}x{} {}/frames/%0{}d.png'.format(video_full_path, image_width, image_height, video_name, zero_pad_number))
 
     number_of_frames = len(os.listdir(frames_dir))
@@ -310,7 +309,7 @@ def process_video(video_name, intersection_lines, image_width, image_height, max
             number_of_positive_examples = extract_positive_examples(video_name, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames)
             extract_negative_examples(video_name, number_of_positive_examples, speeds, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames, frames_per_second)
 
-            log_file.write('Number of positive examples: {}, number of negative examples: {}'.format(number_of_positive_examples, number_of_positive_examples))
+            log_file.write('Number of positive examples: {}, number of negative examples: {}\n'.format(number_of_positive_examples, number_of_positive_examples))
 
     clear_redundant_data(found_intersections, frames_dir, log_file_path, video_full_path, video_name)
 
