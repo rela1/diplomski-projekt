@@ -342,7 +342,7 @@ def build_sequential(inputs_placeholder, labels, fully_connected=[], weight_deca
 
     print(net.get_shape())
 
-    net = tf.reshape(batch_size, -1)#net = tf.contrib.layers.flatten(net, scope='flatten')
+    net = tf.reshape(net, [batch_size, -1])#net = tf.contrib.layers.flatten(net, scope='flatten')
 
     with tf.contrib.framework.arg_scope([layers.fully_connected],
         activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
