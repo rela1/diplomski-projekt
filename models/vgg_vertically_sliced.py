@@ -240,7 +240,7 @@ def build_convolutional_sequential_feature_extractor(input_placeholder, weight_d
             net = layers.convolution2d(net, 512, scope='conv5_3')
 
             if stacked is None:
-                stacked = net
+                stacked = tf.expand_dims(net, axis=1)
             else:
                 stacked = tf.stack([stacked, net], axis=1)
             print(stacked.get_shape())
