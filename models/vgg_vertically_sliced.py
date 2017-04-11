@@ -239,13 +239,10 @@ def build_convolutional_sequential_feature_extractor(input_placeholder, weight_d
             net = layers.convolution2d(net, 512, scope='conv5_2')
             net = layers.convolution2d(net, 512, scope='conv5_3')
 
-            print(net.get_shape())
-
             if concated is None:
                 concated = tf.expand_dims(net, axis=1)
             else:
                 concated = tf.concat([concated, tf.expand_dims(net, axis=1)], axis=1)
-            print(concated.get_shape())
 
         if is_training:
             init_op, init_feed = create_init_op(vgg_layers)
@@ -320,7 +317,7 @@ def build(inputs, labels, num_classes, fully_connected=[], weight_decay=0.0, vgg
   return logits, total_loss
 
 
-def build_sequential(input_placeholder, label, fully_connected=[], weight_decay=0.0, vgg_init_dir=None, is_training=True):
+def build_sequential(inputs_placeholder, labels, fully_connected=[], weight_decay=0.0, vgg_init_dir=None, is_training=True):
     bn_params = {
         'decay': 0.999,
         'center': True,
@@ -331,15 +328,19 @@ def build_sequential(input_placeholder, label, fully_connected=[], weight_decay=
     }
 
     if is_training:
-        net, init_op, init_feed = build_convolutional_sequential_feature_extractor(input_placeholder, weight_decay, vgg_init_dir, is_training)
+        net, init_op, init_feed = build_convolutional_sequential_feature_extractor(inputs_placeholder, weight_decay, vgg_init_dir, is_training)
     else:
-        net = build_convolutional_sequential_feature_extractor(input_placeholder, weight_decay, vgg_init_dir, is_training)
+        net = build_convolutional_sequential_feature_extractor(inputs_placeholder, weight_decay, vgg_init_dir, is_training)
 
-    inputs_shape = input_placeholder.get_shape()
+    inputs_shape = inputs_placeholder.get_shape()
 
-    net = tf.reshape(net, [1, int(inputs_shape[0]), -1, 1])
+    net = tf.reshape(net, [inputs_shape[0], int(inputs_shape[1]), -1, 1])
+
+    print(net.get_shape())
 
     net = layers.max_pool2d(net, kernel_size=2, stride=2, scope='pool5')
+
+    print(net.get_shape())
 
     net = tf.contrib.layers.flatten(net, scope='flatten')
 
@@ -352,11 +353,11 @@ def build_sequential(input_placeholder, label, fully_connected=[], weight_decay=
             net = layers.fully_connected(net, fully_connected_num, scope='fc{}'.format(layer_num))
             layer_num += 1
 
-    logit = layers.fully_connected(net, 1, activation_fn=None, scope='logits')
+    logits = layers.fully_connected(net, 1, activation_fn=None, scope='logits')
 
-    total_loss = loss(logit, label, is_training)
+    total_loss = loss(logits, labels, is_training)
 
     if is_training:
-        return logit, total_loss, init_op, init_feed
+        return logits, total_loss, init_op, init_feed
     else:
-        return logit, total_loss
+        return logits, total_loss
