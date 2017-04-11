@@ -11,11 +11,11 @@ from evaluate_helper import evaluate_default_metric_functions, print_metrics
 np.set_printoptions(linewidth=250)
 
 WEIGHT_DECAY = 1e-3
-LEARNING_RATE = 1e-4
+LEARNING_RATE = 5e-4
 FULLY_CONNECTED = [400, 50]
 EPOCHS = 5
 INFO_STEP = 20
-BATCH_SIZE = 2
+BATCH_SIZE = 5
 INPUT_SHAPE = [25, 40, 100, 3]
 SHAPES = [INPUT_SHAPE, []]
 
@@ -145,7 +145,6 @@ def train(model, vgg_init_dir, dataset_root, model_path):
       while not coord.should_stop():
 
           _, logits_val, loss_val, labels_val = sess.run([train_op, logit, loss, train_labels])
-          print(logits_val)
           correct += np.sum(np.argmax(logits_val, axis=1) == labels_val)
           total += BATCH_SIZE
           assert not np.isnan(loss_val), 'Model diverged with loss = NaN'
