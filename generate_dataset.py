@@ -261,7 +261,7 @@ def extract_positive_examples(video_name, positive_images_ranges, frames_resolut
     return positive_examples
 
 
-def extract_negative_examples(number_of_positive_examples, speeds, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames, frames_per_second):
+def extract_negative_examples(video_name, number_of_positive_examples, speeds, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames, frames_per_second):
     treshold = SAME_TRESHOLD * frames_resolution
     average_speed = np.mean(speeds)
     min_frame_diff_to_positive = (MIN_DISTANCE_TO_POSITIVE / average_speed) * frames_per_second + 2 * SEQUENCE_HALF_LENGTH
@@ -308,7 +308,7 @@ def process_video(video_name, intersection_lines, image_width, image_height, max
 
             sequential_tf_records_writer, single_tf_records_writer = create_tf_records_writers(video_name)
             number_of_positive_examples = extract_positive_examples(video_name, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames)
-            extract_negative_examples(number_of_positive_examples, speeds, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames, frames_per_second)
+            extract_negative_examples(video_name, number_of_positive_examples, speeds, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames, frames_per_second)
 
             log_file.write('Number of positive examples: {}, number of negative examples: {}'.format(number_of_positive_examples, number_of_positive_examples))
 
