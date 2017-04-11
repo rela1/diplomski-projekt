@@ -30,7 +30,7 @@ IMAGE_HEIGHT = 40
 MAX_DISTANCE_TO_INTERSECTION = 15 #meters
 
 
-def write_sequenced_and_single_example(single_image_frame, label, images_before_single, images_after_single, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
+def write_sequenced_and_single_example(single_image_frame, video_name, label, images_before_single, images_after_single, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
     images_sequence = []
     single_img = imread(os.path.join(video_name, 'frames', str(single_image_frame).zfill(zero_pad_number) + '.png'))
 
@@ -255,7 +255,7 @@ def extract_positive_examples(video_name, positive_images_ranges, frames_resolut
                 if diff < treshold:
                     continue
             prev_img = img
-            if write_sequenced_and_single_example(positive_image, 1, SEQUENCE_HALF_LENGTH * 2, 0, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
+            if write_sequenced_and_single_example(positive_image, video_name, 1, SEQUENCE_HALF_LENGTH * 2, 0, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
                 positive_examples += 1   
     return positive_examples
 
@@ -272,7 +272,7 @@ def extract_negative_examples(number_of_positive_examples, speeds, positive_imag
         if any([abs(image - positive_images_range[0]) < min_frame_diff_to_positive or abs(image - positive_images_range[1]) < min_frame_diff_to_positive 
             for positive_images_range in positive_images_ranges]):
                 continue
-        if write_sequenced_and_single_example(image, 0, SEQUENCE_HALF_LENGTH * 2, 0, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
+        if write_sequenced_and_single_example(image, video_name, 0, SEQUENCE_HALF_LENGTH * 2, 0, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
             selected_single_images.add(image)
 
 
