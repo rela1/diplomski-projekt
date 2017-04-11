@@ -208,8 +208,8 @@ def build_convolutional_sequential_feature_extractor(input_placeholder, weight_d
         vgg_layers, vgg_layer_names = read_vgg_init(vgg_init_dir)
 
     inputs_shape = input_placeholder.get_shape()
-    horizontal_slice_size = int(round(int(inputs_shape[2]) / 3))
-    vertical_slice_size = int(round(int(inputs_shape[1]) / 3))
+    horizontal_slice_size = int(round(int(inputs_shape[3]) / 3))
+    vertical_slice_size = int(round(int(inputs_shape[2]) / 3))
     input_placeholder = tf.slice(input_placeholder, begin=[0, vertical_slice_size, 0, 0], size=[-1, vertical_slice_size * 2, horizontal_slice_size * 2, -1])
 
     with tf.contrib.framework.arg_scope([layers.convolution2d],
@@ -217,29 +217,36 @@ def build_convolutional_sequential_feature_extractor(input_placeholder, weight_d
       normalizer_fn=None, weights_initializer=None,
       weights_regularizer=layers.l2_regularizer(weight_decay)):
 
-        net = layers.convolution2d(input_placeholder, 64, scope='conv1_1')
-        net = layers.convolution2d(net, 64, scope='conv1_2')
-        net = layers.max_pool2d(net, 2, 2, scope='pool1')
-        net = layers.convolution2d(net, 128, scope='conv2_1')
-        net = layers.convolution2d(net, 128, scope='conv2_2')
-        net = layers.max_pool2d(net, 2, 2, scope='pool2')
-        net = layers.convolution2d(net, 256, scope='conv3_1')
-        net = layers.convolution2d(net, 256, scope='conv3_2')
-        net = layers.convolution2d(net, 256, scope='conv3_3')
-        net = layers.max_pool2d(net, 2, 2, scope='pool3')
-        net = layers.convolution2d(net, 512, scope='conv4_1')
-        net = layers.convolution2d(net, 512, scope='conv4_2')
-        net = layers.convolution2d(net, 512, scope='conv4_3')
-        net = layers.max_pool2d(net, 2, 2, scope='pool4')
-        net = layers.convolution2d(net, 512, scope='conv5_1')
-        net = layers.convolution2d(net, 512, scope='conv5_2')
-        net = layers.convolution2d(net, 512, scope='conv5_3')
+        stacked = []
+
+        for sequence_image in range(len(inputs_shape[1])):
+
+            net = layers.convolution2d(input_placeholder[sequence_image], 64, scope='conv1_1')
+            net = layers.convolution2d(net, 64, scope='conv1_2')
+            net = layers.max_pool2d(net, 2, 2, scope='pool1')
+            net = layers.convolution2d(net, 128, scope='conv2_1')
+            net = layers.convolution2d(net, 128, scope='conv2_2')
+            net = layers.max_pool2d(net, 2, 2, scope='pool2')
+            net = layers.convolution2d(net, 256, scope='conv3_1')
+            net = layers.convolution2d(net, 256, scope='conv3_2')
+            net = layers.convolution2d(net, 256, scope='conv3_3')
+            net = layers.max_pool2d(net, 2, 2, scope='pool3')
+            net = layers.convolution2d(net, 512, scope='conv4_1')
+            net = layers.convolution2d(net, 512, scope='conv4_2')
+            net = layers.convolution2d(net, 512, scope='conv4_3')
+            net = layers.max_pool2d(net, 2, 2, scope='pool4')
+            net = layers.convolution2d(net, 512, scope='conv5_1')
+            net = layers.convolution2d(net, 512, scope='conv5_2')
+            net = layers.convolution2d(net, 512, scope='conv5_3')
+
+            stacked = tf.stack([stacked, net], axis=1)
+            print(stacked.get_shape())
 
         if is_training:
             init_op, init_feed = create_init_op(vgg_layers)
-            return net, init_op, init_feed
+            return stacked, init_op, init_feed
 
-        return net
+        return stacked
 
 
 def build_scaled(inputs, labels, num_classes, scales=[1,2,4], width_tiles=7, height_tiles=2, fully_connected=[], weight_decay=0.0, vgg_init_dir=None, is_training=True):
