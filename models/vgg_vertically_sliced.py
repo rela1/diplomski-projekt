@@ -242,7 +242,7 @@ def build_convolutional_sequential_feature_extractor(input_placeholder, weight_d
             if stacked is None:
                 stacked = tf.expand_dims(net, axis=1)
             else:
-                stacked = tf.stack([stacked, net], axis=1)
+                stacked = tf.stack([stacked, tf.expand_dims(net, axis=1)], axis=1)
             print(stacked.get_shape())
 
         if is_training:
