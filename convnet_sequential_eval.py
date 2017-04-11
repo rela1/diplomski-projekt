@@ -120,4 +120,4 @@ def evaluate(model, dataset_root, model_path):
 if __name__ == '__main__':
   dataset_root = sys.argv[1]
   model_path = sys.argv[2]
-  train(vgg_vertically_sliced, dataset_root, model_path)
+  evaluate(vgg_vertically_sliced, dataset_root, model_path)
