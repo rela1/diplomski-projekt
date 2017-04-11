@@ -154,13 +154,13 @@ def train(model, vgg_init_dir, dataset_root, model_path):
 
           if not step % INFO_STEP:
             duration = time.time() - start_time
-            print('Average loss: {}, average accuracy: {}, examples/sec: {}, sec/step: {}'.format(np.mean(losses), correct / total, INFO_STEP / duration, float(duration)))
+            print('Average loss: {}, average accuracy: {}, examples/sec: {}, sec/step: {}'.format(np.mean(losses), correct / total, INFO_STEP * BATCH_SIZE / duration, float(duration)))
             start_time = time.time()
             losses.clear()
             correct = 0
             total = 0
 
-          if step == train_examples:
+          if (step * BATCH_SIZE) >= train_examples:
             step = 0
             metrics = evaluate('Validate', sess, logit_eval, loss_eval, valid_tfrecords, input_placeholder, label_placeholder)
             if metrics['accuracy_score'] > best_valid_accuracy:
