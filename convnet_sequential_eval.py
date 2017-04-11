@@ -95,8 +95,8 @@ def evaluate(model, dataset_root, model_path):
     valid_tfrecords = [os.path.join(valid_dir, file) for file in os.listdir(valid_dir)]
     test_tfrecords = [os.path.join(test_dir, file) for file in os.listdir(test_dir)]
 
-    input_placeholder = tf.placeholder(tf.float32, train_images, shape=[None] + INPUT_SHAPE)
-    label_placeholder = tf.placeholder(tf.int64, train_labels, shape=(None, ))
+    input_placeholder = tf.placeholder(tf.float32, shape=[None] + INPUT_SHAPE)
+    label_placeholder = tf.placeholder(tf.int64, shape=(None, ))
 
     sess = tf.Session()
     global_step = tf.get_variable('global_step', [], dtype=tf.int64,
