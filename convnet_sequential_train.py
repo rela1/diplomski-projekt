@@ -11,7 +11,7 @@ from evaluate_helper import evaluate_default_metric_functions, print_metrics
 np.set_printoptions(linewidth=250)
 
 WEIGHT_DECAY = 1e-3
-LEARNING_RATE = 5e-4
+LEARNING_RATE = 1e-3
 FULLY_CONNECTED = [400, 50]
 EPOCHS = 10
 INFO_STEP = 20
@@ -119,7 +119,8 @@ def train(model, vgg_init_dir, dataset_root, model_path):
     with tf.variable_scope('model', reuse=True):
       logit_eval, loss_eval = model.build_sequential(input_placeholder, label_placeholder, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
 
-    opt = tf.train.AdamOptimizer(LEARNING_RATE)
+    exponential_learning_rate = tf.train.exponential_decay(LEARNING_RATE, global_step, 2000, 0.5, staircase=True)
+    opt = tf.train.AdamOptimizer(exponential_learning_rate)
     grads = opt.compute_gradients(loss)
     apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
     with tf.control_dependencies([apply_gradient_op]):
@@ -159,11 +160,12 @@ def train(model, vgg_init_dir, dataset_root, model_path):
             correct = 0
             total = 0
 
-          if not step % train_examples:
+          if step == train_examples:
+            step = 0
             metrics = evaluate('Validate', sess, logit_eval, loss_eval, valid_tfrecords, input_placeholder, label_placeholder)
             if metrics['accuracy_score'] > best_valid_accuracy:
               best_valid_accuracy = metrics['accuracy_score']
-              print('New best validation accuracy', best_valid_accuracy)
+              print('\tNew best validation accuracy', best_valid_accuracy)
               saver.save(sess, model_path)
     except tf.errors.OutOfRangeError:
       print('Done training -- epoch limit reached')
