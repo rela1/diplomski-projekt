@@ -321,8 +321,11 @@ def get_not_processed_video_names(video_urls_path, downloaded_video_names_path):
     with open(video_urls_path) as f:
         video_urls = f.read().splitlines()
     video_names = [re.search(MP4_VIDEO_REGEX, video_url).group(1) for video_url in video_urls]
-    with open(downloaded_video_names_path, 'r+') as f:
-        downloaded_video_names = set(f.read().splitlines())
+    try:
+        with open(downloaded_video_names_path, 'r') as f:
+            downloaded_video_names = set(f.read().splitlines())
+    except:
+        downloaded_video_names = set()
     video_names = [video_name for video_name in video_names if not video_name in downloaded_video_names]
     return video_names, downloaded_video_names
     
