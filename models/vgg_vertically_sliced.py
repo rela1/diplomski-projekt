@@ -355,8 +355,6 @@ def build_sequential(inputs_placeholder, labels, fully_connected=[], weight_deca
 
     logits = layers.fully_connected(net, 2, activation_fn=None, scope='logits')
 
-    print(logits.get_shape(), labels.get_shape())
-
     total_loss = loss(logits, labels, is_training)
 
     if is_training:

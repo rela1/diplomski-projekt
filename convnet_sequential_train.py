@@ -13,7 +13,7 @@ np.set_printoptions(linewidth=250)
 WEIGHT_DECAY = 1e-3
 LEARNING_RATE = 5e-4
 FULLY_CONNECTED = [400, 50]
-EPOCHS = 5
+EPOCHS = 10
 INFO_STEP = 20
 BATCH_SIZE = 5
 INPUT_SHAPE = [25, 40, 100, 3]
@@ -128,8 +128,6 @@ def train(model, vgg_init_dir, dataset_root, model_path):
     sess.run(tf.initialize_all_variables())
     sess.run(tf.initialize_local_variables())
     sess.run(init_op, feed_dict=init_feed)
-
-    metrics = evaluate('Validate', sess, logit_eval, loss_eval, valid_tfrecords, input_placeholder, label_placeholder)
 
     coord = tf.train.Coordinator()
     threads = tf.train.start_queue_runners(sess=sess, coord=coord)
