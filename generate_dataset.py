@@ -347,9 +347,8 @@ if __name__ == '__main__':
 
     not_processed_video_names, processed_video_names = get_not_processed_video_names(video_urls_path, downloaded_video_names_path)
 
-    processed_count = 0
-    for not_processed_video_name in not_processed_video_names:
-        process_video(not_processed_video_name, intersection_lines, IMAGE_WIDTH, IMAGE_HEIGHT, MAX_DISTANCE_TO_INTERSECTION)
+    for i in range(min(len(not_processed_video_name), video_count)):
+        process_video(not_processed_video_names[i], intersection_lines, IMAGE_WIDTH, IMAGE_HEIGHT, MAX_DISTANCE_TO_INTERSECTION)
         processed_video_names.add(not_processed_video_name)
 
     write_processed_video_names(processed_video_names, downloaded_video_names_path)
