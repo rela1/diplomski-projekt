@@ -219,7 +219,7 @@ def build_convolutional_sequential_feature_extractor(input_placeholder, weight_d
 
         stacked = []
 
-        for sequence_image in range(len(int(inputs_shape[1]))):
+        for sequence_image in range(int(inputs_shape[1])):
 
             net = layers.convolution2d(input_placeholder[sequence_image], 64, scope='conv1_1')
             net = layers.convolution2d(net, 64, scope='conv1_2')

@@ -15,6 +15,7 @@ LEARNING_RATE = 0.25
 FULLY_CONNECTED = [400, 50]
 EPOCHS = 5
 INFO_STEP = 20
+BATCH_SIZE = 2
 INPUT_SHAPE = [25, 40, 100, 3]
 SHAPES = [INPUT_SHAPE, []]
 
@@ -103,10 +104,10 @@ def train(model, vgg_init_dir, dataset_root, model_path):
     min_after_dequeue = 10000
     capacity = min_after_dequeue + 3 * 1
     train_images, train_label = tf.train.shuffle_batch(
-        [train_images, train_label], batch_size=1, capacity=capacity,
+        [train_images, train_label], batch_size=BATCH_SIZE, capacity=capacity,
         min_after_dequeue=min_after_dequeue, shapes=SHAPES)
 
-    input_placeholder = tf.placeholder_with_default(train_images[0], shape=INPUT_SHAPE)
+    input_placeholder = tf.placeholder_with_default(train_images, shape=[BATCH_SIZE] + INPUT_SHAPE)
     label_placeholder = tf.placeholder_with_default(train_label, shape=(1, ))
 
     sess = tf.Session()
