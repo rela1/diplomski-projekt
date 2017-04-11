@@ -80,7 +80,7 @@ def evaluate(name, sess, logits, loss, tf_records_files, input_placeholder, labe
   return metrics
 
 
-def evaluate(model, dataset_root, model_path):
+def evaluate_model(model, dataset_root, model_path):
   train_dir = os.path.join(dataset_root, 'train')
   valid_dir = os.path.join(dataset_root, 'validate')
   test_dir = os.path.join(dataset_root, 'test')
@@ -99,8 +99,6 @@ def evaluate(model, dataset_root, model_path):
     label_placeholder = tf.placeholder(tf.int64, shape=(None, ))
 
     sess = tf.Session()
-    global_step = tf.get_variable('global_step', [], dtype=tf.int64,
-        initializer=tf.constant_initializer(0), trainable=False)
 
     with tf.variable_scope('model'):
       logit_eval, loss_eval = model.build_sequential(input_placeholder, label_placeholder, fully_connected=FULLY_CONNECTED, is_training=False)
@@ -120,4 +118,4 @@ def evaluate(model, dataset_root, model_path):
 if __name__ == '__main__':
   dataset_root = sys.argv[1]
   model_path = sys.argv[2]
-  evaluate(vgg_vertically_sliced, dataset_root, model_path)
+  evaluate_model(vgg_vertically_sliced, dataset_root, model_path)
