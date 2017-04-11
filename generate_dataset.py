@@ -219,7 +219,7 @@ def extract_video_frames(video_name, video_full_path, video_duration_seconds, fr
         os.mkdir(frames_dir)
     else:
         frame_extract_info = subprocess.getoutput('ffmpeg -i "{}" -s {}x{} {}/frames/%0{}d.png'.format(video_full_path, image_width, image_height, video_name, zero_pad_number))
-        
+
     number_of_frames = len(os.listdir(frames_dir))
     return frames_dir, number_of_frames, zero_pad_number
 
@@ -261,7 +261,7 @@ def extract_positive_examples(video_name, positive_images_ranges, frames_resolut
     return positive_examples
 
 
-def extract_negative_examples(number_of_positive_examples, speeds, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames, frames_per_seconds):
+def extract_negative_examples(number_of_positive_examples, speeds, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames, frames_per_second):
     treshold = SAME_TRESHOLD * frames_resolution
     average_speed = np.mean(speeds)
     min_frame_diff_to_positive = (MIN_DISTANCE_TO_POSITIVE / average_speed) * frames_per_second + 2 * SEQUENCE_HALF_LENGTH
