@@ -60,7 +60,7 @@ def number_of_examples(directory):
   return examples
 
 
-def evaluate(name, sess, logit, loss, tf_records_files, input_placeholder, label_placeholder):
+def evaluate(name, sess, logits, loss, tf_records_files, input_placeholder, label_placeholder):
   print("\nRunning evaluation: ", name)
   y_true = []
   y_pred = []
@@ -69,7 +69,7 @@ def evaluate(name, sess, logit, loss, tf_records_files, input_placeholder, label
     for record_string in tf.python_io.tf_record_iterator(tf_records_file, options=tf.python_io.TFRecordOptions(tf.python_io.TFRecordCompressionType.GZIP)):
         images, label = parse_example(record_string)
         images_val, label_val = sess.run([images, label])
-        logit_val, loss_val = sess.run([logit, loss], feed_dict={input_placeholder: images_val, label_placeholder: [label_val]})
+        logit_val, loss_val = sess.run([logits, loss], feed_dict={input_placeholder: images_val, label_placeholder: [label_val]})
         pred = np.argmax(logit_val, axis=1)
         y_pred.append(pred)
         y_true.append(label_val)
@@ -100,15 +100,15 @@ def train(model, vgg_init_dir, dataset_root, model_path):
     print('Train tfrecords: {}, valid tfrecords: {}, test tfrecords: {}'.format(train_tfrecords, valid_tfrecords, test_tfrecords))
     print('Train num examples: {}, valid num examples: {}, test num examples: {}'.format(train_examples, valid_examples, test_examples))
 
-    train_images, train_label = input_decoder(train_file_queue)
+    train_images, train_labels = input_decoder(train_file_queue)
     min_after_dequeue = 10000
     capacity = min_after_dequeue + 3 * 1
-    train_images, train_label = tf.train.shuffle_batch(
-        [train_images, train_label], batch_size=BATCH_SIZE, capacity=capacity,
+    train_images, train_labels = tf.train.shuffle_batch(
+        [train_images, train_labels], batch_size=BATCH_SIZE, capacity=capacity,
         min_after_dequeue=min_after_dequeue, shapes=SHAPES)
 
     input_placeholder = tf.placeholder_with_default(train_images, shape=[BATCH_SIZE] + INPUT_SHAPE)
-    label_placeholder = tf.placeholder_with_default(train_label, shape=(BATCH_SIZE, ))
+    label_placeholder = tf.placeholder_with_default(train_labels, shape=(BATCH_SIZE, ))
 
     sess = tf.Session()
     global_step = tf.get_variable('global_step', [], dtype=tf.int64,
@@ -144,11 +144,10 @@ def train(model, vgg_init_dir, dataset_root, model_path):
     try:
       while not coord.should_stop():
 
-          _, logit_val, loss_val, label_val = sess.run([train_op, logit, loss, train_label])
-          print(logit_val)
-          if np.argmax(logit_val, axis=1) == label_val:
-            correct += 1
-          total += 1
+          _, logits_val, loss_val, labels_val = sess.run([train_op, logit, loss, train_labels])
+          print(logits_val)
+          correct += np.sum(np.argmax(logits_val, axis=1) == label_val)
+          total += BATCH_SIZE
           assert not np.isnan(loss_val), 'Model diverged with loss = NaN'
           losses.append(loss_val)
           step += 1

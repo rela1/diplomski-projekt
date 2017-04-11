@@ -336,11 +336,7 @@ def build_sequential(inputs_placeholder, labels, fully_connected=[], weight_deca
 
     net = tf.reshape(net, [int(inputs_shape[0]), int(inputs_shape[1]), -1, 1])
 
-    print(net.get_shape())
-
     net = layers.max_pool2d(net, kernel_size=2, stride=2, scope='pool5')
-
-    print(net.get_shape())
 
     net = tf.contrib.layers.flatten(net, scope='flatten')
 
@@ -353,9 +349,7 @@ def build_sequential(inputs_placeholder, labels, fully_connected=[], weight_deca
             net = layers.fully_connected(net, fully_connected_num, scope='fc{}'.format(layer_num))
             layer_num += 1
 
-    logits = layers.fully_connected(net, 1, activation_fn=None, scope='logits')
-
-    print(logits.get_shape(), labels.get_shape())
+    logits = layers.fully_connected(net, 2, activation_fn=None, scope='logits')
 
     total_loss = loss(logits, labels, is_training)
 
