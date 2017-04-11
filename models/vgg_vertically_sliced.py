@@ -336,7 +336,7 @@ def build_sequential(inputs_placeholder, labels, fully_connected=[], weight_deca
 
     batch_size = tf.shape(inputs_placeholder)[0]
 
-    net = tf.reshape(net, [batch_size, int(net_shape[2]), int(net_shape[1]) * int(net_shape[3]), int(net_shape[4])])
+    net = tf.reshape(net, [batch_size, int(net_shape[1]), int(net_shape[2]) * int(net_shape[3]), int(net_shape[4])])
 
     net = layers.max_pool2d(net, kernel_size=2, stride=2, scope='pool5')
 
