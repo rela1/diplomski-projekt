@@ -105,7 +105,7 @@ def write_sequenced_and_single_example(single_image_frame, label, images_before_
 
 
 def get_frame_closest_to(point, frames_per_second, points_index_tree, points, time_offset, times, speeds, max_distance_to_intersection, log_file):
-    dist, ind = tree.query([point], k=2)
+    dist, ind = points_index_tree.query([point], k=2)
     closer_point = points[ind[0][0]]
     further_point = points[ind[0][1]]
     closer_distance = vincenty(point, closer_point).meters
