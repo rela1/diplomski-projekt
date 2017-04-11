@@ -300,6 +300,7 @@ def process_video(video_name, intersection_lines, image_width, image_height, max
         positive_images_ranges = get_positive_images_ranges(intersection_lines, frames_per_second, tree, points, time_offset, times, speeds, max_distance_to_intersection, log_file)
         found_intersections = len(positive_images_ranges) > 0
 
+        frames_dir = None
         if found_intersections:
             log_file.write('Positive images ranges {}\n'.format(positive_images_ranges))
             frames_dir, number_of_frames, zero_pad_number = extract_video_frames(video_name, video_full_path, video_duration_seconds, frames_per_second, image_width, image_height)
