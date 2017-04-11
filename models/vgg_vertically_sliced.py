@@ -244,14 +244,14 @@ def build_convolutional_sequential_feature_extractor(input_placeholder, weight_d
             if concated is None:
                 concated = tf.expand_dims(net, axis=1)
             else:
-                concated = tf.concat([stacked, tf.expand_dims(net, axis=1)], axis=1)
-            print(stacked.get_shape())
+                concated = tf.concat([concated, tf.expand_dims(net, axis=1)], axis=1)
+            print(concated.get_shape())
 
         if is_training:
             init_op, init_feed = create_init_op(vgg_layers)
-            return stacked, init_op, init_feed
+            return concated, init_op, init_feed
 
-        return stacked
+        return concated
 
 
 def build_scaled(inputs, labels, num_classes, scales=[1,2,4], width_tiles=7, height_tiles=2, fully_connected=[], weight_decay=0.0, vgg_init_dir=None, is_training=True):
