@@ -146,7 +146,7 @@ def train(model, vgg_init_dir, dataset_root, model_path):
 
           _, logits_val, loss_val, labels_val = sess.run([train_op, logit, loss, train_labels])
           print(logits_val)
-          correct += np.sum(np.argmax(logits_val, axis=1) == label_val)
+          correct += np.sum(np.argmax(logits_val, axis=1) == labels_val)
           total += BATCH_SIZE
           assert not np.isnan(loss_val), 'Model diverged with loss = NaN'
           losses.append(loss_val)
