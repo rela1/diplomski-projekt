@@ -338,7 +338,7 @@ def build_sequential(inputs_placeholder, labels, fully_connected=[], weight_deca
 
     net = layers.max_pool2d(net, kernel_size=2, stride=2, scope='pool5')
 
-    net = tf.contrib.layers.flatten(net, scope='flatten')
+    net = tf.reshape(net, [tf.shape(net)[0], -1])#net = tf.contrib.layers.flatten(net, scope='flatten')
 
     with tf.contrib.framework.arg_scope([layers.fully_connected],
         activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
