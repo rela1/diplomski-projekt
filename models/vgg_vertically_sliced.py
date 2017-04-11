@@ -217,7 +217,7 @@ def build_convolutional_sequential_feature_extractor(input_placeholder, weight_d
       normalizer_fn=None, weights_initializer=None,
       weights_regularizer=layers.l2_regularizer(weight_decay)):
 
-        stacked = []
+        stacked = None
 
         for sequence_image in range(int(inputs_shape[1])):
 
@@ -239,7 +239,10 @@ def build_convolutional_sequential_feature_extractor(input_placeholder, weight_d
             net = layers.convolution2d(net, 512, scope='conv5_2')
             net = layers.convolution2d(net, 512, scope='conv5_3')
 
-            stacked = tf.stack([stacked, net], axis=1)
+            if stacked is None:
+                stacked = net
+            else:
+                stacked = tf.stack([stacked, net], axis=1)
             print(stacked.get_shape())
 
         if is_training:
