@@ -140,8 +140,9 @@ def download_video(video_name):
 
     video_full_path = os.path.join(video_name, video_name + '.mp4')
 
-    with urllib.request.urlopen(MP4_VIDEO_FORMAT.format(video_name)) as response, open(video_full_path, 'wb') as out_file:
-        shutil.copyfileobj(response, out_file)
+    if not os.path.exists(video_full_path):
+        with urllib.request.urlopen(MP4_VIDEO_FORMAT.format(video_name)) as response, open(video_full_path, 'wb') as out_file:
+            shutil.copyfileobj(response, out_file)
 
     return video_full_path
 
@@ -211,14 +212,14 @@ def get_positive_images_ranges(intersection_lines, frames_per_second, tree, poin
 
 def extract_video_frames(video_name, video_full_path, video_duration_seconds, frames_per_second, image_width, image_height):
     approximate_number_of_frames = video_duration_seconds * frames_per_second
-
+    zero_pad_number = len(str(approximate_number_of_frames))
     frames_dir = os.path.join(video_name, 'frames')
 
     if not os.path.exists(frames_dir):
         os.mkdir(frames_dir)
-
-    zero_pad_number = len(str(approximate_number_of_frames))
-    frame_extract_info = subprocess.getoutput('ffmpeg -i "{}" -s {}x{} {}/frames/%0{}d.png'.format(video_full_path, image_width, image_height, video_name, zero_pad_number))
+    else:
+        frame_extract_info = subprocess.getoutput('ffmpeg -i "{}" -s {}x{} {}/frames/%0{}d.png'.format(video_full_path, image_width, image_height, video_name, zero_pad_number))
+        
     number_of_frames = len(os.listdir(frames_dir))
     return frames_dir, number_of_frames, zero_pad_number
 
