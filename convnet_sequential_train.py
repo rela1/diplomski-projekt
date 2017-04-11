@@ -67,13 +67,13 @@ def evaluate(name, sess, logits, loss, tf_records_files, input_placeholder, labe
   losses = []
   for tf_records_file in tf_records_files:
     for record_string in tf.python_io.tf_record_iterator(tf_records_file, options=tf.python_io.TFRecordOptions(tf.python_io.TFRecordCompressionType.GZIP)):
-        images, label = parse_example(record_string)
-        images_val, label_val = sess.run([images, label])
-        logit_val, loss_val = sess.run([logits, loss], feed_dict={input_placeholder: images_val, label_placeholder: [label_val]})
+        images, labels = parse_example(record_string)
+        images_val, labels_val = sess.run([images, labels])
+        logit_val, loss_val = sess.run([logits, loss], feed_dict={input_placeholder: [images_val], label_placeholder: [labels_val]})
         pred = np.argmax(logit_val, axis=1)
-        y_pred.append(pred)
-        y_true.append(label_val)
-        losses.append(loss_val)
+        y_pred.extend(pred)
+        y_true.extend(labels_val)
+        losses.extend(loss_val)
   metrics = evaluate_default_metric_functions(y_true, y_pred)
   print_metrics(metrics)
   print('\taverage loss={}'.format(np.mean(losses)))
@@ -107,8 +107,8 @@ def train(model, vgg_init_dir, dataset_root, model_path):
         [train_images, train_labels], batch_size=BATCH_SIZE, capacity=capacity,
         min_after_dequeue=min_after_dequeue, shapes=SHAPES)
 
-    input_placeholder = tf.placeholder_with_default(train_images, shape=[BATCH_SIZE] + INPUT_SHAPE)
-    label_placeholder = tf.placeholder_with_default(train_labels, shape=(BATCH_SIZE, ))
+    input_placeholder = tf.placeholder_with_default(train_images, shape=[None] + INPUT_SHAPE)
+    label_placeholder = tf.placeholder_with_default(train_labels, shape=(None, ))
 
     sess = tf.Session()
     global_step = tf.get_variable('global_step', [], dtype=tf.int64,
@@ -128,6 +128,8 @@ def train(model, vgg_init_dir, dataset_root, model_path):
     sess.run(tf.initialize_all_variables())
     sess.run(tf.initialize_local_variables())
     sess.run(init_op, feed_dict=init_feed)
+
+    metrics = evaluate('Validate', sess, logit_eval, loss_eval, valid_tfrecords, input_placeholder, label_placeholder)
 
     coord = tf.train.Coordinator()
     threads = tf.train.start_queue_runners(sess=sess, coord=coord)
