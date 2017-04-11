@@ -332,19 +332,17 @@ def build_sequential(inputs_placeholder, labels, fully_connected=[], weight_deca
     else:
         net = build_convolutional_sequential_feature_extractor(inputs_placeholder, weight_decay, vgg_init_dir, is_training)
 
-    inputs_shape = inputs_placeholder.get_shape()
-
-    print(inputs_shape, net.get_shape())
+    net_shape = net.get_shape()
 
     batch_size = tf.shape(inputs_placeholder)[0]
 
-    net = tf.reshape(net, [batch_size, int(inputs_shape[2]), int(inputs_shape[1]) * int(inputs_shape[3]), int(inputs_shape[4])])
+    net = tf.reshape(net, [batch_size, int(net_shape[2]), int(net_shape[1]) * int(net_shape[3]), int(net_shape[4])])
 
     net = layers.max_pool2d(net, kernel_size=2, stride=2, scope='pool5')
 
-    print(net.get_shape())
+    net_shape = net.get_shape()
 
-    net = tf.reshape(net, [batch_size, -1])#net = tf.contrib.layers.flatten(net, scope='flatten')
+    net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2]) * int(net_shape[3])])#net = tf.contrib.layers.flatten(net, scope='flatten')
 
     with tf.contrib.framework.arg_scope([layers.fully_connected],
         activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
