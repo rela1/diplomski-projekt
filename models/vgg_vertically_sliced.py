@@ -334,11 +334,15 @@ def build_sequential(inputs_placeholder, labels, fully_connected=[], weight_deca
 
     inputs_shape = inputs_placeholder.get_shape()
 
-    net = tf.reshape(net, [tf.shape(net)[0], int(inputs_shape[1]), -1, 1])
+    batch_size = tf.shape(inputs_placeholder)[0]
+
+    net = tf.reshape(net, [batch_size, int(inputs_shape[1]), -1, 1])
 
     net = layers.max_pool2d(net, kernel_size=2, stride=2, scope='pool5')
 
-    net = tf.reshape(net, [tf.shape(net)[0], -1])#net = tf.contrib.layers.flatten(net, scope='flatten')
+    print(net.get_shape())
+
+    net = tf.reshape(batch_size, -1)#net = tf.contrib.layers.flatten(net, scope='flatten')
 
     with tf.contrib.framework.arg_scope([layers.fully_connected],
         activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
