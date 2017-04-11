@@ -10,7 +10,7 @@ from evaluate_helper import evaluate_default_metric_functions, print_metrics
 
 np.set_printoptions(linewidth=250)
 
-WEIGHT_DECAY = 1e-1
+WEIGHT_DECAY = 0.25
 LEARNING_RATE = 5e-4
 FULLY_CONNECTED = [400, 50]
 EPOCHS = 5
