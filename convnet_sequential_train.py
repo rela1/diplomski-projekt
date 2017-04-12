@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import math
 
 import numpy as np
 import tensorflow as tf
@@ -60,13 +61,14 @@ def number_of_examples(directory):
   return examples
 
 
-def evaluate(name, sess, logits, loss, num_examples):
+def evaluate(name, sess, logits, loss, labels, num_examples):
   print("\nRunning evaluation: ", name)
   y_true = []
   y_pred = []
   losses = []
-  for i in range(num_examples):
-    logit_val, loss_val = sess.run([logits, loss])
+  num_batches = int(math.ceil(num_examples / BATCH_SIZE))
+  for i in range(num_batches):
+    logit_val, loss_val, labels_val = sess.run([logits, loss, labels])
     pred = np.argmax(logit_val, axis=1)
     y_pred.extend(pred)
     y_true.extend(labels_val)
@@ -101,15 +103,15 @@ def train(model, vgg_init_dir, dataset_root, model_path):
 
     train_images, train_labels = input_decoder(train_file_queue)
     train_images, train_labels = tf.train.batch(
-        [train_images, train_labels], batch_size=BATCH_SIZE, shapes=SHAPES)
+        [train_images, train_labels], batch_size=BATCH_SIZE, shapes=SHAPES, allow_smaller_final_batch=True)
 
     valid_images, valid_labels = input_decoder(valid_file_queue)
     valid_images, valid_labels = tf.train.batch(
-        [valid_images, valid_labels], batch_size=BATCH_SIZE, shapes=SHAPES)
+        [valid_images, valid_labels], batch_size=BATCH_SIZE, shapes=SHAPES, allow_smaller_final_batch=True)
 
     test_images, test_labels = input_decoder(test_file_queue)
     test_images, test_labels = tf.train.batch(
-      [test_images, test_labels], batch_size=BATCH_SIZE, shapes=SHAPES)
+      [test_images, test_labels], batch_size=BATCH_SIZE, shapes=SHAPES, allow_smaller_final_batch=True)
 
     input_placeholder = tf.placeholder_with_default(train_images, shape=[None] + INPUT_SHAPE)
     label_placeholder = tf.placeholder_with_default(train_labels, shape=(None, ))
@@ -173,7 +175,7 @@ def train(model, vgg_init_dir, dataset_root, model_path):
 
           if (step * BATCH_SIZE) >= train_examples:
             step = 0
-            metrics = evaluate('Validation', sess, logit_eval, loss_eval, valid_examples)
+            metrics = evaluate('Validation', sess, logit_eval, loss_eval, valid_labels, valid_examples)
             if metrics['accuracy_score'] > best_valid_accuracy:
               best_valid_accuracy = metrics['accuracy_score']
               print('\tNew best validation accuracy', best_valid_accuracy)
@@ -181,7 +183,7 @@ def train(model, vgg_init_dir, dataset_root, model_path):
     except tf.errors.OutOfRangeError:
       print('Done training -- epoch limit reached')
       saver.restore(sess, model_path)
-      evaluate('Test', sess, logit_test, loss_test, test_examples)
+      evaluate('Test', sess, logit_test, loss_test, test_labels, test_examples)
     finally:
       coord.request_stop()
 
