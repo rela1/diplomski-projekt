@@ -60,20 +60,17 @@ def number_of_examples(directory):
   return examples
 
 
-def evaluate(name, sess, logits, loss, tf_records_files, input_placeholder, label_placeholder):
+def evaluate(name, sess, logits, loss, num_examples):
   print("\nRunning evaluation: ", name)
   y_true = []
   y_pred = []
   losses = []
-  for tf_records_file in tf_records_files:
-    for record_string in tf.python_io.tf_record_iterator(tf_records_file, options=tf.python_io.TFRecordOptions(tf.python_io.TFRecordCompressionType.GZIP)):
-        images, labels = parse_example(record_string)
-        images_val, labels_val = sess.run([images, labels])
-        logit_val, loss_val = sess.run([logits, loss], feed_dict={input_placeholder: [images_val], label_placeholder: [labels_val]})
-        pred = np.argmax(logit_val, axis=1)
-        y_pred.append(pred)
-        y_true.append(labels_val)
-        losses.append(loss_val)
+  for i in range(num_examples):
+    logit_val, loss_val = sess.run([logits, loss])
+    pred = np.argmax(logit_val, axis=1)
+    y_pred.extend(pred)
+    y_true.extend(labels_val)
+    losses.extend(loss_val)
   metrics = evaluate_default_metric_functions(y_true, y_pred)
   print_metrics(metrics)
   print('\taverage loss={}'.format(np.mean(losses)))
@@ -96,19 +93,32 @@ def train(model, vgg_init_dir, dataset_root, model_path):
     test_tfrecords = [os.path.join(test_dir, file) for file in os.listdir(test_dir)]
 
     train_file_queue = tf.train.string_input_producer(train_tfrecords, num_epochs=EPOCHS)
+    valid_file_queue = tf.train.string_input_producer(valid_tfrecords)
+    test_file_queue = tf.train.string_input_producer(test_tfrecords)
 
     print('Train tfrecords: {}, valid tfrecords: {}, test tfrecords: {}'.format(train_tfrecords, valid_tfrecords, test_tfrecords))
     print('Train num examples: {}, valid num examples: {}, test num examples: {}'.format(train_examples, valid_examples, test_examples))
 
     train_images, train_labels = input_decoder(train_file_queue)
-    min_after_dequeue = 10000
-    capacity = min_after_dequeue + 3 * 1
     train_images, train_labels = tf.train.shuffle_batch(
-        [train_images, train_labels], batch_size=BATCH_SIZE, capacity=capacity,
-        min_after_dequeue=min_after_dequeue, shapes=SHAPES)
+        [train_images, train_labels], batch_size=BATCH_SIZE, shapes=SHAPES)
+
+    valid_images, valid_labels = input_decoder(valid_file_queue)
+    valid_images, valid_labels = tf.train.batch(
+        [valid_images, valid_labels], batch_size=BATCH_SIZE, shapes=SHAPES)
+
+    test_images, test_labels = input_decoder(test_file_queue)
+    test_images, test_labels = tf.train.batch(
+      [test_images, test_labels], batch_size=BATCH_SIZE, shapes=SHAPES)
 
     input_placeholder = tf.placeholder_with_default(train_images, shape=[None] + INPUT_SHAPE)
     label_placeholder = tf.placeholder_with_default(train_labels, shape=(None, ))
+
+    valid_input_placeholder = tf.placeholder_with_default(valid_images, shape=[None] + INPUT_SHAPE)
+    valid_label_placeholder = tf.placeholder_with_default(valid_labels, shape=(None, ))
+
+    test_input_placeholder = tf.placeholder_with_default(test_images, shape=[None] + INPUT_SHAPE)
+    test_label_placeholder = tf.placeholder_with_default(test_labels, shape=(None, ))
 
     sess = tf.Session()
     global_step = tf.get_variable('global_step', [], dtype=tf.int64,
@@ -117,7 +127,8 @@ def train(model, vgg_init_dir, dataset_root, model_path):
     with tf.variable_scope('model'):
       logit, loss, init_op, init_feed = model.build_sequential(input_placeholder, label_placeholder, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=True)
     with tf.variable_scope('model', reuse=True):
-      logit_eval, loss_eval = model.build_sequential(input_placeholder, label_placeholder, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
+      logit_eval, loss_eval = model.build_sequential(valid_input_placeholder, valid_label_placeholder, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
+      logit_test, loss_test = model.build_sequential(test_input_placeholder, test_label_placeholder, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
 
     exponential_learning_rate = tf.train.exponential_decay(LEARNING_RATE, global_step, 2000, 0.5, staircase=True)
     opt = tf.train.AdamOptimizer(exponential_learning_rate)
@@ -162,7 +173,7 @@ def train(model, vgg_init_dir, dataset_root, model_path):
 
           if (step * BATCH_SIZE) >= train_examples:
             step = 0
-            metrics = evaluate('Validate', sess, logit_eval, loss_eval, valid_tfrecords, input_placeholder, label_placeholder)
+            metrics = evaluate('Validation', sess, logit_eval, loss_eval, valid_examples)
             if metrics['accuracy_score'] > best_valid_accuracy:
               best_valid_accuracy = metrics['accuracy_score']
               print('\tNew best validation accuracy', best_valid_accuracy)
@@ -170,7 +181,7 @@ def train(model, vgg_init_dir, dataset_root, model_path):
     except tf.errors.OutOfRangeError:
       print('Done training -- epoch limit reached')
       saver.restore(sess, model_path)
-      evaluate('Test', sess, logit_eval, loss_eval, test_tfrecords, input_placeholder, label_placeholder)
+      evaluate('Test', sess, logit_test, loss_test, test_examples)
     finally:
       coord.request_stop()
 
