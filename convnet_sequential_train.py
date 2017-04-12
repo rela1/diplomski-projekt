@@ -75,7 +75,7 @@ def evaluate(name, sess, logits, loss, labels, num_examples):
     losses.append(loss_val)
   metrics = evaluate_default_metric_functions(y_true, y_pred)
   print_metrics(metrics)
-  print('\taverage loss={}'.format(np.mean(losses)))
+  print('\taverage loss={}\n'.format(np.mean(losses)))
   return metrics
 
 
