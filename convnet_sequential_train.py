@@ -100,7 +100,7 @@ def train(model, vgg_init_dir, dataset_root, model_path):
     print('Train num examples: {}, valid num examples: {}, test num examples: {}'.format(train_examples, valid_examples, test_examples))
 
     train_images, train_labels = input_decoder(train_file_queue)
-    train_images, train_labels = tf.train.shuffle_batch(
+    train_images, train_labels = tf.train.batch(
         [train_images, train_labels], batch_size=BATCH_SIZE, shapes=SHAPES)
 
     valid_images, valid_labels = input_decoder(valid_file_queue)
