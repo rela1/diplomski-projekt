@@ -69,11 +69,10 @@ def evaluate(name, sess, logits, loss, labels, num_examples):
   num_batches = int(math.ceil(num_examples / BATCH_SIZE))
   for i in range(num_batches):
     logit_val, loss_val, labels_val = sess.run([logits, loss, labels])
-    print(logit_val, loss_val, labels_val)
     pred = np.argmax(logit_val, axis=1)
     y_pred.extend(pred)
     y_true.extend(labels_val)
-    losses.extend(loss_val)
+    losses.append(loss_val)
   metrics = evaluate_default_metric_functions(y_true, y_pred)
   print_metrics(metrics)
   print('\taverage loss={}'.format(np.mean(losses)))
