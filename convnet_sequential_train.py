@@ -132,7 +132,7 @@ def train(model, vgg_init_dir, dataset_root, model_path):
       logit_eval, loss_eval = model.build_sequential(valid_input_placeholder, valid_label_placeholder, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
       logit_test, loss_test = model.build_sequential(test_input_placeholder, test_label_placeholder, fully_connected=FULLY_CONNECTED, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=False)
 
-    exponential_learning_rate = tf.train.exponential_decay(LEARNING_RATE, global_step, 2000, 0.5, staircase=True)
+    exponential_learning_rate = tf.train.exponential_decay(LEARNING_RATE, global_step, 5000, 0.5, staircase=True)
     opt = tf.train.AdamOptimizer(exponential_learning_rate)
     grads = opt.compute_gradients(loss)
     apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
