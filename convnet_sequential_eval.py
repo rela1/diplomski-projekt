@@ -126,7 +126,7 @@ def evaluate_trained_model(model, dataset_root, model_path):
         initializer=tf.constant_initializer(0), trainable=False)
 
     with tf.variable_scope('model'):
-      logit_train, loss_train, init_op = model.build_sequential(train_input_placeholder, train_label_placeholder, fully_connected=FULLY_CONNECTED, is_training=False)
+      logit_train, loss_train = model.build_sequential(train_input_placeholder, train_label_placeholder, fully_connected=FULLY_CONNECTED, is_training=False)
       logit_valid, loss_valid = model.build_sequential(valid_input_placeholder, valid_label_placeholder, fully_connected=FULLY_CONNECTED, is_training=False)
       logit_test, loss_test = model.build_sequential(test_input_placeholder, test_label_placeholder, fully_connected=FULLY_CONNECTED, is_training=False)
 
