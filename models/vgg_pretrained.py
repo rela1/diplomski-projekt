@@ -84,7 +84,7 @@ class SequentialImagePoolingModel:
     )
 
     net_shape = net.get_shape()
-    batch_size = tf.shape(inputs_placeholder)[0]
+    batch_size = tf.shape(inputs)[0]
 
     net = tf.reshape(net, [batch_size, int(net_shape[1]), int(net_shape[2]) * int(net_shape[3]), int(net_shape[4])])
     net = layers.max_pool2d(net, kernel_size=2, stride=2, scope='pool5')
@@ -181,7 +181,7 @@ class SingleImageModel:
     )
 
     net_shape = net.get_shape()
-    batch_size = tf.shape(inputs_placeholder)[0]
+    batch_size = tf.shape(inputs)[0]
     net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2]) * int(net_shape[3])])
 
     with tf.contrib.framework.arg_scope([layers.fully_connected],
@@ -226,49 +226,3 @@ def create_init_op(vgg_layers):
       print(var.name, ' --> random init')
   init_op, init_feed = tf.contrib.framework.assign_from_values(init_map)
   return init_op, init_feed
-
-
-def build_sequential(inputs_placeholder, labels, fully_connected=[], weight_decay=0.0, vgg_init_dir=None, is_training=True):
-    bn_params = {
-        'decay': 0.999,
-        'center': True,
-        'scale': True,
-        'epsilon': 0.001,
-        'updates_collections': None,
-        'is_training': is_training,
-    }
-
-    if is_training:
-        net, init_op, init_feed = build_convolutional_sequential_feature_extractor(inputs_placeholder, weight_decay, vgg_init_dir, is_training)
-    else:
-        net = build_convolutional_sequential_feature_extractor(inputs_placeholder, weight_decay, vgg_init_dir, is_training)
-
-    net_shape = net.get_shape()
-
-    batch_size = tf.shape(inputs_placeholder)[0]
-
-    net = tf.reshape(net, [batch_size, int(net_shape[1]), int(net_shape[2]) * int(net_shape[3]), int(net_shape[4])])
-
-    net = layers.max_pool2d(net, kernel_size=2, stride=2, scope='pool5')
-
-    net_shape = net.get_shape()
-
-    net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2]) * int(net_shape[3])])#net = tf.contrib.layers.flatten(net, scope='flatten')
-
-    with tf.contrib.framework.arg_scope([layers.fully_connected],
-        activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
-        weights_initializer=initializers.xavier_initializer(),
-        weights_regularizer=layers.l2_regularizer(weight_decay)):
-        layer_num = 1
-        for fully_connected_num in fully_connected:
-            net = layers.fully_connected(net, fully_connected_num, scope='fc{}'.format(layer_num))
-            layer_num += 1
-
-    logits = layers.fully_connected(net, 2, activation_fn=None, scope='logits')
-
-    total_loss = loss(logits, labels, is_training)
-
-    if is_training:
-        return logits, total_loss, init_op, init_feed
-    else:
-        return logits, total_loss
