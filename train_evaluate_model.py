@@ -13,7 +13,7 @@ np.set_printoptions(linewidth=250)
 INFO_STEP = 20
 
 
-def train(model, dataset, learning_rate, num_epochs, model_path):
+def train_model(model, dataset, learning_rate, num_epochs, model_path):
 
   sess = tf.Session()
 
@@ -75,7 +75,7 @@ def train(model, dataset, learning_rate, num_epochs, model_path):
   sess.close()
 
 
-def evaluate(model, dataset, model_path):
+def evaluate_model(model, dataset, model_path):
 
   sess = tf.Session()
 

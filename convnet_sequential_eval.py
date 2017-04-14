@@ -2,7 +2,7 @@ import sys
 
 from dataset import ImageSequenceDataset
 from models.vgg_pretrained import SequentialImagePoolingModel
-from train_evaluate_model import evaluate
+from train_evaluate_model import evaluate_model
 
 
 FULLY_CONNECTED = [200]
