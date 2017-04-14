@@ -45,13 +45,13 @@ class Dataset:
 class SingleImageDataset(Dataset):
 
     def __init__(self, dataset_root, batch_size, input_shape, is_training=True):
-        super().__init__(parse_single_example, dataset_root, batch_size, input_shape, is_training=is_training):
+        super().__init__(parse_single_example, dataset_root, batch_size, input_shape, is_training=is_training)
 
 
 class ImageSequenceDataset(Dataset):
 
     def __init__(self, dataset_root, batch_size, input_shape, is_training=True):
-        super().__init__(parse_sequence_example, dataset_root, batch_size, input_shape, is_training=is_training):
+        super().__init__(parse_sequence_example, dataset_root, batch_size, input_shape, is_training=is_training)
 
 
 def parse_sequence_example(record_string):
