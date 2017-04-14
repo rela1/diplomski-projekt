@@ -6,10 +6,10 @@ from train_evaluate_model import train_model
 
 
 WEIGHT_DECAY = 1e-3
-LEARNING_RATE = 1e-3
+LEARNING_RATE = 1e-4
 FULLY_CONNECTED = [200]
 EPOCHS = 50
-BATCH_SIZE = 5
+BATCH_SIZE = 10
 INPUT_SHAPE = [25, 40, 100, 3]
 
 
