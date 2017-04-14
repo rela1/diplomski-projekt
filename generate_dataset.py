@@ -31,8 +31,6 @@ SINGLE_IMAGE_WIDTH = 700
 SINGLE_IMAGE_HEIGHT = 250
 MAX_DISTANCE_TO_INTERSECTION = 15 #meters
 
-TF_IMAGE_RESIZER = TFImageResize()
-
 
 class TFImageResize:
 
@@ -41,6 +39,9 @@ class TFImageResize:
 
     def resize_images(self, images, dims):
         return self.sess.run(tf.image.resize_images(images, dims))
+
+
+TF_IMAGE_RESIZER = TFImageResize()
 
 
 def write_sequenced_and_single_example(single_image_frame, video_name, label, images_before_single, images_after_single, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
