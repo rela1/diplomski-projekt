@@ -18,4 +18,4 @@ if __name__ == '__main__':
 
   model = SequentialImagePoolingModel(FULLY_CONNECTED, dataset, is_training=False)
 
-  evaluate(model, dataset, model_path)
+  evaluate_model(model, dataset, model_path)
