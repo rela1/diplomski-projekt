@@ -75,8 +75,8 @@ class SequentialImagePoolingModel:
             else:
                 concated = tf.concat([concated, tf.expand_dims(net, axis=1)], axis=1)
 
-      if is_training:
-        init_op, init_feed = create_init_op(vgg_layers)
+    if is_training:
+      init_op, init_feed = create_init_op(vgg_layers)
 
     net = layers.batch_norm(net, decay=bn_params['decay'], center=bn_params['center'], 
       scale=bn_params['scale'], epsilon=bn_params['epsilon'], 
@@ -172,8 +172,8 @@ class SingleImageModel:
       net = layers.convolution2d(net, 512, scope='conv5_3')
       net = layers.max_pool2d(net, 2, 2, scope='pool5')
 
-      if is_training:
-        init_op, init_feed = create_init_op(vgg_layers)
+    if is_training:
+      init_op, init_feed = create_init_op(vgg_layers)
 
     net = layers.batch_norm(net, decay=bn_params['decay'], center=bn_params['center'], 
       scale=bn_params['scale'], epsilon=bn_params['epsilon'], 
