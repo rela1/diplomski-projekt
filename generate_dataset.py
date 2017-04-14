@@ -303,7 +303,7 @@ def clear_redundant_data(found_intersections, frames_dir, log_file_path, video_f
 
 
 def get_frames_resolution(frames_dir, zero_pad_number):
-    frame = imread(os.path.join(video_name, 'frames', str(1).zfill(zero_pad_number) + '.png'))
+    frame = imread(os.path.join(frames_dir, str(1).zfill(zero_pad_number) + '.png'))
     return frame.shape[0] * frame.shape[1]
 
 
