@@ -2,7 +2,7 @@ import sys
 
 from dataset import ImageSequenceDataset
 from models.vgg_pretrained import SequentialImagePoolingModel
-from train_evaluate_model import train
+from train_evaluate_model import train_model
 
 
 WEIGHT_DECAY = 1e-3
@@ -22,4 +22,4 @@ if __name__ == '__main__':
 
   model = SequentialImagePoolingModel(FULLY_CONNECTED, dataset, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=True)
 
-  train(model, dataset, LEARNING_RATE, EPOCHS, model_path)
+  train_model(model, dataset, LEARNING_RATE, EPOCHS, model_path)
