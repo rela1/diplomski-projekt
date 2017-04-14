@@ -15,7 +15,7 @@ INPUT_SHAPE = [25, 40, 100, 3]
 
 if __name__ == '__main__':
   vgg_init_dir = sys.argv[1]
-  dataset_root = sys.argv[2]
+  dataset_root = sys.argpv[2]
   model_path = sys.argv[3]
 
   dataset = ImageSequenceDataset(dataset_root, BATCH_SIZE, INPUT_SHAPE, is_training=True)
