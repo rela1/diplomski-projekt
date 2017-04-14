@@ -70,7 +70,7 @@ def evaluate(name, sess, batch_logits, batch_loss, batch_true_labels, num_exampl
   num_batches = int(math.ceil(num_examples / batch_size))
   for i in range(num_batches):
     start_time = time.time()
-    logits_val, loss_val, labels_val = sess.run([logits, loss, labels])
+    logits_val, loss_val, labels_val = sess.run([batch_logits, batch_loss, batch_true_labels])
     duration = time.time() - start_time
     probs_val = softmax()
     preds_val = np.argmax(logits_val, axis=1)
