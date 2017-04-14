@@ -1,6 +1,8 @@
+import math
+import time
+
 import numpy as np
 from sklearn import metrics
-import time
 import tensorflow as tf
 
 METRIC_FUNCTIONS = (metrics.accuracy_score, metrics.precision_score, metrics.average_precision_score, metrics.recall_score)
