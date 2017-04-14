@@ -70,12 +70,10 @@ class SequentialImagePoolingModel:
             net = layers.convolution2d(net, 512, scope='conv5_2')
             net = layers.convolution2d(net, 512, scope='conv5_3')
 
-            """
             net = layers.batch_norm(net, decay=bn_params['decay'], center=bn_params['center'], 
                     scale=bn_params['scale'], epsilon=bn_params['epsilon'], 
                     updates_collections=bn_params['updates_collections'], is_training=bn_params['is_training'],
                     scope='batch_norm')
-            """
 
             if concated is None:
                 concated = tf.expand_dims(net, axis=1)
