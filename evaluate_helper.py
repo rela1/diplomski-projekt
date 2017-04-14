@@ -72,7 +72,7 @@ def evaluate(name, sess, batch_logits, batch_loss, batch_true_labels, num_exampl
     start_time = time.time()
     logits_val, loss_val, labels_val = sess.run([batch_logits, batch_loss, batch_true_labels])
     duration = time.time() - start_time
-    probs_val = softmax()
+    probs_val = softmax(logits_val)
     preds_val = np.argmax(logits_val, axis=1)
     y_pred.extend(preds_val)
     y_true.extend(labels_val)
