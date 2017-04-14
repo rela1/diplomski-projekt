@@ -46,7 +46,7 @@ class SequentialImagePoolingModel:
     with tf.contrib.framework.arg_scope([layers.convolution2d],
         kernel_size=3, stride=1, padding='SAME', rate=1, activation_fn=tf.nn.relu,
         normalizer_fn=None, weights_initializer=None,
-        weights_regularizer=layers.l2_regularizer(weight_decay)):
+        weights_regularizer=layers.l2_regularizer(weight_decay), reuse=True):
 
         concated = None
 
@@ -70,6 +70,11 @@ class SequentialImagePoolingModel:
             net = layers.convolution2d(net, 512, scope='conv5_2')
             net = layers.convolution2d(net, 512, scope='conv5_3')
 
+            net = layers.batch_norm(netdecay=bn_params['decay'], center=bn_params['center'], 
+                    scale=bn_params['scale'], epsilon=bn_params['epsilon'], 
+                    updates_collections=bn_params['updates_collections'], is_training=bn_params['is_training'],
+                    scope='batch_norm')
+
             if concated is None:
                 concated = tf.expand_dims(net, axis=1)
             else:
@@ -78,12 +83,8 @@ class SequentialImagePoolingModel:
     if is_training:
       init_op, init_feed = create_init_op(vgg_layers)
 
+    net = concated
     print(net.get_shape())
-
-    net = layers.batch_norm(net, decay=bn_params['decay'], center=bn_params['center'], 
-      scale=bn_params['scale'], epsilon=bn_params['epsilon'], 
-      updates_collections=bn_params['updates_collections'], is_training=bn_params['is_training']
-    )
 
     net_shape = net.get_shape()
     batch_size = tf.shape(inputs)[0]
