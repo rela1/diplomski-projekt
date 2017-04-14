@@ -102,7 +102,7 @@ class SequentialImagePoolingModel:
         weights_initializer=initializers.xavier_initializer(),
         weights_regularizer=layers.l2_regularizer(weight_decay)):
         layer_num = 1
-        for fully_connected_num in fully_connected:
+        for fully_connected_num in fully_connected_layers:
             net = layers.fully_connected(net, fully_connected_num, scope='fc{}'.format(layer_num))
             layer_num += 1
 
@@ -194,7 +194,7 @@ class SingleImageModel:
       weights_initializer=initializers.xavier_initializer(),
       weights_regularizer=layers.l2_regularizer(weight_decay)):
       layer_num = 1
-      for fully_connected_num in fully_connected:
+      for fully_connected_num in fully_connected_layers:
         net = layers.fully_connected(net, fully_connected_num, scope='fc{}'.format(layer_num))
         layer_num += 1
     logits = layers.fully_connected(net, num_classes, activation_fn=None, scope='logits')
