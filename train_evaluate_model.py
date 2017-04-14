@@ -18,7 +18,7 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path):
   sess = tf.Session()
 
   global_step = tf.get_variable('global_step', [], dtype=tf.int64, initializer=tf.constant_initializer(0), trainable=False)
-  exponential_learning_rate = tf.train.exponential_decay(learning_rate, global_step, 5000, 0.5, staircase=True)
+  #exponential_learning_rate = tf.train.exponential_decay(learning_rate, global_step, 5000, 0.5, staircase=True)
 
   opt = tf.train.AdamOptimizer(exponential_learning_rate)
   grads = opt.compute_gradients(model.train_loss)
