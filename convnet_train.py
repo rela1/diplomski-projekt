@@ -6,7 +6,7 @@ import numpy as np
 import tensorflow as tf
 
 import attributes_dataset as dataset
-from models import vgg_vertically_sliced
+from models import vgg_pretrained
 import evaluate_helper
 
 np.set_printoptions(linewidth=250)
@@ -90,4 +90,4 @@ if __name__ == '__main__':
   vgg_init_dir = sys.argv[1]
   dataset_root = sys.argv[2]
   model_path = sys.argv[3]
-  train(vgg_vertically_sliced, vgg_init_dir, dataset_root, model_path)
+  train(vgg_pretrained, vgg_init_dir, dataset_root, model_path)

@@ -5,24 +5,32 @@ import tensorflow as tf
 
 METRIC_FUNCTIONS = (metrics.accuracy_score, metrics.precision_score, metrics.average_precision_score, metrics.recall_score)
 
+
 def print_metrics(metrics):
   print('Results:')
   for metric in metrics:
     print('\t{}={}'.format(metric, metrics[metric]))
 
+
+def softmax(x):
+  probs = np.exp(x)
+  probs_sum = np.sum(probs, axis=1, keepdims=True)
+  return probs / probs_sum
+
+
 def evaluate_metric_functions(y_true, y_pred, metric_functions):
-	"""
+  """
   Evaluates given metric functions on given true and predicted dense data.
 
-	Keyword arguments:
-	y_true -- true densely stored classes
-	y_pred -- predicted densely stored classes
-	metric_functions -- iterable of metric_functions which receive 2 arguments: y_true and y_pred and returns metric score
+  Keyword arguments:
+  y_true -- true densely stored classes
+  y_pred -- predicted densely stored classes
+  metric_functions -- iterable of metric_functions which receive 2 arguments: y_true and y_pred and returns metric score
 
-	Returns:
-	dictionary mapping metric function name to metric score
-	"""
-	return {metric_function.__name__ : metric_function(y_true, y_pred) for metric_function in metric_functions}
+  Returns:
+  dictionary mapping metric function name to metric score
+  """
+  return {metric_function.__name__ : metric_function(y_true, y_pred) for metric_function in metric_functions}
 
 
 def evaluate_default_metric_functions(y_true, y_pred):
@@ -39,55 +47,38 @@ def evaluate_default_metric_functions(y_true, y_pred):
   return evaluate_metric_functions(y_true, y_pred, METRIC_FUNCTIONS)
 
 
-def tf_proba_predict_func(probabilities):
-  return np.argmax(probabilities, axis=1)
-
-def tf_probability_func(sess, inputs, logits):
-  def probability_func(x):
-    logits_val = sess.run(logits, feed_dict={inputs:x})
-    logits_exp = np.exp(logits_val)
-    logits_exp_sum = np.sum(logits_exp, axis=1, keepdims=True)
-    return logits_exp / logits_exp_sum
-  return probability_func
-
-def evaluate(name, x, y, batch_size, predict_function, probability_function=None, verbose=False):
+def evaluate(name, sess, batch_logits, batch_loss, batch_true_labels, num_examples, batch_size):
   """
-  Evaluates given predict function on given data in batches.
+  Evaluates given logits and loss on true labels. Data is expected to be read from TFRecords queue reader.
 
   Keyword arguments:
-  name -- name of evaluation (train, test, valid, etc.)
-  x -- data to be predicted
-  y -- true densely stored classes
-  batch_size -- size of evaluate batch
-  predict_function -- function used for prediction; called as predict_function(x) on batch of data x
-  probability_function -- function used for probability calculation; called as probability_function(x) on batch of data x; if probability functon is given, predict function is called on batch of probabilities of data x instead of batch of data x
-
-  Returns:
-  dictionary mapping metric function name to metric score on given data with given predict function
+  name -- name of evaluation subset (train, test, valid, etc.)
+  sess -- session used for evaluation
+  batch_logits -- logits of batch data that is to be evaluated
+  batch_loss -- mean loss of batch data that is to be evaluated
+  batch_true_labels -- true labels of batch data that is to be evaluated
+  num_examples -- total number of examples in data that is to be evaluated
+  batch_size -- batch size of data that is to be evaluated
   """
   print("\nRunning evaluation: ", name)
-  num_examples = x.shape[0]
-  assert num_examples % batch_size == 0
-  num_batches = num_examples // batch_size
-  y_predict = []
-  if not probability_function == None:
-    y_probabilities = []
+  y_true = []
+  y_pred = []
+  y_prob = []
+  losses = []
+  num_batches = int(math.ceil(num_examples / batch_size))
   for i in range(num_batches):
-    batch_x = x[i*batch_size:(i+1)*batch_size, :]
     start_time = time.time()
-    if not probability_function == None:
-      probabilities_batch_y = probability_function(batch_x)
-      y_probabilities.extend(probabilities_batch_y)
-      predict_batch_y = predict_function(probabilities_batch_y)
-    else:
-      predict_batch_y = predict_function(batch_x)
+    logits_val, loss_val, labels_val = sess.run([logits, loss, labels])
     duration = time.time() - start_time
-    y_predict.extend(predict_batch_y)
-    if (i+1) % 10 == 0 and verbose:
-      print('step {}/{}, {} examples/sec, {} sec/batch'.format(i+1, num_batches, batch_size / duration, duration))
-  metrics = evaluate_metric_functions(y, y_predict, METRIC_FUNCTIONS)
+    probs_val = softmax()
+    preds_val = np.argmax(logits_val, axis=1)
+    y_pred.extend(preds_val)
+    y_true.extend(labels_val)
+    y_prob.extend(probs_val)
+    losses.append(loss_val)
+    if not i % 10:
+      print('\tstep {}/{}, {} examples/sec, {} sec/batch'.format(i+1, num_batches, batch_size / duration, duration))
+  metrics = evaluate_default_metric_functions(y_true, y_pred)
   print_metrics(metrics)
-  if not probability_function == None:
-    return metrics, y_predict, y_probabilities
-  else:
-    return metrics, y_predict
+  print('\taverage loss={}\n'.format(np.mean(losses)))
+  return metrics, y_true, y_pred, y_prob

@@ -7,7 +7,7 @@ import numpy as np
 import tensorflow as tf
 
 import attributes_dataset as dataset
-from models import vgg_vertically_sliced
+from models import vgg_pretrained
 import evaluate_helper
 
 np.set_printoptions(linewidth=250)
@@ -59,4 +59,4 @@ if __name__ == '__main__':
   images_root = sys.argv[2]
   model_path = sys.argv[3]
   misclassified_output_folder = sys.argv[4] if len(sys.argv) > 4 else None
-  evaluate(vgg_vertically_sliced, dataset_root, images_root, model_path, misclassified_output_folder)
+  evaluate(vgg_pretrained, dataset_root, images_root, model_path, misclassified_output_folder)
