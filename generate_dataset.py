@@ -31,6 +31,17 @@ SINGLE_IMAGE_WIDTH = 700
 SINGLE_IMAGE_HEIGHT = 250
 MAX_DISTANCE_TO_INTERSECTION = 15 #meters
 
+TF_IMAGE_RESIZER = TFImageResize()
+
+
+class TFImageResize:
+
+    def __init__(self):
+        self.sess = tf.Session()
+
+    def resize_images(self, images, dims):
+        return self.sess.run(tf.image.resize_images(images, dims))
+
 
 def write_sequenced_and_single_example(single_image_frame, video_name, label, images_before_single, images_after_single, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
     images_sequence = []
@@ -74,7 +85,8 @@ def write_sequenced_and_single_example(single_image_frame, video_name, label, im
             added_images += 1
 
     images_sequence = np.array(images_sequence, dtype=np.float32)
-    images_sequence_raw = images_sequence.tostring()
+    images_sequence_resized = TF_IMAGE_RESIZER.resize_images(images_sequence, (IMAGE_HEIGHT, IMAGE_WIDTH))
+    images_sequence_raw = images_sequence_resized.tostring()
 
     sequence_example = tf.train.Example(
         features=tf.train.Features(
@@ -90,6 +102,9 @@ def write_sequenced_and_single_example(single_image_frame, video_name, label, im
     )
     sequential_tf_records_writer.write(sequence_example.SerializeToString())
 
+    single_image_eq_resized = TF_IMAGE_RESIZER.resize_images(single_img_eq, (SINGLE_IMAGE_HEIGHT, SINGLE_IMAGE_WIDTH))
+    single_image_eq_raw = single_image_eq_resized.tostring()
+
     single_image_example = tf.train.Example(
         features=tf.train.Features(
             feature={
@@ -97,7 +112,7 @@ def write_sequenced_and_single_example(single_image_frame, video_name, label, im
                 'width': _int64_feature(single_img.shape[1]),
                 'depth': _int64_feature(single_img.shape[2]),
                 'label': _int64_feature(label),
-                'image_raw': _bytes_feature(single_img_eq.tostring())
+                'image_raw': _bytes_feature(single_image_eq_raw.tostring())
             }
         )
     )
@@ -182,7 +197,7 @@ def index_video_geoinformation(json_geoinformation):
         else:
             speeds.append(speeds[-1])
 
-    tree = KDTree(points)  
+    tree = KDTree(points)
 
     return points, times, speeds, time_offset, tree
 
@@ -212,14 +227,14 @@ def get_positive_images_ranges(intersection_lines, frames_per_second, tree, poin
     return sorted(positive_images_ranges)
 
 
-def extract_video_frames(video_name, video_full_path, video_duration_seconds, frames_per_second, image_width, image_height):
+def extract_video_frames(video_name, video_full_path, video_duration_seconds, frames_per_second):
     approximate_number_of_frames = video_duration_seconds * frames_per_second
     zero_pad_number = len(str(approximate_number_of_frames))
     frames_dir = os.path.join(video_name, 'frames')
 
     if not os.path.exists(frames_dir):
         os.mkdir(frames_dir)
-        frame_extract_info = subprocess.getoutput('ffmpeg -i "{}" -s {}x{} {}/frames/%0{}d.png'.format(video_full_path, image_width, image_height, video_name, zero_pad_number))
+        frame_extract_info = subprocess.getoutput('ffmpeg -i "{}" {}/frames/%0{}d.png'.format(video_full_path, video_name, zero_pad_number))
 
     number_of_frames = len(os.listdir(frames_dir))
     return frames_dir, number_of_frames, zero_pad_number
@@ -227,7 +242,7 @@ def extract_video_frames(video_name, video_full_path, video_duration_seconds, fr
 
 def create_tf_records_writers(video_name):
     sequential_tf_records_filename = os.path.join(video_name, video_name + '_sequential.tfrecords')
-    middle_tf_records_filename = os.path.join(video_name, video_name + '_middle.tfrecords')
+    middle_tf_records_filename = os.path.join(video_name, video_name + '_single.tfrecords')
 
     sequential_tf_records_writer = tf.python_io.TFRecordWriter(
         sequential_tf_records_filename, 
@@ -286,7 +301,12 @@ def clear_redundant_data(found_intersections, frames_dir, log_file_path, video_f
         os.remove(video_full_path)
 
 
-def process_video(video_name, intersection_lines, image_width, image_height, max_distance_to_intersection):
+def get_frames_resolution(frames_dir, zero_pad_number):
+    frame = imread(os.path.join(video_name, 'frames', str(1).zfill(zero_pad_number) + '.png'))
+    return frame.shape[0] * frame.shape[1]
+
+
+def process_video(video_name, intersection_lines, max_distance_to_intersection):
     json_geoinformation = download_video_geoinformation(video_name)
     approximate_video_duration = json_geoinformation[-1]['time']
 
@@ -305,8 +325,8 @@ def process_video(video_name, intersection_lines, image_width, image_height, max
         frames_dir = None
         if found_intersections:
             log_file.write('Positive images ranges {}\n'.format(positive_images_ranges))
-            frames_dir, number_of_frames, zero_pad_number = extract_video_frames(video_name, video_full_path, video_duration_seconds, frames_per_second, image_width, image_height)
-            frames_resolution = image_width * image_height
+            frames_dir, number_of_frames, zero_pad_number = extract_video_frames(video_name, video_full_path, video_duration_seconds, frames_per_second)
+            frames_resolution = get_frames_resolution(frames_dir, zero_pad_number)
 
             sequential_tf_records_writer, single_tf_records_writer = create_tf_records_writers(video_name)
             number_of_positive_examples = extract_positive_examples(video_name, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames)
@@ -351,7 +371,7 @@ if __name__ == '__main__':
 
     processed_videos = 0
     for not_processed_video_name in not_processed_video_names:
-        if process_video(not_processed_video_name, intersection_lines, IMAGE_WIDTH, IMAGE_HEIGHT, MAX_DISTANCE_TO_INTERSECTION):
+        if process_video(not_processed_video_name, intersection_lines, MAX_DISTANCE_TO_INTERSECTION):
             processed_videos += 1
         processed_video_names.add(not_processed_video_name)
         if processed_videos >= video_count:
