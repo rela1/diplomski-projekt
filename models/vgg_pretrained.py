@@ -78,6 +78,8 @@ class SequentialImagePoolingModel:
     if is_training:
       init_op, init_feed = create_init_op(vgg_layers)
 
+    print(net.get_shape())
+
     net = layers.batch_norm(net, decay=bn_params['decay'], center=bn_params['center'], 
       scale=bn_params['scale'], epsilon=bn_params['epsilon'], 
       updates_collections=bn_params['updates_collections'], is_training=bn_params['is_training']
@@ -85,6 +87,8 @@ class SequentialImagePoolingModel:
 
     net_shape = net.get_shape()
     batch_size = tf.shape(inputs)[0]
+
+    print(net_shape)
 
     net = tf.reshape(net, [batch_size, int(net_shape[1]), int(net_shape[2]) * int(net_shape[3]), int(net_shape[4])])
     net = layers.max_pool2d(net, kernel_size=2, stride=2, scope='pool5')
