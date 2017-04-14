@@ -11,7 +11,7 @@ class SequentialImagePoolingModel:
     if is_training:
       
       with tf.variable_scope('model'):
-        init_op, init_feed, logits, loss = self.build(fully_connected_layers, dataset.train_images, dataset.train_labels, weight_decay, vgg_init_dir, True)
+        logits, loss, init_op, init_feed = self.build(fully_connected_layers, dataset.train_images, dataset.train_labels, weight_decay, vgg_init_dir, True)
         self.vgg_init = (init_op, init_feed)
         self.train_loss = loss
         self.train_logits = logits
