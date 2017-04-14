@@ -113,7 +113,7 @@ def write_sequenced_and_single_example(single_image_frame, video_name, label, im
                 'width': _int64_feature(single_img.shape[1]),
                 'depth': _int64_feature(single_img.shape[2]),
                 'label': _int64_feature(label),
-                'image_raw': _bytes_feature(single_image_eq_raw.tostring())
+                'image_raw': _bytes_feature(single_image_eq_raw)
             }
         )
     )
