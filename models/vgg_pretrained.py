@@ -52,7 +52,7 @@ class SequentialImagePoolingModel:
 
         for sequence_image in range(int(inputs_shape[1])):
 
-            net = layers.convolution2d(input_placeholder[:, sequence_image], 64, scope='conv1_1')
+            net = layers.convolution2d(inputs[:, sequence_image], 64, scope='conv1_1')
             net = layers.convolution2d(net, 64, scope='conv1_2')
             net = layers.max_pool2d(net, 2, 2, scope='pool1')
             net = layers.convolution2d(net, 128, scope='conv2_1')
