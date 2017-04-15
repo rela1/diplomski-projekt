@@ -16,6 +16,7 @@ from sklearn.neighbors import KDTree
 import tensorflow as tf
 from matplotlib.image import imread
 from skimage.exposure import equalize_adapthist
+from skimage.transform import resize
 import numpy as np
 
 MP4_VIDEO_FORMAT = 'https://he.ftts-irap.org/video/{}.mp4' 
@@ -32,16 +33,12 @@ SINGLE_IMAGE_HEIGHT = 280
 MAX_DISTANCE_TO_INTERSECTION = 15 #meters
 
 
-class TFImageResize:
-
-    def __init__(self):
-        self.sess = tf.Session()
-
-    def resize_images(self, images, dims):
-        return self.sess.run(tf.image.resize_images(images, dims))
-
-
-TF_IMAGE_RESIZER = TFImageResize()
+def resize_images(images, width, height):
+    if len(images.shape) == 3:
+        return resize(images, (height, width)).astype(np.float32)
+    else:
+        dims = (height, width)
+        return np.array([resize(image, dims) for image in images]).astype(np.float32)
 
 
 def write_sequenced_and_single_example(single_image_frame, video_name, label, images_before_single, images_after_single, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
@@ -86,7 +83,7 @@ def write_sequenced_and_single_example(single_image_frame, video_name, label, im
             added_images += 1
 
     images_sequence = np.array(images_sequence)
-    images_sequence_resized = TF_IMAGE_RESIZER.resize_images(images_sequence, (IMAGE_HEIGHT, IMAGE_WIDTH)).astype(np.float32)
+    images_sequence_resized = resize_images(images_sequence, IMAGE_WIDTH, IMAGE_HEIGHT)
     images_sequence_raw = images_sequence_resized.tostring()
 
     sequence_example = tf.train.Example(
@@ -103,7 +100,7 @@ def write_sequenced_and_single_example(single_image_frame, video_name, label, im
     )
     sequential_tf_records_writer.write(sequence_example.SerializeToString())
 
-    single_image_eq_resized = TF_IMAGE_RESIZER.resize_images(single_img_eq, (SINGLE_IMAGE_HEIGHT, SINGLE_IMAGE_WIDTH)).astype(np.float32)
+    single_image_eq_resized = resize_images(single_img_eq, SINGLE_IMAGE_WIDTH, SINGLE_IMAGE_HEIGHT)
     single_image_eq_raw = single_image_eq_resized.tostring()
 
     single_image_example = tf.train.Example(
