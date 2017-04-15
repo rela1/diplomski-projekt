@@ -87,7 +87,7 @@ def write_sequenced_and_single_example(single_image_frame, video_name, label, im
 
     images_sequence = np.array(images_sequence, dtype=np.float32)
     images_sequence_resized = TF_IMAGE_RESIZER.resize_images(images_sequence, (IMAGE_HEIGHT, IMAGE_WIDTH))
-    images_sequence_raw = images_sequence_resized.tostring()
+    images_sequence_raw = images_sequence_resized.astype(np.float32).tostring()
 
     sequence_example = tf.train.Example(
         features=tf.train.Features(
