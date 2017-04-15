@@ -104,6 +104,7 @@ def write_sequenced_and_single_example(single_image_frame, video_name, label, im
     sequential_tf_records_writer.write(sequence_example.SerializeToString())
 
     single_image_eq_resized = TF_IMAGE_RESIZER.resize_images(single_img_eq, (SINGLE_IMAGE_HEIGHT, SINGLE_IMAGE_WIDTH))
+    print(single_image_eq_resized.shape, single_image_eq_resized.dtype)
     single_image_eq_raw = single_image_eq_resized.tostring()
 
     single_image_example = tf.train.Example(
