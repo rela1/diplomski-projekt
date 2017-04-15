@@ -2,7 +2,7 @@ import sys
 
 from dataset import SingleImageDataset
 from models.vgg_pretrained import SingleImageModel
-from train_evaluate_model import train_model
+from train_evaluate_model import evaluate_model
 
 
 FULLY_CONNECTED = [200]

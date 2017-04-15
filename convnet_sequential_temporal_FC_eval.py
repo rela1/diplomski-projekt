@@ -2,7 +2,7 @@ import sys
 
 from dataset import ImageSequenceDataset
 from models.vgg_pretrained import SequentialImageTemporalFCModel
-from train_evaluate_model import train_model
+from train_evaluate_model import evaluate_model
 
 
 SPATIAL_FULLY_CONNECTED = 64
