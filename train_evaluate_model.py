@@ -28,12 +28,12 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path):
 
   init_op, init_feed = model.vgg_init
 
+  coord = tf.train.Coordinator()
+  threads = tf.train.start_queue_runners(sess=sess, coord=coord)
+
   sess.run(tf.initialize_all_variables())
   sess.run(tf.initialize_local_variables())
   sess.run(init_op, feed_dict=init_feed)
-
-  coord = tf.train.Coordinator()
-  threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
   best_accuracy = 0
   saver = tf.train.Saver()
@@ -79,14 +79,14 @@ def evaluate_model(model, dataset, model_path):
 
   sess = tf.Session()
 
+  coord = tf.train.Coordinator()
+  threads = tf.train.start_queue_runners(sess=sess, coord=coord)
+
   sess.run(tf.initialize_all_variables())
   sess.run(tf.initialize_local_variables())
     
   saver = tf.train.Saver()
   saver.restore(sess, model_path)
-
-  coord = tf.train.Coordinator()
-  threads = tf.train.start_queue_runners(sess=sess, coord=coord)
   
   evaluate('Train', sess, model.train_logits, model.train_loss, dataset.train_labels, dataset.num_train_examples, dataset.batch_size)
   evaluate('Validation', sess, model.valid_logits, model.valid_loss, dataset.valid_labels, dataset.num_valid_examples, dataset.batch_size)
