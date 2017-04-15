@@ -40,7 +40,8 @@ class TFImageResizer:
         self.images = tf.placeholder(tf.float32)
 
     def resize_images(self, images, width, height):
-        return self.sess.run(tf.image.resize_images(self.images, (height, width)), feed_dict={self.images: images}).astype(np.float32)
+        self.images.set_shape(images.shape)
+        return self.sess.run(tf.image.resize_images(self.images, (height, width)), feed_dict={self.images: images})
 
 
 IMG_RESIZER = TFImageResizer()
