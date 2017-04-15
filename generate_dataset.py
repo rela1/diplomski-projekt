@@ -85,6 +85,7 @@ def write_sequenced_and_single_example(single_image_frame, video_name, label, im
             images_sequence.append(img)
             added_images += 1
 
+    images_sequence = np.array(images_sequence)
     images_sequence_resized = TF_IMAGE_RESIZER.resize_images(images_sequence, (IMAGE_HEIGHT, IMAGE_WIDTH)).astype(np.float32)
     print(images_sequence_resized.shape, images_sequence_resized.dtype)
     images_sequence_raw = images_sequence_resized.tostring()
