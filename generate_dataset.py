@@ -38,10 +38,15 @@ class TFImageResizer:
     def __init__(self):
         self.sess = tf.Session()
         self.images = tf.placeholder(tf.float32)
+        self.image = tf.placeholder(tf.float32)
 
     def resize_images(self, images, width, height):
         self.images.set_shape(images.shape)
         return self.sess.run(tf.image.resize_images(self.images, (height, width)), feed_dict={self.images: images})
+
+    def resize_image(self, image, width, height):
+        self.image.set_shape(image.shape)
+        return self.sess.run(tf.image.resize_images(self.image, (height, width)), feed_dict={self.image: image})
 
 
 IMG_RESIZER = TFImageResizer()
@@ -106,7 +111,7 @@ def write_sequenced_and_single_example(single_image_frame, video_name, label, im
     )
     sequential_tf_records_writer.write(sequence_example.SerializeToString())
 
-    single_image_eq_resized = IMG_RESIZER.resize_images(single_img_eq, SINGLE_IMAGE_WIDTH, SINGLE_IMAGE_HEIGHT)
+    single_image_eq_resized = IMG_RESIZER.resize_image(single_img_eq, SINGLE_IMAGE_WIDTH, SINGLE_IMAGE_HEIGHT)
     single_image_eq_raw = single_image_eq_resized.tostring()
 
     single_image_example = tf.train.Example(
