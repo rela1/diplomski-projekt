@@ -28,7 +28,7 @@ SAME_TRESHOLD = 0.005
 IMAGE_WIDTH = 100
 IMAGE_HEIGHT = 40
 SINGLE_IMAGE_WIDTH = 700
-SINGLE_IMAGE_HEIGHT = 250
+SINGLE_IMAGE_HEIGHT = 280
 MAX_DISTANCE_TO_INTERSECTION = 15 #meters
 
 
@@ -92,11 +92,11 @@ def write_sequenced_and_single_example(single_image_frame, video_name, label, im
     sequence_example = tf.train.Example(
         features=tf.train.Features(
             feature={
-                'height': _int64_feature(single_img.shape[0]),
-                'width': _int64_feature(single_img.shape[1]),
-                'depth': _int64_feature(single_img.shape[2]),
+                'height': _int64_feature(images_sequence_resized.shape[1]),
+                'width': _int64_feature(images_sequence_resized.shape[2]),
+                'depth': _int64_feature(images_sequence_resized.shape[3]),
                 'label': _int64_feature(label),
-                'sequence_length': _int64_feature(images_sequence.shape[0]),
+                'sequence_length': _int64_feature(images_sequence_resized.shape[0]),
                 'images_raw': _bytes_feature(images_sequence_raw)
             }
         )
@@ -109,9 +109,9 @@ def write_sequenced_and_single_example(single_image_frame, video_name, label, im
     single_image_example = tf.train.Example(
         features=tf.train.Features(
             feature={
-                'height': _int64_feature(single_img.shape[0]),
-                'width': _int64_feature(single_img.shape[1]),
-                'depth': _int64_feature(single_img.shape[2]),
+                'height': _int64_feature(single_image_eq_resized.shape[0]),
+                'width': _int64_feature(single_image_eq_resized.shape[1]),
+                'depth': _int64_feature(single_image_eq_resized.shape[2]),
                 'label': _int64_feature(label),
                 'image_raw': _bytes_feature(single_image_eq_raw)
             }
@@ -235,7 +235,7 @@ def extract_video_frames(video_name, video_full_path, video_duration_seconds, fr
 
     if not os.path.exists(frames_dir):
         os.mkdir(frames_dir)
-        frame_extract_info = subprocess.getoutput('ffmpeg -i "{}" {}/frames/%0{}d.png'.format(video_full_path, video_name, zero_pad_number))
+        frame_extract_info = subprocess.getoutput('ffmpeg -i "{}" -s {}x{} {}/frames/%0{}d.png'.format(video_full_path, SINGLE_IMAGE_WIDTH, SINGLE_IMAGE_HEIGHT, video_name, zero_pad_number))
 
     number_of_frames = len(os.listdir(frames_dir))
     return frames_dir, number_of_frames, zero_pad_number
