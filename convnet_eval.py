@@ -7,7 +7,7 @@ from train_evaluate_model import evaluate_model
 
 FULLY_CONNECTED = [200]
 BATCH_SIZE = 10
-INPUT_SHAPE = [250, 700, 3]
+INPUT_SHAPE = [280, 700, 3]
 
 
 if __name__ == '__main__':
