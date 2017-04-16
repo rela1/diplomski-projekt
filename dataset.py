@@ -5,7 +5,7 @@ import tensorflow as tf
 
 class Dataset:
 
-    def __init__(self, example_parser, dataset_root, batch_size, input_shape, is_training=True):
+    def __init__(self, example_parser, dataset_suffix, dataset_root, batch_size, input_shape, is_training=True):
         self.batch_size = batch_size
         shapes = [input_shape, []]
 
@@ -17,9 +17,14 @@ class Dataset:
         self.num_valid_examples = number_of_examples(valid_dir)
         self.num_test_examples = number_of_examples(test_dir)
 
-        train_tfrecords = [os.path.join(train_dir, file) for file in os.listdir(train_dir)]
-        valid_tfrecords = [os.path.join(valid_dir, file) for file in os.listdir(valid_dir)]
-        test_tfrecords = [os.path.join(test_dir, file) for file in os.listdir(test_dir)]
+        train_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(train_dir)]
+        train_tf_records = [os.path.join(train_dir, train_tfrecords_dir, train_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for train_tfrecords_dir in train_tfrecords_dirs]
+        
+        valid_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(valid_dir)]
+        valid_tf_records = [os.path.join(valid_dir, valid_tfrecords_dir, valid_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for valid_tfrecords_dir in valid_tfrecords_dirs]
+
+        test_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(test_dir)]
+        test_tf_records = [os.path.join(test_dir, test_tfrecords_dir, test_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for test_tfrecords_dir in test_tfrecords_dirs]
 
         train_file_queue = tf.train.string_input_producer(train_tfrecords)
         valid_file_queue = tf.train.string_input_producer(valid_tfrecords)
@@ -45,13 +50,13 @@ class Dataset:
 class SingleImageDataset(Dataset):
 
     def __init__(self, dataset_root, batch_size, input_shape, is_training=True):
-        super().__init__(parse_single_example, dataset_root, batch_size, input_shape, is_training=is_training)
+        super().__init__(parse_single_example, 'single', dataset_root, batch_size, input_shape, is_training=is_training)
 
 
 class ImageSequenceDataset(Dataset):
 
     def __init__(self, dataset_root, batch_size, input_shape, is_training=True):
-        super().__init__(parse_sequence_example, dataset_root, batch_size, input_shape, is_training=is_training)
+        super().__init__(parse_sequence_example, 'sequential', dataset_root, batch_size, input_shape, is_training=is_training)
 
 
 def parse_sequence_example(record_string):
