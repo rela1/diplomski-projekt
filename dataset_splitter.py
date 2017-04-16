@@ -9,7 +9,7 @@ if __name__ == '__main__':
         if os.path.isdir(full_path):
             log_file_path = os.path.join(full_path, 'log.txt')
             if os.path.isfile(log_file_path):
-                with file(os.path.join) as f:
+                with open(os.path.join) as f:
                     log = f.read()
                     number_of_positives = int(re.search('Number of positive examples: ([0-9]+?),', log).group(1))
                     number_of_examples = number_of_positives * 2
