@@ -13,10 +13,6 @@ class Dataset:
         valid_dir = os.path.join(dataset_root, 'validate')
         test_dir = os.path.join(dataset_root, 'test')
 
-        self.num_train_examples = number_of_examples(train_dir)
-        self.num_valid_examples = number_of_examples(valid_dir)
-        self.num_test_examples = number_of_examples(test_dir)
-
         train_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(train_dir)]
         train_tf_records = [os.path.join(train_dir, train_tfrecords_dir, train_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for train_tfrecords_dir in train_tfrecords_dirs]
         
@@ -25,6 +21,10 @@ class Dataset:
 
         test_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(test_dir)]
         test_tf_records = [os.path.join(test_dir, test_tfrecords_dir, test_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for test_tfrecords_dir in test_tfrecords_dirs]
+
+        self.num_train_examples = number_of_examples(train_tf_records)
+        self.num_valid_examples = number_of_examples(valid_tf_records)
+        self.num_test_examples = number_of_examples(test_tf_records)
 
         train_file_queue = tf.train.string_input_producer(train_tfrecords)
         valid_file_queue = tf.train.string_input_producer(valid_tfrecords)
@@ -111,7 +111,7 @@ def input_decoder(filename_queue, example_parser):
   return example_parser(record_string)
 
 
-def number_of_examples(directory):
+def number_of_examples(tfrecords_files):
   examples = 0
   for fn in [os.path.join(directory, file) for file in os.listdir(directory)]:
     for record in tf.python_io.tf_record_iterator(fn, options=tf.python_io.TFRecordOptions(tf.python_io.TFRecordCompressionType.GZIP)):

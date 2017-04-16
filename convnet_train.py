@@ -20,6 +20,8 @@ if __name__ == '__main__':
 
   dataset = SingleImageDataset(dataset_root, BATCH_SIZE, INPUT_SHAPE, is_training=True)
 
+  print('Dataset info: {} train examples, {} valid examples, {} test examples'.format(dataset.num_train_examples, dataset.num_valid_examples, dataset.num_test_examples))
+
   model = SingleImageModel(FULLY_CONNECTED, dataset, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=True)
 
   train_model(model, dataset, LEARNING_RATE, EPOCHS, model_path)
