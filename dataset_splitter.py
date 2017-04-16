@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 
 if __name__ == '__main__':
     root_dir = sys.argv[1]
