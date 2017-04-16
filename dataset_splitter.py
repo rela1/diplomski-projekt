@@ -17,3 +17,4 @@ if __name__ == '__main__':
                     examples_per_video[path] = number_of_examples
     for video_name in sorted(examples_per_video, key=examples_per_video.get):
         print('{} -> {} examples'.format(video_name, examples_per_video[video_name]))
+    print('Total number of examples: ', sum(examples_per_video.values()))
