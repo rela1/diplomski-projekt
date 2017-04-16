@@ -22,9 +22,9 @@ class Dataset:
         test_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(test_dir)]
         test_tfrecords = [os.path.join(test_dir, test_tfrecords_dir, test_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for test_tfrecords_dir in test_tfrecords_dirs]
 
-        self.num_train_examples = number_of_examples(train_tf_records)
-        self.num_valid_examples = number_of_examples(valid_tf_records)
-        self.num_test_examples = number_of_examples(test_tf_records)
+        self.num_train_examples = number_of_examples(train_tfrecords)
+        self.num_valid_examples = number_of_examples(valid_tfrecords)
+        self.num_test_examples = number_of_examples(test_tfrecords)
 
         train_file_queue = tf.train.string_input_producer(train_tfrecords)
         valid_file_queue = tf.train.string_input_producer(valid_tfrecords)
