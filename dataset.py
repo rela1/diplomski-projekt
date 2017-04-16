@@ -98,7 +98,7 @@ def parse_single_example(record_string):
     depth = tf.cast(features['depth'], tf.int32)
     label = tf.cast(features['label'], tf.int32)
     image = tf.reshape(image, [height, width, depth])
-    return images, label
+    return image, label
 
 
 def input_decoder(filename_queue, example_parser):
