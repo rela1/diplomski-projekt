@@ -42,11 +42,11 @@ class TFImageResizer:
 
     def resize_images(self, images, width, height):
         self.images.set_shape(images.shape)
-        return self.sess.run(tf.image.resize_images(self.images, (height, width)), feed_dict={self.images: images})
+        return self.sess.run(tf.image.resize_images(self.images, (height, width), tf.image.ResizeMethod.AREA), feed_dict={self.images: images})
 
     def resize_image(self, image, width, height):
         self.image.set_shape(image.shape)
-        return self.sess.run(tf.image.resize_images(self.image, (height, width)), feed_dict={self.image: image})
+        return self.sess.run(tf.image.resize_images(self.image, (height, width), tf.image.ResizeMethod.AREA), feed_dict={self.image: image})
 
 
 IMG_RESIZER = TFImageResizer()
