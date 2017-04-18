@@ -5,58 +5,73 @@ import tensorflow as tf
 
 class Dataset:
 
-    def __init__(self, example_parser, dataset_suffix, dataset_root, batch_size, input_shape, is_training=True):
+    def __init__(self, example_parser, dataset_suffix, dataset_root, batch_size, input_shape, is_training=True, load_train_subset=True, load_valid_subset=True, load_test_subset=True):
         self.batch_size = batch_size
         shapes = [input_shape, []]
 
-        train_dir = os.path.join(dataset_root, 'train')
-        valid_dir = os.path.join(dataset_root, 'validate')
-        test_dir = os.path.join(dataset_root, 'test')
+        if load_train_subset:
+          train_dir = os.path.join(dataset_root, 'train')
+        if load_valid_subset:
+          valid_dir = os.path.join(dataset_root, 'validate')
+        if load_test_subset:
+          test_dir = os.path.join(dataset_root, 'test')
 
-        train_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(train_dir)]
-        train_tfrecords = [os.path.join(train_dir, train_tfrecords_dir, train_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for train_tfrecords_dir in train_tfrecords_dirs]
+        if load_train_subset:
+          train_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(train_dir)]
+          train_tfrecords = [os.path.join(train_dir, train_tfrecords_dir, train_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for train_tfrecords_dir in train_tfrecords_dirs]
         
-        valid_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(valid_dir)]
-        valid_tfrecords = [os.path.join(valid_dir, valid_tfrecords_dir, valid_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for valid_tfrecords_dir in valid_tfrecords_dirs]
+        if load_valid_subset:
+          valid_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(valid_dir)]
+          valid_tfrecords = [os.path.join(valid_dir, valid_tfrecords_dir, valid_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for valid_tfrecords_dir in valid_tfrecords_dirs]
 
-        test_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(test_dir)]
-        test_tfrecords = [os.path.join(test_dir, test_tfrecords_dir, test_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for test_tfrecords_dir in test_tfrecords_dirs]
+        if load_test_subset:
+          test_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(test_dir)]
+          test_tfrecords = [os.path.join(test_dir, test_tfrecords_dir, test_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for test_tfrecords_dir in test_tfrecords_dirs]
 
-        self.num_train_examples = number_of_examples(train_tfrecords)
-        self.num_valid_examples = number_of_examples(valid_tfrecords)
-        self.num_test_examples = number_of_examples(test_tfrecords)
+        if load_train_subset:
+          self.num_train_examples = number_of_examples(train_tfrecords)
+        if load_valid_subset:
+          self.num_valid_examples = number_of_examples(valid_tfrecords)
+        if load_test_subset:
+          self.num_test_examples = number_of_examples(test_tfrecords)
 
-        train_file_queue = tf.train.string_input_producer(train_tfrecords)
-        valid_file_queue = tf.train.string_input_producer(valid_tfrecords)
-        test_file_queue = tf.train.string_input_producer(test_tfrecords)
+        if load_train_subset:
+          train_file_queue = tf.train.string_input_producer(train_tfrecords)
+        if load_valid_subset:
+          valid_file_queue = tf.train.string_input_producer(valid_tfrecords)
+        if load_test_subset:
+          test_file_queue = tf.train.string_input_producer(test_tfrecords)
 
-        train_images, train_labels = input_decoder(train_file_queue, example_parser)
-        if is_training:
-            self.train_images, self.train_labels = tf.train.shuffle_batch(
-                [train_images, train_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True, capacity=2000, min_after_dequeue=1000)
-        else:
-            self.train_images, self.train_labels = tf.train.batch(
-                [train_images, train_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True)
+        if load_train_subset:
+          train_images, train_labels = input_decoder(train_file_queue, example_parser)
+          if is_training:
+              self.train_images, self.train_labels = tf.train.shuffle_batch(
+                  [train_images, train_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True, capacity=2000, min_after_dequeue=1000)
+          else:
+              self.train_images, self.train_labels = tf.train.batch(
+                  [train_images, train_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True)
 
-        valid_images, valid_labels = input_decoder(valid_file_queue, example_parser)
-        self.valid_images, self.valid_labels = tf.train.batch(
-            [valid_images, valid_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True)
+        if load_valid_subset:
+          valid_images, valid_labels = input_decoder(valid_file_queue, example_parser)
+          self.valid_images, self.valid_labels = tf.train.batch(
+              [valid_images, valid_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True)
 
-        test_images, test_labels = input_decoder(test_file_queue, example_parser)
-        self.test_images, self.test_labels = tf.train.batch(
-            [test_images, test_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True)
+        if load_test_subset:
+          test_images, test_labels = input_decoder(test_file_queue, example_parser)
+          self.test_images, self.test_labels = tf.train.batch(
+              [test_images, test_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True)
 
 
 class SingleImageDataset(Dataset):
 
-    def __init__(self, dataset_root, batch_size, input_shape, is_training=True):
-        super().__init__(parse_single_example, 'single', dataset_root, batch_size, input_shape, is_training=is_training)
+    def __init__(self, dataset_root, batch_size, input_shape, is_training=True, load_train_subset=True, load_valid_subset=True, load_test_subset=True):
+        super().__init__(parse_single_example, 'single', dataset_root, batch_size, input_shape, is_training=is_training, load_train_subset=load_train_subset, load_valid_subset=load_valid_subset, load_test_subset=load_test_subset)
 
 
 class ImageSequenceDataset(Dataset):
 
-    def __init__(self, dataset_root, batch_size, input_shape, is_training=True):
-        super().__init__(parse_sequence_example, 'sequential', dataset_root, batch_size, input_shape, is_training=is_training)
+    def __init__(self, dataset_root, batch_size, input_shape, is_training=True, load_train_subset=True, load_valid_subset=True, load_test_subset=True):
+        super().__init__(parse_sequence_example, 'sequential', dataset_root, batch_size, input_shape, is_training=is_training, load_train_subset=load_train_subset, load_valid_subset=load_valid_subset, load_test_subset=load_test_subset)
 
 
 def parse_sequence_example(record_string):
