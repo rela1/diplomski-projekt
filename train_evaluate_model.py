@@ -4,7 +4,7 @@ import math
 import numpy as np
 import tensorflow as tf
 
-from evaluate_helper import evaluate
+from evaluate_helper import evaluate, softmax
 
 
 np.set_printoptions(linewidth=250)
@@ -91,3 +91,45 @@ def evaluate_model(model, dataset, model_path):
   evaluate('Train', sess, model.train_logits, model.train_loss, dataset.train_labels, dataset.num_train_examples, dataset.batch_size)
   evaluate('Validation', sess, model.valid_logits, model.valid_loss, dataset.valid_labels, dataset.num_valid_examples, dataset.batch_size)
   evaluate('Test', sess, model.test_logits, model.test_loss, dataset.test_labels, dataset.num_test_examples, dataset.batch_size)
+
+
+def plot_wrong_classifications(model, dataset, model_path):
+
+  sess = tf.Session()
+
+  sess.run(tf.initialize_all_variables())
+  sess.run(tf.initialize_local_variables())
+    
+  saver = tf.train.Saver()
+  saver.restore(sess, model_path)
+
+  coord = tf.train.Coordinator()
+  threads = tf.train.start_queue_runners(sess=sess, coord=coord)
+
+  for i in range(dataset.num_test_examples):
+
+    logits_vals, label_vals, image_vals = sess.run([model.test_logits, dataset.test_labels, dataset.test_images])
+    probability_vals = softmax(logits_vals)
+    prediction_vals = np.argmax(logits_vals, axis=1)
+
+    for j in range(dataset.batch_size):
+
+      if label_vals[j] != prediction_vals[j]:
+
+        if len(image_vals.shape) == 5:
+
+          sequence_length = image_vals.shape[1]
+
+          rows = 5
+          cols = int(math.ceil(sequence_length / rows))
+
+          for k in range(1, sequence_length + 1):
+            plt.subplot(rows, cols, k)
+            plt.imshow(image_vals[j][k - 1])
+
+        else:
+
+          plt.imshow(image_vals[j])
+
+        plt.suptitle('True label {}, prediction: {}, probabilities: {}'.format(label_vals[j], prediction_vals[j], probability_vals[j]))
+        plt.show()
