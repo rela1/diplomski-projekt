@@ -5,11 +5,11 @@ from models.vgg_pretrained import SequentialImageTemporalFCModel
 from train_evaluate_model import train_model
 
 
-WEIGHT_DECAY = 1e-2
+WEIGHT_DECAY = 1e-3
 LEARNING_RATE = 1e-4
-SPATIAL_FULLY_CONNECTED = 128
-TEMPORAL_FULLY_CONNECTED = [256, 64]
-EPOCHS = 50
+SPATIAL_FULLY_CONNECTED = 256
+TEMPORAL_FULLY_CONNECTED = [256, 128, 64]
+EPOCHS = 25
 BATCH_SIZE = 5
 INPUT_SHAPE = [25, 80, 200, 3]
 
