@@ -33,7 +33,7 @@ class Dataset:
         train_images, train_labels = input_decoder(train_file_queue, example_parser)
         if is_training:
             self.train_images, self.train_labels = tf.train.shuffle_batch(
-                [train_images, train_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True, capacity=2000, min_after_dequeue=1000)
+                [train_images, train_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True, capacity=200, min_after_dequeue=100)
         else:
             self.train_images, self.train_labels = tf.train.batch(
                 [train_images, train_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True)
