@@ -47,8 +47,9 @@ class SequentialImageLSTMModel:
 
     concated = None
 
+    sequence_length = int(inputs_shape[1])
     reuse = None
-    for sequence_image in range(int(inputs_shape[1])):
+    for sequence_image in range(sequence_length):
       with tf.contrib.framework.arg_scope([layers.convolution2d],
         kernel_size=3, stride=1, padding='SAME', rate=1, activation_fn=tf.nn.relu,
         normalizer_fn=None, weights_initializer=None,
@@ -107,7 +108,8 @@ class SequentialImageLSTMModel:
     if is_training:
       init_op, init_feed = create_init_op(vgg_layers)
 
-    outputs, states = tf.contrib.rnn.static_rnn(lstm, concated, dtype=tf.float32)
+    net = tf.unstack(concated, num=sequence_length, axis=0)
+    outputs, states = tf.contrib.rnn.static_rnn(lstm, net, dtype=tf.float32)
     logits = tf.matmul(outputs[-1], output_weights) + output_bias
 
     total_loss = loss(logits, labels, is_training)
