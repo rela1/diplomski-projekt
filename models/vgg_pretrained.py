@@ -154,18 +154,18 @@ class SequentialImageTemporalFCModel:
 
         net = layers.convolution2d(inputs[:, sequence_image], 64, scope='conv1_1', reuse=reuse)
         net = layers.convolution2d(net, 64, scope='conv1_2', reuse=reuse)
-        net = layers.max_pool2d(net, 2, 2, scope='pool1', reuse=reuse)
+        net = layers.max_pool2d(net, 2, 2, scope='pool1')
         net = layers.convolution2d(net, 128, scope='conv2_1', reuse=reuse)
         net = layers.convolution2d(net, 128, scope='conv2_2', reuse=reuse)
-        net = layers.max_pool2d(net, 2, 2, scope='pool2', reuse=reuse)
+        net = layers.max_pool2d(net, 2, 2, scope='pool2')
         net = layers.convolution2d(net, 256, scope='conv3_1', reuse=reuse)
         net = layers.convolution2d(net, 256, scope='conv3_2', reuse=reuse)
         net = layers.convolution2d(net, 256, scope='conv3_3', reuse=reuse)
-        net = layers.max_pool2d(net, 2, 2, scope='pool3', reuse=reuse)
+        net = layers.max_pool2d(net, 2, 2, scope='pool3')
         net = layers.convolution2d(net, 512, scope='conv4_1', reuse=reuse)
         net = layers.convolution2d(net, 512, scope='conv4_2', reuse=reuse)
         net = layers.convolution2d(net, 512, scope='conv4_3', reuse=reuse)
-        net = layers.max_pool2d(net, 2, 2, scope='pool4', reuse=reuse)
+        net = layers.max_pool2d(net, 2, 2, scope='pool4')
         net = layers.convolution2d(net, 512, scope='conv5_1', reuse=reuse)
         net = layers.convolution2d(net, 512, scope='conv5_2', reuse=reuse)
         net = layers.convolution2d(net, 512, scope='conv5_3', reuse=reuse)
@@ -187,7 +187,7 @@ class SequentialImageTemporalFCModel:
         activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
         weights_initializer=initializers.xavier_initializer(),
         weights_regularizer=layers.l2_regularizer(weight_decay)):
-        net = layers.fully_connected(net, spatial_fully_connected_size, scope='spatial_FC')
+        net = layers.fully_connected(net, spatial_fully_connected_size, scope='spatial_FC', reuse=reuse)
 
       if concated is None:
         concated = tf.expand_dims(net, axis=1)
