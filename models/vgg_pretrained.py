@@ -97,7 +97,7 @@ class SequentialImageLSTMModel:
       regularizer=layers.l2_regularizer(weight_decay)
     )
     output_bias = tf.get_variable(
-      'lstm_output_weights', 
+      'lstm_output_bias', 
       shape=[2], 
       initializer=initializers.xavier_initializer(), 
       regularizer=layers.l2_regularizer(weight_decay)
