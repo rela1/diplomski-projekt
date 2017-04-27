@@ -147,52 +147,53 @@ class SequentialImageTemporalFCModel:
 
     for sequence_image in range(int(inputs_shape[1])):
 
-      with tf.contrib.framework.arg_scope([layers.convolution2d, layers.fully_connected],
-        kernel_size=3, stride=1, padding='SAME', rate=1, activation_fn=tf.nn.relu,
-        normalizer_fn=None, weights_initializer=None,
-        weights_regularizer=layers.l2_regularizer(weight_decay), reuse=True):
+      with tf.variable_scope('conv_layers', reuse=True):
+        with tf.contrib.framework.arg_scope([layers.convolution2d, layers.fully_connected],
+          kernel_size=3, stride=1, padding='SAME', rate=1, activation_fn=tf.nn.relu,
+          normalizer_fn=None, weights_initializer=None,
+          weights_regularizer=layers.l2_regularizer(weight_decay)):
 
-        net = layers.convolution2d(inputs[:, sequence_image], 64, scope='conv1_1')
-        net = layers.convolution2d(net, 64, scope='conv1_2')
-        net = layers.max_pool2d(net, 2, 2, scope='pool1')
-        net = layers.convolution2d(net, 128, scope='conv2_1')
-        net = layers.convolution2d(net, 128, scope='conv2_2')
-        net = layers.max_pool2d(net, 2, 2, scope='pool2')
-        net = layers.convolution2d(net, 256, scope='conv3_1')
-        net = layers.convolution2d(net, 256, scope='conv3_2')
-        net = layers.convolution2d(net, 256, scope='conv3_3')
-        net = layers.max_pool2d(net, 2, 2, scope='pool3')
-        net = layers.convolution2d(net, 512, scope='conv4_1')
-        net = layers.convolution2d(net, 512, scope='conv4_2')
-        net = layers.convolution2d(net, 512, scope='conv4_3')
-        net = layers.max_pool2d(net, 2, 2, scope='pool4')
-        net = layers.convolution2d(net, 512, scope='conv5_1')
-        net = layers.convolution2d(net, 512, scope='conv5_2')
-        net = layers.convolution2d(net, 512, scope='conv5_3')
+          net = layers.convolution2d(inputs[:, sequence_image], 64, scope='conv1_1')
+          net = layers.convolution2d(net, 64, scope='conv1_2')
+          net = layers.max_pool2d(net, 2, 2, scope='pool1')
+          net = layers.convolution2d(net, 128, scope='conv2_1')
+          net = layers.convolution2d(net, 128, scope='conv2_2')
+          net = layers.max_pool2d(net, 2, 2, scope='pool2')
+          net = layers.convolution2d(net, 256, scope='conv3_1')
+          net = layers.convolution2d(net, 256, scope='conv3_2')
+          net = layers.convolution2d(net, 256, scope='conv3_3')
+          net = layers.max_pool2d(net, 2, 2, scope='pool3')
+          net = layers.convolution2d(net, 512, scope='conv4_1')
+          net = layers.convolution2d(net, 512, scope='conv4_2')
+          net = layers.convolution2d(net, 512, scope='conv4_3')
+          net = layers.max_pool2d(net, 2, 2, scope='pool4')
+          net = layers.convolution2d(net, 512, scope='conv5_1')
+          net = layers.convolution2d(net, 512, scope='conv5_2')
+          net = layers.convolution2d(net, 512, scope='conv5_3')
 
-        net = layers.batch_norm(net, decay=bn_params['decay'], center=bn_params['center'], 
-                scale=bn_params['scale'], epsilon=bn_params['epsilon'], 
-                updates_collections=bn_params['updates_collections'], is_training=bn_params['is_training'],
-                scope='batch_norm')
+          net = layers.batch_norm(net, decay=bn_params['decay'], center=bn_params['center'], 
+                  scale=bn_params['scale'], epsilon=bn_params['epsilon'], 
+                  updates_collections=bn_params['updates_collections'], is_training=bn_params['is_training'],
+                  scope='batch_norm')
 
-      net_shape = net.get_shape()
+        net_shape = net.get_shape()
 
-      global_pooling_kernel = [int(net_shape[1]), int(net_shape[2])]
-      net = layers.max_pool2d(net, kernel_size=global_pooling_kernel, stride=global_pooling_kernel, scope='global_pool1')
-      net_shape = net.get_shape()
+        global_pooling_kernel = [int(net_shape[1]), int(net_shape[2])]
+        net = layers.max_pool2d(net, kernel_size=global_pooling_kernel, stride=global_pooling_kernel, scope='global_pool1')
+        net_shape = net.get_shape()
 
-      net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2]) * int(net_shape[3])])
-      
-      with tf.contrib.framework.arg_scope([layers.fully_connected],
-        activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
-        weights_initializer=initializers.xavier_initializer(),
-        weights_regularizer=layers.l2_regularizer(weight_decay), reuse=True):
-        net = layers.fully_connected(net, spatial_fully_connected_size, scope='spatial_FC')
+        net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2]) * int(net_shape[3])])
+        
+        with tf.contrib.framework.arg_scope([layers.fully_connected],
+          activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
+          weights_initializer=initializers.xavier_initializer(),
+          weights_regularizer=layers.l2_regularizer(weight_decay)):
+          net = layers.fully_connected(net, spatial_fully_connected_size, scope='spatial_FC')
 
-      if concated is None:
-        concated = tf.expand_dims(net, axis=1)
-      else:
-        concated = tf.concat([concated, tf.expand_dims(net, axis=1)], axis=1)
+        if concated is None:
+          concated = tf.expand_dims(net, axis=1)
+        else:
+          concated = tf.concat([concated, tf.expand_dims(net, axis=1)], axis=1)
 
     if is_training:
       init_op, init_feed = create_init_op(vgg_layers)
