@@ -1,6 +1,7 @@
 import time
 import math
 import os
+import shutil
 
 import numpy as np
 import tensorflow as tf
@@ -28,6 +29,9 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path):
   with tf.control_dependencies([apply_gradient_op]):
     train_op = tf.no_op(name='train')
 
+  if os.path.isdir(os.path.abspath(os.path.join(model_path, 'tensorboard'))):
+    shutil.rmtree(os.path.abspath(os.path.join(model_path, 'tensorboard')))
+  
   writer = tf.summary.FileWriter(os.path.join(model_path, 'tensorboard'), sess.graph)
   print('Tensorboard command: tensorboard --logdir="{}"'.format(os.path.abspath(os.path.join(model_path, 'tensorboard'))))
   writer.close()
