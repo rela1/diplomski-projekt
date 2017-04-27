@@ -145,9 +145,8 @@ class SequentialImageTemporalFCModel:
 
     concated = None
 
-    for sequence_image in range(int(inputs_shape[1])):
-
-      with tf.variable_scope('conv_layers', reuse=True):
+    with tf.variable_scope('conv_layers', reuse=True):
+      for sequence_image in range(int(inputs_shape[1])):
         with tf.contrib.framework.arg_scope([layers.convolution2d, layers.fully_connected],
           kernel_size=3, stride=1, padding='SAME', rate=1, activation_fn=tf.nn.relu,
           normalizer_fn=None, weights_initializer=None,
