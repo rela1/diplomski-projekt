@@ -1,5 +1,6 @@
 import time
 import math
+import os
 
 import numpy as np
 import tensorflow as tf
@@ -26,6 +27,9 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path):
   apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
   with tf.control_dependencies([apply_gradient_op]):
     train_op = tf.no_op(name='train')
+
+  writer = tf.summary.FileWriter(os.path.join(model_path, 'tensorboard'), sess.graph)
+  writer.close()
 
   init_op, init_feed = model.vgg_init
 
