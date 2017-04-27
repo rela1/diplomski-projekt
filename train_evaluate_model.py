@@ -29,6 +29,7 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path):
     train_op = tf.no_op(name='train')
 
   writer = tf.summary.FileWriter(os.path.join(model_path, 'tensorboard'), sess.graph)
+  print('Tensorboard command: tensorboard --logdir="{}"'.format(os.path.abspath(os.path.join(model_path, 'tensorboard'))))
   writer.close()
 
   init_op, init_feed = model.vgg_init
