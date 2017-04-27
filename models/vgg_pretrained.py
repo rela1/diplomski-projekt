@@ -26,7 +26,7 @@ class SequentialImageLSTMModel:
         self.valid_logits, self.valid_loss = self.build(lstm_state_size, dataset.valid_images, dataset.valid_labels, weight_decay, vgg_init_dir, False)
         self.test_logits, self.test_loss = self.build(lstm_state_size, dataset.test_images, dataset.test_labels, weight_decay, vgg_init_dir, False)
 
-  def build(self, lstm_state_size, lstm_output_size, inputs, labels, weight_decay, vgg_init_dir, is_training):
+  def build(self, lstm_state_size, inputs, labels, weight_decay, vgg_init_dir, is_training):
     bn_params = {
       'decay': 0.999,
       'center': True,
@@ -45,7 +45,7 @@ class SequentialImageLSTMModel:
     vertical_slice_size = int(round(int(inputs_shape[2]) / 3))
     inputs = tf.slice(inputs, begin=[0, 0, vertical_slice_size, 0, 0], size=[-1, -1, -1, horizontal_slice_size * 2, -1])
 
-    # lstm init
+    concated = None
 
     reuse = None
     for sequence_image in range(int(inputs_shape[1])):
@@ -84,12 +84,31 @@ class SequentialImageLSTMModel:
       net_shape = net.get_shape()
 
       net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2]) * int(net_shape[3])])
-            
+
+      if concated is None:
+        concated = tf.expand_dims(net, axis=0)
+      else:
+        concated = tf.concat([concated, tf.expand_dims(net, axis=0)], axis=0)
+
+    output_weights = tf.get_variable(
+      'lstm_output_weights', 
+      shape=[lstm_state_size, 2], 
+      initializer=initializers.xavier_initializer(), 
+      regularizer=layers.l2_regularizer(weight_decay)
+    )
+    output_bias = tf.get_variabletf.get_variable(
+      'lstm_output_weights', 
+      shape=[2], 
+      initializer=initializers.xavier_initializer(), 
+      regularizer=layers.l2_regularizer(weight_decay)
+    )
+    lstm = tf.contrib.rnn.BasicLSTMCell(lstm_state_size)            
 
     if is_training:
       init_op, init_feed = create_init_op(vgg_layers)
 
-    logits = layers.fully_connected(net, 2, activation_fn=None, scope='logits')
+    outputs, states = tf.contrib.rnn.static_rnn(lstm, concated, dtype=tf.float32)
+    logits = tf.matmul(outputs[-1], output_weights) + output_bias
 
     total_loss = loss(logits, labels, is_training)
 
