@@ -31,7 +31,10 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path):
 
   if os.path.isdir(os.path.abspath(os.path.join(model_path, 'tensorboard'))):
     shutil.rmtree(os.path.abspath(os.path.join(model_path, 'tensorboard')))
-  
+
+  print('Variables list:')
+  print([x.name for x in tf.global_variables()])
+
   writer = tf.summary.FileWriter(os.path.join(model_path, 'tensorboard'), sess.graph)
   print('Tensorboard command: tensorboard --logdir="{}"'.format(os.path.abspath(os.path.join(model_path, 'tensorboard'))))
   writer.close()

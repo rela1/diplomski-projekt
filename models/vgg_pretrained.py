@@ -145,7 +145,7 @@ class SequentialImageTemporalFCModel:
 
     concated = None
 
-    reuse = False
+    reuse = None
     for sequence_image in range(int(inputs_shape[1])):
       with tf.contrib.framework.arg_scope([layers.convolution2d],
         kernel_size=3, stride=1, padding='SAME', rate=1, activation_fn=tf.nn.relu,
@@ -262,42 +262,42 @@ class SequentialImagePoolingModel:
     vertical_slice_size = int(round(int(inputs_shape[2]) / 3))
     inputs = tf.slice(inputs, begin=[0, 0, vertical_slice_size, 0, 0], size=[-1, -1, -1, horizontal_slice_size * 2, -1])
 
-    with tf.contrib.framework.arg_scope([layers.convolution2d],
+    reuse = None
+    for sequence_image in range(int(inputs_shape[1])):
+      with tf.contrib.framework.arg_scope([layers.convolution2d],
         kernel_size=3, stride=1, padding='SAME', rate=1, activation_fn=tf.nn.relu,
         normalizer_fn=None, weights_initializer=None,
-        weights_regularizer=layers.l2_regularizer(weight_decay), reuse=True):
+        weights_regularizer=layers.l2_regularizer(weight_decay)):
 
-        concated = None
+        net = layers.convolution2d(inputs[:, sequence_image], 64, scope='conv1_1', reuse=reuse)
+        net = layers.convolution2d(net, 64, scope='conv1_2', reuse=reuse)
+        net = layers.max_pool2d(net, 2, 2, scope='pool1')
+        net = layers.convolution2d(net, 128, scope='conv2_1', reuse=reuse)
+        net = layers.convolution2d(net, 128, scope='conv2_2', reuse=reuse)
+        net = layers.max_pool2d(net, 2, 2, scope='pool2')
+        net = layers.convolution2d(net, 256, scope='conv3_1', reuse=reuse)
+        net = layers.convolution2d(net, 256, scope='conv3_2', reuse=reuse)
+        net = layers.convolution2d(net, 256, scope='conv3_3', reuse=reuse)
+        net = layers.max_pool2d(net, 2, 2, scope='pool3')
+        net = layers.convolution2d(net, 512, scope='conv4_1', reuse=reuse)
+        net = layers.convolution2d(net, 512, scope='conv4_2', reuse=reuse)
+        net = layers.convolution2d(net, 512, scope='conv4_3', reuse=reuse)
+        net = layers.max_pool2d(net, 2, 2, scope='pool4')
+        net = layers.convolution2d(net, 512, scope='conv5_1', reuse=reuse)
+        net = layers.convolution2d(net, 512, scope='conv5_2', reuse=reuse)
+        net = layers.convolution2d(net, 512, scope='conv5_3', reuse=reuse)
 
-        for sequence_image in range(int(inputs_shape[1])):
+        net = layers.batch_norm(net, decay=bn_params['decay'], center=bn_params['center'], 
+                scale=bn_params['scale'], epsilon=bn_params['epsilon'], 
+                updates_collections=bn_params['updates_collections'], is_training=bn_params['is_training'],
+                scope='batch_norm', reuse=reuse)
 
-            net = layers.convolution2d(inputs[:, sequence_image], 64, scope='conv1_1')
-            net = layers.convolution2d(net, 64, scope='conv1_2')
-            net = layers.max_pool2d(net, 2, 2, scope='pool1')
-            net = layers.convolution2d(net, 128, scope='conv2_1')
-            net = layers.convolution2d(net, 128, scope='conv2_2')
-            net = layers.max_pool2d(net, 2, 2, scope='pool2')
-            net = layers.convolution2d(net, 256, scope='conv3_1')
-            net = layers.convolution2d(net, 256, scope='conv3_2')
-            net = layers.convolution2d(net, 256, scope='conv3_3')
-            net = layers.max_pool2d(net, 2, 2, scope='pool3')
-            net = layers.convolution2d(net, 512, scope='conv4_1')
-            net = layers.convolution2d(net, 512, scope='conv4_2')
-            net = layers.convolution2d(net, 512, scope='conv4_3')
-            net = layers.max_pool2d(net, 2, 2, scope='pool4')
-            net = layers.convolution2d(net, 512, scope='conv5_1')
-            net = layers.convolution2d(net, 512, scope='conv5_2')
-            net = layers.convolution2d(net, 512, scope='conv5_3')
+      if concated is None:
+        concated = tf.expand_dims(net, axis=1)
+      else:
+        concated = tf.concat([concated, tf.expand_dims(net, axis=1)], axis=1)
 
-            net = layers.batch_norm(net, decay=bn_params['decay'], center=bn_params['center'], 
-                    scale=bn_params['scale'], epsilon=bn_params['epsilon'], 
-                    updates_collections=bn_params['updates_collections'], is_training=bn_params['is_training'],
-                    scope='batch_norm')
-
-            if concated is None:
-                concated = tf.expand_dims(net, axis=1)
-            else:
-                concated = tf.concat([concated, tf.expand_dims(net, axis=1)], axis=1)
+      reuse=True
 
     if is_training:
       init_op, init_feed = create_init_op(vgg_layers)
