@@ -1,5 +1,7 @@
 import sys
 
+import tensorflow as tf
+
 from dataset import SingleImageDataset
 from models.vgg_pretrained import SingleImageModel
 from train_evaluate_model import evaluate_model
