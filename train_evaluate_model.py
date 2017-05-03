@@ -23,6 +23,7 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path):
   global_step = tf.get_variable('global_step', [], dtype=tf.int64, initializer=tf.constant_initializer(0), trainable=False)
   num_batches = int(math.ceil(dataset.num_train_examples / dataset.batch_size))
   learning_rate = tf.train.exponential_decay(learning_rate, global_step, num_batches, 0.9, staircase=True)
+  print('\nNumber of steps per epoch: {}'.format(num_batches))
 
   opt = tf.train.AdamOptimizer(learning_rate)
   grads = opt.compute_gradients(model.train_loss)
@@ -33,11 +34,11 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path):
   if os.path.isdir(os.path.abspath(os.path.join(model_path, 'tensorboard'))):
     shutil.rmtree(os.path.abspath(os.path.join(model_path, 'tensorboard')))
 
-  print('Variables list:')
+  print('\nVariables list:')
   print([x.name for x in tf.global_variables()])
 
   writer = tf.summary.FileWriter(os.path.join(model_path, 'tensorboard'), sess.graph)
-  print('Tensorboard command: tensorboard --logdir="{}"'.format(os.path.abspath(os.path.join(model_path, 'tensorboard'))))
+  print('\nTensorboard command: tensorboard --logdir="{}"'.format(os.path.abspath(os.path.join(model_path, 'tensorboard'))))
   writer.close()
 
   init_op, init_feed = model.vgg_init
@@ -63,13 +64,13 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path):
     for j in range(num_batches):
 
       start_time = time.time()
-      _, loss_val = sess.run([train_op, model.train_loss])
+      _, loss_val, learning_rate_val = sess.run([train_op, model.train_loss, learning_rate])
       duration = time.time() - start_time
 
       assert not np.isnan(loss_val), 'Model diverged with loss = NaN'      
 
       if not j % INFO_STEP:
-        print('\tEpoch: {}/{}, step: {}/{}, loss: {}, {} examples/sec, {} sec/batch'.format(i+1, num_epochs, j+1, num_batches, loss_val, dataset.batch_size / duration, duration))
+        print('\tEpoch: {}/{}, step: {}/{}, loss: {}, {} examples/sec, {} sec/batch, learning rate: {}'.format(i+1, num_epochs, j+1, num_batches, loss_val, dataset.batch_size / duration, duration, learning_rate_val))
 
     metrics, y_true, y_pred, y_prob = evaluate('Validation', sess, model.valid_logits, model.valid_loss, dataset.valid_labels, dataset.num_valid_examples, dataset.batch_size)
     if metrics['accuracy_score'] > best_valid_accuracy:
