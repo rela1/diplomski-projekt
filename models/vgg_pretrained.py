@@ -197,11 +197,9 @@ class SequentialImageTemporalFCModel:
 
       net_shape = net.get_shape()
 
-      """
       global_pooling_kernel = [int(net_shape[1]), int(net_shape[2])]
       net = layers.max_pool2d(net, kernel_size=global_pooling_kernel, stride=global_pooling_kernel, scope='global_pool1')
       net_shape = net.get_shape()
-      """
 
       net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2]) * int(net_shape[3])])
         

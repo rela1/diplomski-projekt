@@ -16,7 +16,6 @@ from sklearn.neighbors import KDTree
 import tensorflow as tf
 from matplotlib.image import imread
 from skimage.exposure import equalize_adapthist
-from skimage.transform import resize
 import numpy as np
 
 MP4_VIDEO_FORMAT = 'https://he.ftts-irap.org/video/{}.mp4' 
@@ -50,6 +49,41 @@ class TFImageResizer:
 
 
 IMG_RESIZER = TFImageResizer()
+
+
+def write_single_example(img, label, tf_records_writer):
+    img_raw = img.tostring()
+
+    image_example = tf.train.Example(
+        features=tf.train.Features(
+            feature={
+                'height': _int64_feature(img.shape[0]),
+                'width': _int64_feature(img.shape[1]),
+                'depth': _int64_feature(img.shape[2]),
+                'label': _int64_feature(label),
+                'image_raw': _bytes_feature(img_raw)
+            }
+        )
+    )
+    tf_records_writer.write(image_example.SerializeToString())
+
+
+def write_example_sequence(img_sequence, label, tf_records_writer):
+    img_sequence_raw = img_sequence.tostring()
+
+    sequence_example = tf.train.Example(
+        features=tf.train.Features(
+            feature={
+                'height': _int64_feature(img_sequence.shape[1]),
+                'width': _int64_feature(img_sequence.shape[2]),
+                'depth': _int64_feature(img_sequence.shape[3]),
+                'label': _int64_feature(label),
+                'sequence_length': _int64_feature(img_sequence.shape[0]),
+                'images_raw': _bytes_feature(img_sequence_raw)
+            }
+        )
+    )
+    tf_records_writer.write(sequence_example.SerializeToString())
 
 
 def write_sequenced_and_single_example(single_image_frame, video_name, label, images_before_single, images_after_single, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
@@ -95,37 +129,10 @@ def write_sequenced_and_single_example(single_image_frame, video_name, label, im
 
     images_sequence = np.array(images_sequence)
     images_sequence_resized = IMG_RESIZER.resize_images(images_sequence, IMAGE_WIDTH, IMAGE_HEIGHT)
-    images_sequence_raw = images_sequence_resized.tostring()
-
-    sequence_example = tf.train.Example(
-        features=tf.train.Features(
-            feature={
-                'height': _int64_feature(images_sequence_resized.shape[1]),
-                'width': _int64_feature(images_sequence_resized.shape[2]),
-                'depth': _int64_feature(images_sequence_resized.shape[3]),
-                'label': _int64_feature(label),
-                'sequence_length': _int64_feature(images_sequence_resized.shape[0]),
-                'images_raw': _bytes_feature(images_sequence_raw)
-            }
-        )
-    )
-    sequential_tf_records_writer.write(sequence_example.SerializeToString())
+    write_example_sequence(images_sequence_resized, label, sequential_tf_records_writer)
 
     single_image_eq_resized = IMG_RESIZER.resize_image(single_img_eq, SINGLE_IMAGE_WIDTH, SINGLE_IMAGE_HEIGHT)
-    single_image_eq_raw = single_image_eq_resized.tostring()
-
-    single_image_example = tf.train.Example(
-        features=tf.train.Features(
-            feature={
-                'height': _int64_feature(single_image_eq_resized.shape[0]),
-                'width': _int64_feature(single_image_eq_resized.shape[1]),
-                'depth': _int64_feature(single_image_eq_resized.shape[2]),
-                'label': _int64_feature(label),
-                'image_raw': _bytes_feature(single_image_eq_raw)
-            }
-        )
-    )
-    single_tf_records_writer.write(single_image_example.SerializeToString())
+    write_single_example(single_image_eq_resized, label, single_tf_records_writer)
 
     return True
 
@@ -236,35 +243,33 @@ def get_positive_images_ranges(intersection_lines, frames_per_second, tree, poin
     return sorted(positive_images_ranges)
 
 
-def extract_video_frames(video_name, video_full_path, video_duration_seconds, frames_per_second):
+def extract_video_frames(video_name, video_full_path, video_duration_seconds, frames_per_second, image_width, image_height):
     approximate_number_of_frames = video_duration_seconds * frames_per_second
     zero_pad_number = len(str(approximate_number_of_frames))
     frames_dir = os.path.join(video_name, 'frames')
 
     if not os.path.exists(frames_dir):
         os.mkdir(frames_dir)
-        frame_extract_info = subprocess.getoutput('ffmpeg -i "{}" -s {}x{} {}/frames/%0{}d.png'.format(video_full_path, SINGLE_IMAGE_WIDTH, SINGLE_IMAGE_HEIGHT, video_name, zero_pad_number))
+        frame_extract_info = subprocess.getoutput('ffmpeg -i "{}" -s {}x{} {}/frames/%0{}d.png'.format(video_full_path, image_width, image_height, video_name, zero_pad_number))
 
     number_of_frames = len(os.listdir(frames_dir))
     return frames_dir, number_of_frames, zero_pad_number
 
 
+def create_tf_records_writer(tf_records_writer_path):
+    return tf.python_io.TFRecordWriter(
+        tf_records_writer_path, 
+        options=tf.python_io.TFRecordOptions(
+            tf.python_io.TFRecordCompressionType.GZIP
+        )
+    )
+
 def create_tf_records_writers(video_name):
     sequential_tf_records_filename = os.path.join(video_name, video_name + '_sequential.tfrecords')
     middle_tf_records_filename = os.path.join(video_name, video_name + '_single.tfrecords')
 
-    sequential_tf_records_writer = tf.python_io.TFRecordWriter(
-        sequential_tf_records_filename, 
-        options=tf.python_io.TFRecordOptions(
-            tf.python_io.TFRecordCompressionType.GZIP
-        )
-    )
-    single_tf_records_writer = tf.python_io.TFRecordWriter(
-        middle_tf_records_filename, 
-        options=tf.python_io.TFRecordOptions(
-            tf.python_io.TFRecordCompressionType.GZIP
-        )
-    )
+    sequential_tf_records_writer = create_tf_records_writer(sequential_tf_records_filename)
+    single_tf_records_writer = create_tf_records_writer(middle_tf_records_filename)
 
     return sequential_tf_records_writer, single_tf_records_writer
 
@@ -334,7 +339,7 @@ def process_video(video_name, intersection_lines, max_distance_to_intersection):
         frames_dir = None
         if found_intersections:
             log_file.write('Positive images ranges {}\n'.format(positive_images_ranges))
-            frames_dir, number_of_frames, zero_pad_number = extract_video_frames(video_name, video_full_path, video_duration_seconds, frames_per_second)
+            frames_dir, number_of_frames, zero_pad_number = extract_video_frames(video_name, video_full_path, video_duration_seconds, frames_per_second, SINGLE_IMAGE_WIDTH, SINGLE_IMAGE_HEIGHT)
             frames_resolution = get_frames_resolution(frames_dir, zero_pad_number)
 
             sequential_tf_records_writer, single_tf_records_writer = create_tf_records_writers(video_name)

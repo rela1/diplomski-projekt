@@ -17,10 +17,15 @@ if __name__ == '__main__':
   vgg_init_dir = sys.argv[1]
   dataset_root = sys.argv[2]
   model_path = sys.argv[3]
+  resolution_factor = float(sys.argv[4])
 
   dataset = SingleImageDataset(dataset_root, BATCH_SIZE, INPUT_SHAPE, is_training=True)
 
-  print('Dataset info: {} train examples, {} valid examples, {} test examples'.format(dataset.num_train_examples, dataset.num_valid_examples, dataset.num_test_examples))
+  new_width = int(round(resolution_factor * INPUT_SHAPE[1]))
+  new_height = int(round(resolution_factor * INPUT_SHAPE[0]))
+  dataset.train_images = tf.image.resize_images(dataset.train_images, (new_height, new_width), tf.image.ResizeMethod.AREA)
+  dataset.valid_images = tf.image.resize_images(dataset.valid_images, (new_height, new_width), tf.image.ResizeMethod.AREA)
+  dataset.test_images = tf.image.resize_images(dataset.test_images, (new_height, new_width), tf.image.ResizeMethod.AREA)
 
   model = SingleImageModel(FULLY_CONNECTED, dataset, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=True)
 
