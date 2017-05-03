@@ -10,9 +10,6 @@ from datetime import datetime
 import math
 import random
 
-from fastkml import kml
-from geopy.distance import vincenty
-from sklearn.neighbors import KDTree
 import tensorflow as tf
 from matplotlib.image import imread
 from skimage.exposure import equalize_adapthist
