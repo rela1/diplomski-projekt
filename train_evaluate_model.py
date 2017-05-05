@@ -31,15 +31,15 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path, pretraine
 
   opt = tf.train.AdamOptimizer(learning_rate)
   freezed_pretrained_grads = opt.compute_gradients(model.train_loss, var_list=freezed_pretrained_trainable_variables)
-  grads = opt.compute_gradients(model.train_loss)
+  #grads = opt.compute_gradients(model.train_loss)
   freezed_pretrained_apply_gradient_op = opt.apply_gradients(freezed_pretrained_grads, global_step=global_step)
-  apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
+  #apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
 
-  with tf.control_dependencies([apply_gradient_op]):
-    all_train_op = tf.no_op(name='all_train')
+  #with tf.control_dependencies([apply_gradient_op]):
+    #all_train_op = tf.no_op(name='all_train')
 
   with tf.control_dependencies([freezed_pretrained_apply_gradient_op]):
-    freezed_pretrained_train_op = tf.no_op(name='freezed_pretrained_train')
+    train_op = tf.no_op(name='freezed_pretrained_train')
 
   if os.path.isdir(os.path.abspath(os.path.join(model_path, 'tensorboard'))):
     shutil.rmtree(os.path.abspath(os.path.join(model_path, 'tensorboard')))
@@ -77,7 +77,7 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path, pretraine
 
   for i in range(num_epochs):
 
-    train_op = all_train_op if i >= pretrained_freeze_epochs else freezed_pretrained_train_op
+    #train_op = all_train_op if i >= pretrained_freeze_epochs else freezed_pretrained_train_op
 
     print('Using {} train operation.'.format(train_op.name))
 
