@@ -43,10 +43,10 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path):
   print([x.name for x in tf.global_variables()])
 
   print('\nFreezed pretrained trainable variables list:')
-  print([x[1].name for x in freezed_pretrained_grads])
+  print([x.name for x in freezed_pretrained_trainable_variables])
 
   print('\nAll trainable variables list:')
-  print([x[1].name for x in all_grads])
+  print([x.name for x in trainable_variables])
 
   writer = tf.summary.FileWriter(os.path.join(model_path, 'tensorboard'), sess.graph)
   print('\nTensorboard command: tensorboard --logdir="{}"'.format(os.path.abspath(os.path.join(model_path, 'tensorboard'))))
