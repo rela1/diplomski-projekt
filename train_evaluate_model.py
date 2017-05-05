@@ -77,9 +77,9 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path, pretraine
 
   for i in range(num_epochs):
 
-  	train_op = all_train if i >= pretrained_freeze_epochs else freezed_pretrained_train
+    train_op = all_train if i >= pretrained_freeze_epochs else freezed_pretrained_train
 
-  	print('Using {} train operation.'.format(train_op.name))
+    print('Using {} train operation.'.format(train_op.name))
 
     for j in range(num_batches):
 
