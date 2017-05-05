@@ -31,7 +31,7 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path, pretraine
 
   opt = tf.train.AdamOptimizer(learning_rate)
   freezed_pretrained_grads = opt.compute_gradients(model.train_loss, var_list=freezed_pretrained_trainable_variables)
-  grads = opt.compute_gradients(model.train_loss, var_list=trainable_variables)
+  grads = opt.compute_gradients(model.train_loss)
   freezed_pretrained_apply_gradient_op = opt.apply_gradients(freezed_pretrained_grads, global_step=global_step)
   apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
 
@@ -77,7 +77,7 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path, pretraine
 
   for i in range(num_epochs):
 
-    train_op = all_train if i >= pretrained_freeze_epochs else freezed_pretrained_train
+    train_op = all_train_op if i >= pretrained_freeze_epochs else freezed_pretrained_train_op
 
     print('Using {} train operation.'.format(train_op.name))
 

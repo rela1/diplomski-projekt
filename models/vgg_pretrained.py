@@ -438,6 +438,7 @@ class SingleImageModel:
       for fully_connected_num in fully_connected_layers:
         net = layers.fully_connected(net, fully_connected_num, scope='fc{}'.format(layer_num))
         layer_num += 1
+        
     logits = layers.fully_connected(net, 2, activation_fn=None, scope='logits')
 
     total_loss = loss(logits, labels, is_training)
