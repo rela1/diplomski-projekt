@@ -10,7 +10,7 @@ from train_evaluate_model import train_model
 WEIGHT_DECAY = 1e-3
 LEARNING_RATE = 5e-4
 FULLY_CONNECTED = [200]
-EPOCHS = 50
+EPOCHS = 70
 BATCH_SIZE = 10
 INPUT_SHAPE = [280, 700, 3]
 
@@ -31,4 +31,4 @@ if __name__ == '__main__':
 
   model = SingleImageModel(FULLY_CONNECTED, dataset, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=True)
 
-  train_model(model, dataset, LEARNING_RATE, EPOCHS, model_path, pretrained_freeze_epochs=2)
+  train_model(model, dataset, LEARNING_RATE, EPOCHS, model_path, pretrained_freeze_epochs=35)
