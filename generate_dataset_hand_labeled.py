@@ -42,13 +42,12 @@ def extract_positive_examples(video_name, positive_images_ranges, frames_resolut
 
 
 def extract_negative_examples(video_name, number_of_positive_examples, positive_images_ranges, frames_resolution, tf_records_writer, zero_pad_number, number_of_frames):
-    treshold = SAME_TRESHOLD * frames_resolution
     selected_single_images = set()
     while len(selected_single_images) < number_of_positive_examples:
         image = random.randint(1, number_of_frames)
         if image in selected_single_images:
             continue
-        if any([abs(image - positive_images_range[0]) < MIN_FRAME_DIFF_TO_POSITIVE or abs(image - positive_images_range[1]) < MIN_FRAME_DIFF_TO_POSITIVE 
+        if any([abs(image - positive_images_range[0]) < MIN_FRAME_DIFF_TO_POSITIVE or abs(image - positive_images_range[1]) < MIN_FRAME_DIFF_TO_POSITIVE or (image >= positive_images_range[0] and image <= positive_images_range[1])
             for positive_images_range in positive_images_ranges]):
                 continue
         img = imread(os.path.join(video_name, 'frames', str(image).zfill(zero_pad_number) + '.png'))

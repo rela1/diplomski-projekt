@@ -300,7 +300,7 @@ def extract_negative_examples(video_name, number_of_positive_examples, speeds, p
         image = random.randint(1, number_of_frames)
         if image in selected_single_images:
             continue
-        if any([abs(image - positive_images_range[0]) < min_frame_diff_to_positive or abs(image - positive_images_range[1]) < min_frame_diff_to_positive 
+        if any([abs(image - positive_images_range[0]) < min_frame_diff_to_positive or abs(image - positive_images_range[1]) < min_frame_diff_to_positive or (image >= positive_images_range[0] and image <= positive_images_range[1])
             for positive_images_range in positive_images_ranges]):
                 continue
         if write_sequenced_and_single_example(image, video_name, 0, SEQUENCE_HALF_LENGTH * 2, 0, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
