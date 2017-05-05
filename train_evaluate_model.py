@@ -31,7 +31,7 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path, pretraine
 
   opt = tf.train.AdamOptimizer(learning_rate)
   all_grads = opt.compute_gradients(model.train_loss)
-  freezed_pretrained_grads = [grad for grad in all_grads if grad[0] not in pretrained_variables]
+  freezed_pretrained_grads = [grad for grad in all_grads if grad[1] not in pretrained_variables]
   apply_gradient_op = opt.apply_gradients(all_grads, global_step=global_step)
   freezed_pretrained_apply_gradient_op = opt.apply_gradients(freezed_pretrained_grads, global_step=global_step)
 
@@ -48,10 +48,10 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path, pretraine
   print([x.name for x in tf.global_variables()])
 
   print('\nFreezed pretrained trainable variables list:')
-  print([x[0].name for x in freezed_pretrained_grads])
+  print([x[1].name for x in freezed_pretrained_grads])
 
   print('\nAll trainable variables list:')
-  print([x[0].name for x in all_grads])
+  print([x[1].name for x in all_grads])
 
   writer = tf.summary.FileWriter(os.path.join(model_path, 'tensorboard'), sess.graph)
   print('\nTensorboard command: tensorboard --logdir="{}"'.format(os.path.abspath(os.path.join(model_path, 'tensorboard'))))
