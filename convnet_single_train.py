@@ -31,4 +31,4 @@ if __name__ == '__main__':
 
   model = SingleImageModel(FULLY_CONNECTED, dataset, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=True)
 
-  train_model(model, dataset, LEARNING_RATE, EPOCHS, model_path)
+  train_model(model, dataset, LEARNING_RATE, EPOCHS, model_path, pretrained_freeze_epochs=2)

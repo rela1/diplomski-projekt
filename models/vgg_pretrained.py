@@ -106,7 +106,8 @@ class SequentialImageLSTMModel:
     lstm = tf.contrib.rnn.BasicLSTMCell(lstm_state_size)            
 
     if is_training:
-      init_op, init_feed = create_init_op(vgg_layers)
+      init_op, init_feed, pretrained_vars = create_init_op(vgg_layers)
+      self.pretrained_vars = pretrained_vars
 
     net = tf.unstack(concated, num=sequence_length, axis=0)
     outputs, states = tf.contrib.rnn.static_rnn(lstm, net, dtype=tf.float32)
@@ -217,7 +218,8 @@ class SequentialImageTemporalFCModel:
       reuse=True
 
     if is_training:
-      init_op, init_feed = create_init_op(vgg_layers)
+      init_op, init_feed, pretrained_vars = create_init_op(vgg_layers)
+      self.pretrained_vars = pretrained_vars
 
     net = concated
 
@@ -320,7 +322,8 @@ class SequentialImagePoolingModel:
       reuse=True
 
     if is_training:
-      init_op, init_feed = create_init_op(vgg_layers)
+      init_op, init_feed, pretrained_vars = create_init_op(vgg_layers)
+      self.pretrained_vars = pretrained_vars
 
     net = concated
 
@@ -415,7 +418,8 @@ class SingleImageModel:
       net = layers.max_pool2d(net, 2, 2, scope='pool5')
 
     if is_training:
-      init_op, init_feed = create_init_op(vgg_layers)
+      init_op, init_feed, pretrained_vars = create_init_op(vgg_layers)
+      self.pretrained_vars = pretrained_vars
 
     net = layers.batch_norm(net, decay=bn_params['decay'], center=bn_params['center'], 
       scale=bn_params['scale'], epsilon=bn_params['epsilon'], 
@@ -456,6 +460,7 @@ def loss(logits, labels, is_training):
 def create_init_op(vgg_layers):
   variables = tf.contrib.framework.get_variables()
   init_map = {}
+  pretrained_vars = []
   for var in variables:
     name_split = var.name.split('/')
     if len(name_split) != 3:
@@ -464,7 +469,8 @@ def create_init_op(vgg_layers):
     if name in vgg_layers:
       print(var.name, ' --> init from ', name)
       init_map[var.name] = vgg_layers[name]
+      pretrained_vars.append(var)
     else:
       print(var.name, ' --> random init')
   init_op, init_feed = tf.contrib.framework.assign_from_values(init_map)
-  return init_op, init_feed
+  return init_op, init_feed, pretrained_vars

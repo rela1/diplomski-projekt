@@ -16,7 +16,7 @@ np.set_printoptions(linewidth=250)
 INFO_STEP = 20
 
 
-def train_model(model, dataset, learning_rate, num_epochs, model_path):
+def train_model(model, dataset, learning_rate, num_epochs, model_path, pretrained_freeze_epochs=0):
 
   sess = tf.Session()
 
@@ -25,17 +25,33 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path):
   learning_rate = tf.train.exponential_decay(learning_rate, global_step, num_batches, 0.9, staircase=True)
   print('\nNumber of steps per epoch: {}'.format(num_batches))
 
+  trainable_variables = tf.trainable_variables()
+  pretrained_variables = set(model.pretrained_vars)
+  freezed_pretrained_trainable_variables = [var for var in trainable_variables if var not in pretrained_variables]
+
   opt = tf.train.AdamOptimizer(learning_rate)
-  grads = opt.compute_gradients(model.train_loss)
+  freezed_pretrained_grads = opt.compute_gradients(model.train_loss, var_list=freezed_pretrained_trainable_variables)
+  grads = opt.compute_gradients(model.train_loss, var_list=trainable_variables)
+  freezed_pretrained_apply_gradient_op = opt.apply_gradients(freezed_pretrained_grads, global_step=global_step)
   apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
+
   with tf.control_dependencies([apply_gradient_op]):
-    train_op = tf.no_op(name='train')
+    all_train_op = tf.no_op(name='all_train')
+
+  with tf.control_dependencies([freezed_pretrained_apply_gradient_op]):
+    freezed_pretrained_train_op = tf.no_op(name='freezed_pretrained_train')
 
   if os.path.isdir(os.path.abspath(os.path.join(model_path, 'tensorboard'))):
     shutil.rmtree(os.path.abspath(os.path.join(model_path, 'tensorboard')))
 
   print('\nVariables list:')
   print([x.name for x in tf.global_variables()])
+
+  print('\nFreezed pretrained variables list:')
+  print([x.name for x in freezed_pretrained_trainable_variables])
+
+  print('\nTrainable variables list:')
+  print([x.name for x in trainable_variables])
 
   writer = tf.summary.FileWriter(os.path.join(model_path, 'tensorboard'), sess.graph)
   print('\nTensorboard command: tensorboard --logdir="{}"'.format(os.path.abspath(os.path.join(model_path, 'tensorboard'))))
@@ -60,6 +76,10 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path):
   start_time = time.time()
 
   for i in range(num_epochs):
+
+  	train_op = all_train if i >= pretrained_freeze_epochs else freezed_pretrained_train
+
+  	print('Using {} train operation.'.format(train_op.name))
 
     for j in range(num_batches):
 
