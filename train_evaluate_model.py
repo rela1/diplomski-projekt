@@ -30,10 +30,11 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path, pretraine
   freezed_pretrained_trainable_variables = [var for var in trainable_variables if var not in pretrained_variables]
 
   opt = tf.train.AdamOptimizer(learning_rate)
+  freezed_opt = tf.train.AdamOptimizer(learning_rate)
   all_grads = opt.compute_gradients(model.train_loss)
   freezed_pretrained_grads = [grad for grad in all_grads if grad[1] not in pretrained_variables]
   apply_gradient_op = opt.apply_gradients(all_grads, global_step=global_step)
-  freezed_pretrained_apply_gradient_op = opt.apply_gradients(freezed_pretrained_grads, global_step=global_step)
+  freezed_pretrained_apply_gradient_op = freezed_opt.apply_gradients(freezed_pretrained_grads, global_step=global_step)
 
   with tf.control_dependencies([apply_gradient_op]):
     all_train_op = tf.no_op(name='all_train')
