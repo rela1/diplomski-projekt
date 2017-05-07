@@ -395,8 +395,7 @@ class SingleImageModel:
 
     with tf.contrib.framework.arg_scope([layers.convolution2d],
         kernel_size=3, stride=1, padding='SAME', rate=1, activation_fn=tf.nn.relu,
-        normalizer_fn=None, weights_initializer=None,
-        weights_regularizer=layers.l2_regularizer(weight_decay)):
+        normalizer_fn=None, weights_initializer=None):
 
       net = layers.convolution2d(inputs, 64, scope='conv1_1')
       net = layers.convolution2d(net, 64, scope='conv1_2')
