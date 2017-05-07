@@ -80,10 +80,6 @@ class SequentialImageLSTMModel:
 
       net_shape = net.get_shape()
 
-      global_pooling_kernel = [int(net_shape[1]), int(net_shape[2])]
-      net = layers.max_pool2d(net, kernel_size=global_pooling_kernel, stride=global_pooling_kernel, scope='global_pool1')
-      net_shape = net.get_shape()
-
       net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2]) * int(net_shape[3])])
 
       if concated is None:
@@ -111,6 +107,7 @@ class SequentialImageLSTMModel:
 
     net = tf.unstack(concated, num=sequence_length, axis=0)
     outputs, states = tf.contrib.rnn.static_rnn(lstm, net, dtype=tf.float32)
+    
     logits = tf.matmul(outputs[-1], output_weights) + output_bias
 
     total_loss = loss(logits, labels, is_training)
