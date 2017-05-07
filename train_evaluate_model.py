@@ -23,6 +23,7 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path):
   global_step = tf.get_variable('global_step', [], dtype=tf.int64, initializer=tf.constant_initializer(0), trainable=False)
   num_batches = int(math.ceil(dataset.num_train_examples / dataset.batch_size))
   learning_rate = tf.train.exponential_decay(learning_rate, global_step, num_batches, 0.9, staircase=True)
+  pretrained_learning_rate = tf.train.exponential_decay(learning_rate, global_step, num_batches)
   print('\nNumber of steps per epoch: {}'.format(num_batches))
 
   trainable_variables = tf.trainable_variables()
@@ -30,8 +31,8 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path):
   freezed_pretrained_trainable_variables = [var for var in trainable_variables if var not in pretrained_variables]
 
   opt = tf.train.AdamOptimizer(learning_rate)
-  all_grads = opt.compute_gradients(model.train_loss)
-  apply_gradient_op = opt.apply_gradients(all_grads, global_step=global_step)
+  grads = opt.compute_gradients(model.train_loss, var_list=freezed_pretrained_trainable_variables)
+  apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
 
   with tf.control_dependencies([apply_gradient_op]):
     train_op = tf.no_op(name='all_train')
