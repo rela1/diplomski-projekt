@@ -30,7 +30,7 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path):
   freezed_pretrained_trainable_variables = [var for var in trainable_variables if var not in pretrained_variables]
 
   opt = tf.train.AdamOptimizer(learning_rate)
-  grads = opt.compute_gradients(model.train_loss, var_list=freezed_pretrained_trainable_variables)
+  grads = opt.compute_gradients(model.train_loss)
   apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
 
   with tf.control_dependencies([apply_gradient_op]):
@@ -114,6 +114,10 @@ def evaluate_model(model, dataset, model_path):
   evaluate('Train', sess, model.train_logits, model.train_loss, dataset.train_labels, dataset.num_train_examples, dataset.batch_size)
   evaluate('Validation', sess, model.valid_logits, model.valid_loss, dataset.valid_labels, dataset.num_valid_examples, dataset.batch_size)
   evaluate('Test', sess, model.test_logits, model.test_loss, dataset.test_labels, dataset.num_test_examples, dataset.batch_size)
+
+  coord.request_stop()
+  coord.join(threads)
+  sess.close()
 
 
 def plot_wrong_classifications(model, dataset, model_path):
