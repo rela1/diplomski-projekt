@@ -6,7 +6,7 @@ from train_evaluate_model import train_model
 
 
 WEIGHT_DECAY = 5e-3
-LEARNING_RATE = 1e-4
+LEARNING_RATE = 5e-4
 SPATIAL_FULLY_CONNECTED = 128
 TEMPORAL_FULLY_CONNECTED = [64, 32]
 EPOCHS = 50
