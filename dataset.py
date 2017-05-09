@@ -55,10 +55,10 @@ class Dataset:
         for i in range(num_batches):
           print('Normalization step {}/{}'.format(i + 1, num_batches))
           image_vals = sess.run(self.train_images)
-          for j in range(batch_size):
+          for j in range(len(image_vals)):
             np.add(mean_image, image_vals[j], mean_image)
         np.divide(mean_image, float(self.num_train_examples), mean_image)
-        tf_mean_image = tf.constant(mean_image)
+        tf_mean_image = tf.constant(mean_image, dtype=tf.float32)
         self.train_images = tf.subtract(self.train_images, tf_mean_image, name='train_images_mean_image_normalization')
         self.valid_images = tf.subtract(self.valid_images, tf_mean_image, name='valid_images_mean_image_normalization')
         self.test_images = tf.subtract(self.test_images, tf_mean_image, name='test_images_mean_image_normalization')
