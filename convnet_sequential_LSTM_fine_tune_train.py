@@ -8,7 +8,7 @@ from train_evaluate_model import fine_tune_train_model
 WEIGHT_DECAY = 1e-3
 LEARNING_RATE = 1e-5
 LSTM_STATE_SIZE = 512
-EPOCHS = 50
+EPOCHS = 40
 BATCH_SIZE = 5
 INPUT_SHAPE = [25, 80, 200, 3]
 

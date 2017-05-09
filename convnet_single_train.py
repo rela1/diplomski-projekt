@@ -10,7 +10,7 @@ from train_evaluate_model import freezed_pretrained_train_model
 WEIGHT_DECAY = 1e-3
 LEARNING_RATE = 5e-4
 FULLY_CONNECTED = [200]
-EPOCHS = 50
+EPOCHS = 10
 BATCH_SIZE = 10
 INPUT_SHAPE = [280, 700, 3]
 
