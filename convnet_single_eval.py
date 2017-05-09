@@ -13,8 +13,6 @@ INPUT_SHAPE = [280, 700, 3]
 
 
 if __name__ == '__main__':
-  import pdb
-  pdb.set_trace()
   dataset_root = sys.argv[1]
   model_path = sys.argv[2]
   resolution_factor = float(sys.argv[3])
