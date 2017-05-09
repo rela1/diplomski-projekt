@@ -63,14 +63,10 @@ def fine_tune_train_model(model, dataset, learning_rate, num_epochs, model_path)
   saver = tf.train.Saver()
   saver.restore(sess, model_path)
 
-  metrics, y_true, y_pred, y_prob = evaluate('Validation', sess, model.valid_logits, model.valid_loss, dataset.valid_labels, dataset.num_valid_examples, dataset.batch_size)
-
-  print('Fine tuning model with best accuracy on validation {}'.format(metrics['accuracy_score']))
-
   train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op, saver, best_valid_accuracy=metrics['accuracy_score'])
 
 
-def train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op, saver, best_valid_accuracy=0):
+def train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op, saver, best_valid_evaluate=False):
 
   num_batches = int(math.ceil(dataset.num_train_examples / dataset.batch_size))
   learning_rate = tf.train.exponential_decay(learning_rate, global_step, num_batches, 0.9, staircase=True)
@@ -84,6 +80,12 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path, sess, glo
   threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
   dataset.mean_image_normalization(sess, dataset.batch_size, num_batches)
+
+  if best_valid_evaluate:
+    metrics, y_true, y_pred, y_prob = evaluate('Validation', sess, model.valid_logits, model.valid_loss, dataset.valid_labels, dataset.num_valid_examples, dataset.batch_size)
+    best_valid_accuracy = metrics['accuracy_score']
+  else:
+    best_valid_accuracy = 0.0
 
   losses = []
   correct = 0
