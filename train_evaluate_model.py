@@ -26,7 +26,7 @@ def freezed_pretrained_train_model(model, dataset, learning_rate, num_epochs, mo
 
   global_step = tf.get_variable('global_step', [], dtype=tf.int64, initializer=tf.constant_initializer(0), trainable=False)
 
-  opt = tf.train.AdamOptimizer(learning_rate, name='pretraining_opt')
+  opt = tf.train.AdamOptimizer(learning_rate)
   grads = opt.compute_gradients(model.train_loss, var_list=freezed_pretrained_trainable_variables)
   apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
 
@@ -50,7 +50,7 @@ def fine_tune_train_model(model, dataset, learning_rate, num_epochs, model_path)
 
   global_step = tf.get_variable('global_step', [], dtype=tf.int64, initializer=tf.constant_initializer(0), trainable=False)
 
-  opt = tf.train.AdamOptimizer(learning_rate, name='finetuning_opt')
+  opt = tf.train.AdamOptimizer(learning_rate)
   grads = opt.compute_gradients(model.train_loss)
   apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
 
