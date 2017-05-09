@@ -53,7 +53,7 @@ class Dataset:
         print('Image shape', image_shape)
         mean_image = np.zeros((image_shape))
         for i in range(num_batches):
-          print('Normalization step {}/{}'.format(ii + 1, num_batches))
+          print('Normalization step {}/{}'.format(i + 1, num_batches))
           image_vals = sess.run(self.train_images)
           for j in range(batch_size):
             np.add(mean_image, image_vals[j], mean_image)
