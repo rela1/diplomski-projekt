@@ -63,7 +63,7 @@ def fine_tune_train_model(model, dataset, learning_rate, num_epochs, model_path)
   saver = tf.train.Saver()
   saver.restore(sess, model_path)
 
-  train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op, saver, best_valid_accuracy=metrics['accuracy_score'])
+  train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op, saver, best_valid_evaluate=True)
 
 
 def train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op, saver, best_valid_evaluate=False):
