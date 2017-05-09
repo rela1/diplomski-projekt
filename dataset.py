@@ -49,7 +49,9 @@ class Dataset:
 
     def mean_image_normalization(self, sess):
         print('Mean image dataset normalization...')
-        mean_image = np.zeros((input_shape))
+        image_shape = self.train_images.get_shape().as_list()[1:]
+        print('Image shape', image_shape)
+        mean_image = np.zeros((image_shape))
         for i in range(self.num_train_examples):
           image_val = sess.run(self.train_images)
           np.add(mean_image, image_val, mean_image)
