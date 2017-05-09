@@ -25,8 +25,6 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path):
   learning_rate = tf.train.exponential_decay(learning_rate, global_step, num_batches, 0.9, staircase=True)
   print('\nNumber of steps per epoch: {}'.format(num_batches))
 
-  dataset.mean_image_normalization(sess, dataset.batch_size, num_batches)
-
   trainable_variables = tf.trainable_variables()
   pretrained_variables = set(model.pretrained_vars)
   freezed_pretrained_trainable_variables = [var for var in trainable_variables if var not in pretrained_variables]
@@ -62,6 +60,8 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path):
 
   coord = tf.train.Coordinator()
   threads = tf.train.start_queue_runners(sess=sess, coord=coord)
+
+  dataset.mean_image_normalization(sess, dataset.batch_size, num_batches)
 
   best_accuracy = 0
   saver = tf.train.Saver()
