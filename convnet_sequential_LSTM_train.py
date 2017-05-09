@@ -7,7 +7,7 @@ from train_evaluate_model import freezed_pretrained_train_model
 
 WEIGHT_DECAY = 1e-3
 LEARNING_RATE = 5e-4
-LSTM_STATE_SIZE = 512
+LSTM_STATE_SIZE = 200
 EPOCHS = 10
 BATCH_SIZE = 5
 INPUT_SHAPE = [25, 80, 200, 3]
