@@ -47,19 +47,22 @@ class Dataset:
         self.test_images, self.test_labels = tf.train.batch(
             [test_images, test_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True)
 
-    def mean_image_normalization(self, sess):
+    def mean_image_normalization(self, sess, batch_size, num_batches):
         print('Mean image dataset normalization...')
         image_shape = self.train_images.get_shape().as_list()[1:]
         print('Image shape', image_shape)
         mean_image = np.zeros((image_shape))
-        for i in range(self.num_train_examples):
-          image_val = sess.run(self.train_images)
-          np.add(mean_image, image_val, mean_image)
+        for i in range(num_batches):
+          print('Normalization step {}/{}'.format(ii + 1, num_batches))
+          image_vals = sess.run(self.train_images)
+          for j in range(batch_size):
+            np.add(mean_image, image_vals[j], mean_image)
         np.divide(mean_image, float(self.num_train_examples), mean_image)
         tf_mean_image = tf.constant(mean_image)
         self.train_images = tf.subtract(self.train_images, tf_mean_image, name='train_images_mean_image_normalization')
         self.valid_images = tf.subtract(self.valid_images, tf_mean_image, name='valid_images_mean_image_normalization')
         self.test_images = tf.subtract(self.test_images, tf_mean_image, name='test_images_mean_image_normalization')
+        print('Done with mean image dataset normalization...')
 
 
 class SingleImageDataset(Dataset):
