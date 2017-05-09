@@ -90,14 +90,13 @@ class SequentialImageLSTMModel:
     output_weights = tf.get_variable(
       'lstm_output_weights', 
       shape=[lstm_state_size, 2], 
-      initializer=layers.variance_scaling_initializer(), 
+      initializer=layers.xavier_initializer(), 
       regularizer=layers.l2_regularizer(weight_decay)
     )
     output_bias = tf.get_variable(
       'lstm_output_bias', 
       shape=[2], 
-      initializer=layers.variance_scaling_initializer(), 
-      regularizer=layers.l2_regularizer(weight_decay)
+      initializer=tf.zeros_initializer()
     )
     lstm = tf.contrib.rnn.BasicLSTMCell(lstm_state_size)            
 
