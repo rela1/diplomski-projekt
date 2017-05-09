@@ -2,11 +2,11 @@ import sys
 
 from dataset import ImageSequenceDataset
 from models.vgg_pretrained import SequentialImageTemporalFCModel
-from train_evaluate_model import freezed_pretrained_train_model
+from train_evaluate_model import fine_tune_train_model
 
 
 WEIGHT_DECAY = 1e-3
-LEARNING_RATE = 5e-4
+LEARNING_RATE = 1e-5
 SPATIAL_FULLY_CONNECTED = 200
 TEMPORAL_FULLY_CONNECTED = [200]
 EPOCHS = 50
@@ -23,4 +23,4 @@ if __name__ == '__main__':
 
   model = SequentialImageTemporalFCModel(SPATIAL_FULLY_CONNECTED, TEMPORAL_FULLY_CONNECTED, dataset, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=True)
 
-  freezed_pretrained_train_model(model, dataset, LEARNING_RATE, EPOCHS, model_path)
+  fine_tune_train_model(model, dataset, LEARNING_RATE, EPOCHS, model_path)

@@ -24,8 +24,6 @@ def freezed_pretrained_train_model(model, dataset, learning_rate, num_epochs, mo
   pretrained_variables = set(model.pretrained_vars)
   freezed_pretrained_trainable_variables = [var for var in trainable_variables if var not in pretrained_variables]
 
-  global_step = tf.get_variable('global_step', [], dtype=tf.int64, initializer=tf.constant_initializer(0), trainable=False)
-
   opt = tf.train.AdamOptimizer(learning_rate)
   grads = opt.compute_gradients(model.train_loss, var_list=freezed_pretrained_trainable_variables)
   apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
@@ -33,46 +31,50 @@ def freezed_pretrained_train_model(model, dataset, learning_rate, num_epochs, mo
   with tf.control_dependencies([apply_gradient_op]):
     train_op = tf.no_op(name='train_op')
 
-  init_op, init_feed = model.vgg_init
-
-  sess.run(tf.initialize_all_variables())
-  sess.run(tf.initialize_local_variables())
-  sess.run(init_op, feed_dict=init_feed)
-
-  train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op)
+  train_model(model, dataset, learning_rate, num_epochs, model_path, )
 
 
-def fine_tune_train_model(model, dataset, learning_rate, num_epochs, model_path):
+def train_model(model, dataset, learning_rate, num_epochs, model_path, session, train_op):
 
   sess = tf.Session()
 
   global_step = tf.get_variable('global_step', [], dtype=tf.int64, initializer=tf.constant_initializer(0), trainable=False)
+  num_batches = int(math.ceil(dataset.num_train_examples / dataset.batch_size))
+  learning_rate = tf.train.exponential_decay(learning_rate, global_step, num_batches, 0.9, staircase=True)
+  print('\nNumber of steps per epoch: {}'.format(num_batches))
+
+  trainable_variables = tf.trainable_variables()
+  pretrained_variables = set(model.pretrained_vars)
+  freezed_pretrained_trainable_variables = [var for var in trainable_variables if var not in pretrained_variables]
 
   opt = tf.train.AdamOptimizer(learning_rate)
   grads = opt.compute_gradients(model.train_loss)
   apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
 
   with tf.control_dependencies([apply_gradient_op]):
-    train_op = tf.no_op(name='train_op')
+    train_op = tf.no_op(name='all_train')
 
-  sess.run(tf.initialize_all_variables())
-  sess.run(tf.initialize_local_variables())
-    
-  saver = tf.train.Saver()
-  saver.restore(sess, model_path)
+  if os.path.isdir(os.path.abspath(os.path.join(model_path, 'tensorboard'))):
+    shutil.rmtree(os.path.abspath(os.path.join(model_path, 'tensorboard')))
 
-  train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op)
+  print('\nVariables list:')
+  print([x.name for x in tf.global_variables()])
 
+  print('\nFreezed pretrained trainable variables list:')
+  print([x.name for x in freezed_pretrained_trainable_variables])
 
-def train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op):
-
-  num_batches = int(math.ceil(dataset.num_train_examples / dataset.batch_size))
-  learning_rate = tf.train.exponential_decay(learning_rate, global_step, num_batches, 0.9, staircase=True)
-  print('\nNumber of steps per epoch: {}'.format(num_batches))
+  print('\nAll trainable variables list:')
+  print([x.name for x in trainable_variables])
 
   writer = tf.summary.FileWriter(os.path.join(model_path, 'tensorboard'), sess.graph)
   print('\nTensorboard command: tensorboard --logdir="{}"'.format(os.path.abspath(os.path.join(model_path, 'tensorboard'))))
   writer.close()
+
+  init_op, init_feed = model.vgg_init
+
+  sess.run(tf.initialize_all_variables())
+  sess.run(tf.initialize_local_variables())
+  sess.run(init_op, feed_dict=init_feed)
 
   coord = tf.train.Coordinator()
   threads = tf.train.start_queue_runners(sess=sess, coord=coord)
