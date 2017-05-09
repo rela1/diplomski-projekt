@@ -133,6 +133,9 @@ def evaluate_model(model, dataset, model_path):
 
   sess.run(tf.initialize_all_variables())
   sess.run(tf.initialize_local_variables())
+
+  import pdb
+  pdb.set_trace()
     
   saver = tf.train.Saver(get_saver_variables())
   saver.restore(sess, model_path)
