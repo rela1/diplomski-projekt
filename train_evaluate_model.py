@@ -26,7 +26,7 @@ def freezed_pretrained_train_model(model, dataset, learning_rate, num_epochs, mo
 
   global_step = tf.get_variable('global_step', [], dtype=tf.int64, initializer=tf.constant_initializer(0), trainable=False)
 
-  opt = tf.train.AdamOptimizer(learning_rate)
+  opt = tf.train.AdamOptimizer(learning_rate, name='pretraining_opt')
   grads = opt.compute_gradients(model.train_loss, var_list=freezed_pretrained_trainable_variables)
   apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
 
@@ -39,7 +39,9 @@ def freezed_pretrained_train_model(model, dataset, learning_rate, num_epochs, mo
   sess.run(tf.initialize_local_variables())
   sess.run(init_op, feed_dict=init_feed)
 
-  train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op)
+  saver = tf.train.Saver()
+
+  train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op, saver)
 
 
 def fine_tune_train_model(model, dataset, learning_rate, num_epochs, model_path):
@@ -48,7 +50,7 @@ def fine_tune_train_model(model, dataset, learning_rate, num_epochs, model_path)
 
   global_step = tf.get_variable('global_step', [], dtype=tf.int64, initializer=tf.constant_initializer(0), trainable=False)
 
-  opt = tf.train.AdamOptimizer(learning_rate)
+  opt = tf.train.AdamOptimizer(learning_rate, name='finetuning_opt')
   grads = opt.compute_gradients(model.train_loss)
   apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
 
@@ -63,10 +65,12 @@ def fine_tune_train_model(model, dataset, learning_rate, num_epochs, model_path)
 
   metrics, y_true, y_pred, y_prob = evaluate('Validation', sess, model.valid_logits, model.valid_loss, dataset.valid_labels, dataset.num_valid_examples, dataset.batch_size)
 
-  train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op, best_accuracy=metrics['accuracy_score'])
+  print('Fine tuning model with best accuracy on validation {}'.format(metrics['accuracy_score']))
+
+  train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op, saver, best_valid_accuracy=metrics['accuracy_score'])
 
 
-def train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op, best_accuracy=0):
+def train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op, saver, best_valid_accuracy=0):
 
   num_batches = int(math.ceil(dataset.num_train_examples / dataset.batch_size))
   learning_rate = tf.train.exponential_decay(learning_rate, global_step, num_batches, 0.9, staircase=True)
@@ -81,12 +85,9 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path, sess, glo
 
   dataset.mean_image_normalization(sess, dataset.batch_size, num_batches)
 
-  saver = tf.train.Saver()
-
   losses = []
   correct = 0
   total = 0
-  best_valid_accuracy = 0
   start_time = time.time()
 
   for i in range(num_epochs):
