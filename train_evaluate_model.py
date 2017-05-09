@@ -61,10 +61,12 @@ def fine_tune_train_model(model, dataset, learning_rate, num_epochs, model_path)
   saver = tf.train.Saver()
   saver.restore(sess, model_path)
 
-  train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op)
+  metrics, y_true, y_pred, y_prob = evaluate('Validation', sess, model.valid_logits, model.valid_loss, dataset.valid_labels, dataset.num_valid_examples, dataset.batch_size)
+
+  train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op, best_accuracy=metrics['accuracy_score'])
 
 
-def train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op):
+def train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op, best_accuracy=0):
 
   num_batches = int(math.ceil(dataset.num_train_examples / dataset.batch_size))
   learning_rate = tf.train.exponential_decay(learning_rate, global_step, num_batches, 0.9, staircase=True)
@@ -79,7 +81,6 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path, sess, glo
 
   dataset.mean_image_normalization(sess, dataset.batch_size, num_batches)
 
-  best_accuracy = 0
   saver = tf.train.Saver()
 
   losses = []
