@@ -47,7 +47,8 @@ class Dataset:
         self.test_images, self.test_labels = tf.train.batch(
             [test_images, test_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True)
 
-    def mean_image_normalization(self, sess, batch_size, num_batches):
+    def mean_image_normalization(self, sess):
+        num_batches = int(math.ceil(self.num_train_examples / self.batch_size))
         print('Mean image dataset normalization...')
         image_shape = self.train_images.get_shape().as_list()[1:]
         print('Image shape', image_shape)

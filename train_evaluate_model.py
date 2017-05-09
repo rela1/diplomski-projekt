@@ -86,7 +86,7 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path, sess, glo
   coord = tf.train.Coordinator()
   threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
-  dataset.mean_image_normalization(sess, dataset.batch_size, num_batches)
+  dataset.mean_image_normalization(sess)
 
   if best_valid_evaluate:
     metrics, y_true, y_pred, y_prob = evaluate('Validation', sess, model.valid_logits, model.valid_loss, dataset.valid_labels, dataset.num_valid_examples, dataset.batch_size)
@@ -139,6 +139,8 @@ def evaluate_model(model, dataset, model_path):
 
   coord = tf.train.Coordinator()
   threads = tf.train.start_queue_runners(sess=sess, coord=coord)
+
+  dataset.mean_image_normalization(sess)
   
   evaluate('Train', sess, model.train_logits, model.train_loss, dataset.train_labels, dataset.num_train_examples, dataset.batch_size)
   evaluate('Validation', sess, model.valid_logits, model.valid_loss, dataset.valid_labels, dataset.num_valid_examples, dataset.batch_size)
