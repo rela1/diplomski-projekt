@@ -90,13 +90,13 @@ class SequentialImageLSTMModel:
     output_weights = tf.get_variable(
       'lstm_output_weights', 
       shape=[lstm_state_size, 2], 
-      initializer=initializers.xavier_initializer(), 
+      initializer=layers.variance_scaling_initializer(), 
       regularizer=layers.l2_regularizer(weight_decay)
     )
     output_bias = tf.get_variable(
       'lstm_output_bias', 
       shape=[2], 
-      initializer=initializers.xavier_initializer(), 
+      initializer=layers.variance_scaling_initializer(), 
       regularizer=layers.l2_regularizer(weight_decay)
     )
     lstm = tf.contrib.rnn.BasicLSTMCell(lstm_state_size)            
@@ -205,7 +205,7 @@ class SequentialImageTemporalFCModel:
         
       with tf.contrib.framework.arg_scope([layers.fully_connected],
         activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
-        weights_initializer=initializers.xavier_initializer(),
+        weights_initializer=layers.variance_scaling_initializer(),
         weights_regularizer=layers.l2_regularizer(weight_decay)):
         net = layers.fully_connected(net, spatial_fully_connected_size, scope='spatial_FC', reuse=reuse)
 
@@ -227,7 +227,7 @@ class SequentialImageTemporalFCModel:
 
     with tf.contrib.framework.arg_scope([layers.fully_connected],
         activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
-        weights_initializer=initializers.xavier_initializer(),
+        weights_initializer=layers.variance_scaling_initializer(),
         weights_regularizer=layers.l2_regularizer(weight_decay)):
         layer_num = 1
         for fully_connected_num in temporal_fully_connected_layers:
@@ -337,7 +337,7 @@ class SequentialImagePoolingModel:
 
     with tf.contrib.framework.arg_scope([layers.fully_connected],
         activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
-        weights_initializer=initializers.xavier_initializer(),
+        weights_initializer=layers.variance_scaling_initializer(),
         weights_regularizer=layers.l2_regularizer(weight_decay)):
         layer_num = 1
         for fully_connected_num in fully_connected_layers:
@@ -432,7 +432,7 @@ class SingleImageModel:
 
     with tf.contrib.framework.arg_scope([layers.fully_connected],
       activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
-      weights_initializer=initializers.xavier_initializer(),
+      weights_initializer=layers.variance_scaling_initializer(),
       weights_regularizer=layers.l2_regularizer(weight_decay)):
       layer_num = 1
       for fully_connected_num in fully_connected_layers:

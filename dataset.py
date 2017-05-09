@@ -1,6 +1,7 @@
 import os
 
 import tensorflow as tf
+import numpy as np
 
 
 class Dataset:
@@ -45,6 +46,18 @@ class Dataset:
         test_images, test_labels = input_decoder(test_file_queue, example_parser)
         self.test_images, self.test_labels = tf.train.batch(
             [test_images, test_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True)
+
+    def mean_image_normalization(self, sess):
+        print('Mean image dataset normalization...')
+        mean_image = np.zeros((input_shape))
+        for i in range(self.num_train_examples):
+          image_val = sess.run(self.train_images)
+          np.add(mean_image, image_val, mean_image)
+        np.divide(mean_image, float(self.num_train_examples), mean_image)
+        tf_mean_image = tf.constant(mean_image)
+        self.train_images = tf.subtract(self.train_images, tf_mean_image, name='train_images_mean_image_normalization')
+        self.valid_images = tf.subtract(self.valid_images, tf_mean_image, name='valid_images_mean_image_normalization')
+        self.test_images = tf.subtract(self.test_images, tf_mean_image, name='test_images_mean_image_normalization')
 
 
 class SingleImageDataset(Dataset):

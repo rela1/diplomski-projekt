@@ -20,6 +20,8 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path):
 
   sess = tf.Session()
 
+  dataset.mean_image_normalization(sess)
+
   global_step = tf.get_variable('global_step', [], dtype=tf.int64, initializer=tf.constant_initializer(0), trainable=False)
   num_batches = int(math.ceil(dataset.num_train_examples / dataset.batch_size))
   learning_rate = tf.train.exponential_decay(learning_rate, global_step, num_batches, 0.9, staircase=True)
