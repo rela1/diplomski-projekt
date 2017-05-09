@@ -16,6 +16,13 @@ np.set_printoptions(linewidth=250)
 INFO_STEP = 20
 
 
+def get_saver_variables():
+  all_vars = tf.all_variables()
+  filtered_vars = [var for var in all_vars if 'global_step' not in var.name and 'Adam' not in var.name]
+  filtered_vars_map = {var.name: var for var in filtered_vars}
+  return filtered_vars_map
+
+
 def freezed_pretrained_train_model(model, dataset, learning_rate, num_epochs, model_path):
 
   sess = tf.Session()
@@ -39,7 +46,7 @@ def freezed_pretrained_train_model(model, dataset, learning_rate, num_epochs, mo
   sess.run(tf.initialize_local_variables())
   sess.run(init_op, feed_dict=init_feed)
 
-  saver = tf.train.Saver()
+  saver = tf.train.Saver(get_saver_variables())
 
   train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op, saver)
 
@@ -60,7 +67,7 @@ def fine_tune_train_model(model, dataset, learning_rate, num_epochs, model_path)
   sess.run(tf.initialize_all_variables())
   sess.run(tf.initialize_local_variables())
     
-  saver = tf.train.Saver()
+  saver = tf.train.Saver(get_saver_variables())
   saver.restore(sess, model_path)
 
   train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op, saver, best_valid_evaluate=True)
