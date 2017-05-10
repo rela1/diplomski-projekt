@@ -241,7 +241,7 @@ class SequentialImageTemporalFCModel:
     logits = layers.fully_connected(
       net, 2, activation_fn=None, 
       weights_initializer=layers.xavier_initializer(),
-      weights_regularizer=layers.l2_regularizer(weight_decay)
+      weights_regularizer=layers.l2_regularizer(weight_decay),
       biases_initializer=tf.zeros_initializer(), 
       scope='logits'
     )
@@ -360,7 +360,7 @@ class SequentialImagePoolingModel:
     logits = layers.fully_connected(
       net, 2, activation_fn=None, 
       weights_initializer=layers.xavier_initializer(),
-      weights_regularizer=layers.l2_regularizer(weight_decay)
+      weights_regularizer=layers.l2_regularizer(weight_decay),
       biases_initializer=tf.zeros_initializer(), 
       scope='logits'
     )
@@ -463,7 +463,7 @@ class SingleImageModel:
     logits = layers.fully_connected(
       net, 2, activation_fn=None, 
       weights_initializer=layers.xavier_initializer(),
-      weights_regularizer=layers.l2_regularizer(weight_decay)
+      weights_regularizer=layers.l2_regularizer(weight_decay),
       biases_initializer=tf.zeros_initializer(), 
       scope='logits'
     )
