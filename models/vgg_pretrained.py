@@ -237,7 +237,13 @@ class SequentialImageTemporalFCModel:
             net = layers.fully_connected(net, fully_connected_num, scope='temporal_FC{}'.format(layer_num))
             layer_num += 1
 
-    logits = layers.fully_connected(net, 2, activation_fn=None, scope='logits')
+    logits = layers.fully_connected(
+      net, 2, activation_fn=None, 
+      weights_initializer=layers.xavier_initializer(),
+      weights_regularizer=layers.l2_regularizer(weight_decay)
+      biases_initializer=tf.zeros_initializer(), 
+      scope='logits'
+    )
 
     total_loss = loss(logits, labels, is_training)
 
@@ -350,7 +356,13 @@ class SequentialImagePoolingModel:
             net = layers.fully_connected(net, fully_connected_num, scope='fc{}'.format(layer_num))
             layer_num += 1
 
-    logits = layers.fully_connected(net, 2, activation_fn=None, scope='logits')
+    logits = layers.fully_connected(
+      net, 2, activation_fn=None, 
+      weights_initializer=layers.xavier_initializer(),
+      weights_regularizer=layers.l2_regularizer(weight_decay)
+      biases_initializer=tf.zeros_initializer(), 
+      scope='logits'
+    )
 
     total_loss = loss(logits, labels, is_training)
 
@@ -447,7 +459,13 @@ class SingleImageModel:
         net = layers.fully_connected(net, fully_connected_num, scope='fc{}'.format(layer_num))
         layer_num += 1
         
-    logits = layers.fully_connected(net, 2, activation_fn=None, scope='logits')
+    logits = layers.fully_connected(
+      net, 2, activation_fn=None, 
+      weights_initializer=layers.xavier_initializer(),
+      weights_regularizer=layers.l2_regularizer(weight_decay)
+      biases_initializer=tf.zeros_initializer(), 
+      scope='logits'
+    )
 
     total_loss = loss(logits, labels, is_training)
 
