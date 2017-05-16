@@ -46,10 +46,14 @@ class TFImageResizer:
         self.sess.graph.finalize()
 
     def resize_images(self, images):
-        return self.sess.run(self.resize_images, feed_dict={self.images: images})
+        resized_images = self.sess.run(self.resize_images, feed_dict={self.images: images})
+        print(resized_images)
+        print(type(resized_images))
+        return resized_images
 
     def resize_image(self, image):
-        return self.sess.run(self.resize_image, feed_dict={self.image: image})
+        resized_image = self.sess.run(self.resize_image, feed_dict={self.image: image})
+        return resized_image
 
 
 IMG_RESIZER = TFImageResizer()
@@ -73,8 +77,6 @@ def write_single_example(img, label, tf_records_writer):
 
 
 def write_example_sequence(img_sequence, label, tf_records_writer):
-    print(img_sequence)
-    print(type(img_sequence))
     img_sequence_raw = img_sequence.tostring()
 
     sequence_example = tf.train.Example(
