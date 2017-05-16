@@ -40,6 +40,7 @@ class TFImageResizer:
         self.sess = tf.Session()
         self.images = tf.placeholder(tf.float32, [SEQUENCE_HALF_LENGTH * 2 + 1, IMAGE_HEIGHT, IMAGE_WIDTH])
         self.image = tf.placeholder(tf.float32, [SINGLE_IMAGE_HEIGHT, SINGLE_IMAGE_WIDTH])
+        self.sess.graph.finalize()
 
     def resize_images(self, images, width, height):
         return self.sess.run(tf.image.resize_images(self.images, (height, width), tf.image.ResizeMethod.AREA), feed_dict={self.images: images})
@@ -400,7 +401,7 @@ if __name__ == '__main__':
             try:
                 result = future_results[i].result()
                 print('Done with video {} found intersections {}'.format(not_processed_video_names[i], result))
-            except:
-                print('Exception during processing of video {}'.format(not_processed_video_names[i]))
+            except as e:
+                print('Exception during processing of video {}: \n{}'.format(not_processed_video_names[i], e))
 
     write_processed_video_names(processed_video_names, downloaded_video_names_path)
