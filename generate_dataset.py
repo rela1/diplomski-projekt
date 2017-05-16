@@ -43,12 +43,9 @@ class TFImageResizer:
         self.image = tf.placeholder(tf.float32, [SINGLE_IMAGE_HEIGHT, SINGLE_IMAGE_WIDTH, IMAGE_CHANNELS])
         self.resize_images = tf.image.resize_images(self.images, (IMAGE_HEIGHT, IMAGE_WIDTH), tf.image.ResizeMethod.AREA)
         self.resize_image = tf.image.resize_images(self.image, (SINGLE_IMAGE_HEIGHT, SINGLE_IMAGE_WIDTH), tf.image.ResizeMethod.AREA)
-        self.sess.graph.finalize()
 
     def resize_images(self, images):
         resized_images = self.sess.run(self.resize_images, feed_dict={self.images: images})
-        print(resized_images)
-        print(type(resized_images))
         return resized_images
 
     def resize_image(self, image):
