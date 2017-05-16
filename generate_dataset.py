@@ -38,15 +38,13 @@ class TFImageResizer:
 
     def __init__(self):
         self.sess = tf.Session()
-        self.images = tf.placeholder(tf.float32)
-        self.image = tf.placeholder(tf.float32)
+        self.images = tf.placeholder(tf.float32, [SEQUENCE_HALF_LENGTH * 2 + 1, IMAGE_HEIGHT, IMAGE_WIDTH])
+        self.image = tf.placeholder(tf.float32, [SINGLE_IMAGE_HEIGHT, SINGLE_IMAGE_WIDTH])
 
     def resize_images(self, images, width, height):
-        self.images.set_shape(images.shape)
         return self.sess.run(tf.image.resize_images(self.images, (height, width), tf.image.ResizeMethod.AREA), feed_dict={self.images: images})
 
     def resize_image(self, image, width, height):
-        self.image.set_shape(image.shape)
         return self.sess.run(tf.image.resize_images(self.image, (height, width), tf.image.ResizeMethod.AREA), feed_dict={self.image: image})
 
 
@@ -345,10 +343,14 @@ def process_video(video_name, intersection_lines, max_distance_to_intersection):
             frames_resolution = get_frames_resolution(frames_dir, zero_pad_number)
 
             sequential_tf_records_writer, single_tf_records_writer = create_tf_records_writers(video_name)
+            log_file.write('Created writers...\n')
             number_of_positive_examples = extract_positive_examples(video_name, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames)
+            log_file.write('Extracted positive examples...\n')
             extract_negative_examples(video_name, number_of_positive_examples, speeds, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames, frames_per_second)
+            log_file.write('Extracted negative examples...\n')
             sequential_tf_records_writer.close()
             single_tf_records_writer.close()
+            log_file.write('Closed writers...\n')
 
             log_file.write('Number of positive examples: {}, number of negative examples: {}\n'.format(number_of_positive_examples, number_of_positive_examples))
 
@@ -395,7 +397,10 @@ if __name__ == '__main__':
             future_results.append(future_result)
             processed_video_names.add(not_processed_video_names[i])
         for i in range(video_count):
-            result = future_results[i].result()
-            print('Done with video {} found intersections {}'.format(not_processed_video_names[i], result))
+            try:
+                result = future_results[i].result()
+                print('Done with video {} found intersections {}'.format(not_processed_video_names[i], result))
+            except:
+                print('Exception during processing of video {}'.format(not_processed_video_names[i]))
 
     write_processed_video_names(processed_video_names, downloaded_video_names_path)
