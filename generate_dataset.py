@@ -9,6 +9,8 @@ import os
 from datetime import datetime
 import math
 import random
+import concurrent.futures
+import multiprocessing
 
 from fastkml import kml
 from geopy.distance import vincenty
@@ -385,12 +387,16 @@ if __name__ == '__main__':
 
     not_processed_video_names, processed_video_names = get_not_processed_video_names(video_urls_path, downloaded_video_names_path)
 
-    processed_videos = 0
-    for not_processed_video_name in not_processed_video_names:
-        if process_video(not_processed_video_name, intersection_lines, MAX_DISTANCE_TO_INTERSECTION):
-            processed_videos += 1
-        processed_video_names.add(not_processed_video_name)
-        if processed_videos >= video_count:
-            break
+    cpu_num = multiprocessing.cpu_count()
+    with concurrent.futures.ThreadPoolExecutor(max_workers=cpu_num) as executor:
+        future_results = []
+        for i in range(video_count):
+            future_result = executor.submit(process_video, not_processed_video_names[i], intersection_lines, MAX_DISTANCE_TO_INTERSECTION)
+            print('Submitted task of video {}'.format(not_processed_video_names[i]))
+            future_results.append(future_result)
+            processed_video_names.add(not_processed_video_names[i])
+        for i in range(video_count):
+            result = future_results[i].result()
+            print('Done with video {} found intersections {}'.format(not_processed_video_names[i], result))
 
     write_processed_video_names(processed_video_names, downloaded_video_names_path)
