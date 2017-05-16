@@ -39,16 +39,11 @@ class TFImageResizer:
 
     def __init__(self):
         self.sess = tf.Session()
-        self.images = tf.placeholder(tf.float32, [SEQUENCE_HALF_LENGTH * 2 + 1, IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_CHANNELS])
-        self.image = tf.placeholder(tf.float32, [SINGLE_IMAGE_HEIGHT, SINGLE_IMAGE_WIDTH, IMAGE_CHANNELS])
+        self.images = tf.placeholder(tf.float32, [None, IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_CHANNELS])
 
     def resize_images(self, images):
         resized_images = self.sess.run(tf.image.resize_images(self.images, (IMAGE_HEIGHT, IMAGE_WIDTH), tf.image.ResizeMethod.AREA), feed_dict={self.images: images})
         return resized_images
-
-    def resize_image(self, image):
-        resized_image = self.sess.run(tf.image.resize_images(self.image, (SINGLE_IMAGE_HEIGHT, SINGLE_IMAGE_WIDTH), tf.image.ResizeMethod.AREA), feed_dict={self.image: image})
-        return resized_image
 
 
 IMG_RESIZER = TFImageResizer()
@@ -134,8 +129,7 @@ def write_sequenced_and_single_example(single_image_frame, video_name, label, im
     images_sequence_resized = IMG_RESIZER.resize_images(images_sequence)
     write_example_sequence(images_sequence_resized, label, sequential_tf_records_writer)
 
-    single_image_eq_resized = IMG_RESIZER.resize_image(single_img_eq)
-    write_single_example(single_image_eq_resized, label, single_tf_records_writer)
+    write_single_example(single_img_eq, label, single_tf_records_writer)
 
     return True
 
