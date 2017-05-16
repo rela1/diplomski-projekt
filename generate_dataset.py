@@ -32,14 +32,15 @@ IMAGE_HEIGHT = 140
 SINGLE_IMAGE_WIDTH = 700
 SINGLE_IMAGE_HEIGHT = 280
 MAX_DISTANCE_TO_INTERSECTION = 15 #meters
+IMAGE_CHANNELS = 3
 
 
 class TFImageResizer:
 
     def __init__(self):
         self.sess = tf.Session()
-        self.images = tf.placeholder(tf.float32, [SEQUENCE_HALF_LENGTH * 2 + 1, IMAGE_HEIGHT, IMAGE_WIDTH])
-        self.image = tf.placeholder(tf.float32, [SINGLE_IMAGE_HEIGHT, SINGLE_IMAGE_WIDTH])
+        self.images = tf.placeholder(tf.float32, [SEQUENCE_HALF_LENGTH * 2 + 1, IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_CHANNELS])
+        self.image = tf.placeholder(tf.float32, [SINGLE_IMAGE_HEIGHT, SINGLE_IMAGE_WIDTH, IMAGE_CHANNELS])
         self.resize_images = tf.image.resize_images(self.images, (IMAGE_HEIGHT, IMAGE_WIDTH), tf.image.ResizeMethod.AREA)
         self.resize_image = tf.image.resize_images(self.image, (SINGLE_IMAGE_HEIGHT, SINGLE_IMAGE_WIDTH), tf.image.ResizeMethod.AREA)
         self.sess.graph.finalize()
