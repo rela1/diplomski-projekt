@@ -401,7 +401,7 @@ if __name__ == '__main__':
             try:
                 result = future_results[i].result()
                 print('Done with video {} found intersections {}'.format(not_processed_video_names[i], result))
-            except as e:
+            except Exception as e:
                 print('Exception during processing of video {}: \n{}'.format(not_processed_video_names[i], e))
 
     write_processed_video_names(processed_video_names, downloaded_video_names_path)
