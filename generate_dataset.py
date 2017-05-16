@@ -73,6 +73,8 @@ def write_single_example(img, label, tf_records_writer):
 
 
 def write_example_sequence(img_sequence, label, tf_records_writer):
+    print(img_sequence)
+    print(type(img_sequence))
     img_sequence_raw = img_sequence.tostring()
 
     sequence_example = tf.train.Example(
