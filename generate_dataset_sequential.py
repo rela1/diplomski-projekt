@@ -27,7 +27,7 @@ def extract_images(video_name, positive_images_ranges, tf_records_writer, zero_p
     prev_img = None
     added_images = 0
     positive_examples = 0
-    for i in range(number_of_frames):
+    for i in range(1, number_of_frames + 1):
         img = imread(os.path.join(video_name, 'frames', str(i).zfill(zero_pad_number) + '.png'))
         if prev_img is not None:
             diff = np.sum(np.abs(img - prev_img))
