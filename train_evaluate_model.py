@@ -17,7 +17,7 @@ INFO_STEP = 20
 
 
 def get_saver_variables():
-  all_vars = tf.all_variables()
+  all_vars = tf.global_variables()
   filtered_vars = [var for var in all_vars if 'global_step' not in var.name and 'Adam' not in var.name]
   filtered_vars_map = {var.name: var for var in filtered_vars}
   return filtered_vars_map
@@ -42,8 +42,8 @@ def freezed_pretrained_train_model(model, dataset, learning_rate, num_epochs, mo
 
   init_op, init_feed = model.vgg_init
 
-  sess.run(tf.initialize_all_variables())
-  sess.run(tf.initialize_local_variables())
+  sess.run(tf.global_variables_initializer())
+  sess.run(tf.local_variables_initializer())
   sess.run(init_op, feed_dict=init_feed)
 
   saver = tf.train.Saver(get_saver_variables())
@@ -64,8 +64,8 @@ def fine_tune_train_model(model, dataset, learning_rate, num_epochs, model_path)
   with tf.control_dependencies([apply_gradient_op]):
     train_op = tf.no_op(name='train_op')
 
-  sess.run(tf.initialize_all_variables())
-  sess.run(tf.initialize_local_variables())
+  sess.run(tf.global_variables_initializer())
+  sess.run(tf.local_variables_initializer())
     
   saver = tf.train.Saver(get_saver_variables())
   saver.restore(sess, model_path)
@@ -131,8 +131,8 @@ def evaluate_model(model, dataset, model_path):
 
   sess = tf.Session()
 
-  sess.run(tf.initialize_all_variables())
-  sess.run(tf.initialize_local_variables())
+  sess.run(tf.global_variables_initializer())
+  sess.run(tf.local_variables_initializer())
 
   saver = tf.train.Saver(get_saver_variables())
   saver.restore(sess, model_path)
@@ -155,8 +155,8 @@ def plot_wrong_classifications(model, dataset, model_path):
 
   sess = tf.Session()
 
-  sess.run(tf.initialize_all_variables())
-  sess.run(tf.initialize_local_variables())
+  sess.run(tf.global_variables_initializer())
+  sess.run(tf.local_variables_initializer())
     
   saver = tf.train.Saver()
   saver.restore(sess, model_path)
