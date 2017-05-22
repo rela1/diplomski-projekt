@@ -85,7 +85,7 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path, sess, glo
 
   coord = tf.train.Coordinator()
   threads = tf.train.start_queue_runners(sess=sess, coord=coord)
-
+  
   dataset.mean_image_normalization(sess)
 
   if best_valid_evaluate:
