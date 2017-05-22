@@ -37,18 +37,18 @@ class Dataset:
         train_images, train_labels = input_decoder(train_file_queue, example_parser)
         if is_training:
             self.train_images, self.train_labels = tf.train.shuffle_batch(
-                [train_images, train_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True, capacity=200, min_after_dequeue=100)
+                [train_images, train_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True, capacity=32, min_after_dequeue=16, num_threads=2)
         else:
             self.train_images, self.train_labels = tf.train.batch(
-                [train_images, train_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True)
+                [train_images, train_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True, num_threads=2)
 
         valid_images, valid_labels = input_decoder(valid_file_queue, example_parser)
         self.valid_images, self.valid_labels = tf.train.batch(
-            [valid_images, valid_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True)
+            [valid_images, valid_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True, num_threads=2)
 
         test_images, test_labels = input_decoder(test_file_queue, example_parser)
         self.test_images, self.test_labels = tf.train.batch(
-            [test_images, test_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True)
+            [test_images, test_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True, num_threads=2)
 
     def mean_image_normalization(self, sess):
         num_batches = int(math.ceil(self.num_train_examples / self.batch_size))
