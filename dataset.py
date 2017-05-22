@@ -30,14 +30,14 @@ class Dataset:
 
         print('Train examples {}, validate examples {}, test examples {}'.format(self.num_train_examples, self.num_valid_examples, self.num_test_examples))
 
-        train_file_queue = tf.train.string_input_producer(train_tfrecords)
-        valid_file_queue = tf.train.string_input_producer(valid_tfrecords)
-        test_file_queue = tf.train.string_input_producer(test_tfrecords)
+        train_file_queue = tf.train.string_input_producer(train_tfrecords, capacity=len(train_tfrecords))
+        valid_file_queue = tf.train.string_input_producer(valid_tfrecords, capacity=len(valid_tfrecords))
+        test_file_queue = tf.train.string_input_producer(test_tfrecords, capacity=len(test_tfrecords))
 
         train_images, train_labels = input_decoder(train_file_queue, example_parser)
         if is_training:
-            self.train_images, self.train_labels = tf.train.batch(
-                [train_images, train_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True, num_threads=2)
+            self.train_images, self.train_labels = tf.train.shuffle_batch(
+                [train_images, train_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True, num_threads=2, capacity=100 + 3 * batch_size, min_after_dequeue=100)
         else:
             self.train_images, self.train_labels = tf.train.batch(
                 [train_images, train_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True, num_threads=2)
@@ -60,8 +60,7 @@ class Dataset:
             print('Normalization step {}/{}'.format(i + 1, num_batches))
             image_vals = sess.run(self.train_images)
             print(image_vals.shape)
-            for j in range(len(image_vals)):
-                np.add(mean_image, image_vals[j], mean_image)
+            np.add(mean_image, np.sum(image_vals, axis=0), mean_image)
         np.divide(mean_image, float(self.num_train_examples), mean_image)
         tf_mean_image = tf.constant(mean_image, dtype=tf.float32)
         self.train_images = tf.subtract(self.train_images, tf_mean_image, name='train_images_mean_image_normalization')
