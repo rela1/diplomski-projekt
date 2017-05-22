@@ -61,6 +61,7 @@ class Dataset:
             image_vals = sess.run(self.train_images)
             print(image_vals.shape)
             np.add(mean_image, np.sum(image_vals, axis=0), mean_image)
+            del image_vals
         np.divide(mean_image, float(self.num_train_examples), mean_image)
         tf_mean_image = tf.constant(mean_image, dtype=tf.float32)
         self.train_images = tf.subtract(self.train_images, tf_mean_image, name='train_images_mean_image_normalization')
