@@ -15,14 +15,14 @@ class Dataset:
         valid_dir = os.path.join(dataset_root, 'validate')
         test_dir = os.path.join(dataset_root, 'test')
 
-        train_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(train_dir)]
-        train_tfrecords = [os.path.join(train_dir, train_tfrecords_dir, train_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for train_tfrecords_dir in train_tfrecords_dirs]
+        train_tfrecords_dirs = [os.path.join(train_dir, tfrecords_dir) for tfrecords_dir in os.listdir(train_dir)]
+        train_tfrecords = [os.path.join(train_tfrecords_dir, train_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for train_tfrecords_dir in train_tfrecords_dirs]
         
-        valid_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(valid_dir)]
-        valid_tfrecords = [os.path.join(valid_dir, valid_tfrecords_dir, valid_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for valid_tfrecords_dir in valid_tfrecords_dirs]
+        valid_tfrecords_dirs = [os.path.join(valid_dir, tfrecords_dir) for tfrecords_dir in os.listdir(valid_dir)]
+        valid_tfrecords = [os.path.join(valid_tfrecords_dir, valid_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for valid_tfrecords_dir in valid_tfrecords_dirs]
 
-        test_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(test_dir)]
-        test_tfrecords = [os.path.join(test_dir, test_tfrecords_dir, test_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for test_tfrecords_dir in test_tfrecords_dirs]
+        test_tfrecords_dirs = [os.path.join(test_dir, tfrecords_dir) for tfrecords_dir in os.listdir(test_dir)]
+        test_tfrecords = [os.path.join(test_tfrecords_dir, test_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for test_tfrecords_dir in test_tfrecords_dirs]
 
         self.num_train_examples = number_of_examples(train_tfrecords_dirs)
         self.num_valid_examples = number_of_examples(valid_tfrecords_dirs)
