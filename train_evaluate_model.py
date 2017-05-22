@@ -107,7 +107,7 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path, sess, glo
       _, loss_val = sess.run([train_op, model.train_loss])
       duration = time.time() - start_time
 
-      assert not np.isnan(loss_val), 'Model diverged with loss = NaN'      
+      assert not np.isnan(loss_val), 'Model diverged with loss = NaN'    
 
       if not j % INFO_STEP:
         print('\tEpoch: {}/{}, step: {}/{}, loss: {}, {} examples/sec, {} sec/batch, learning rate: {}'.format(i+1, num_epochs, j+1, num_batches, loss_val, dataset.batch_size / duration, duration, learning_rate))

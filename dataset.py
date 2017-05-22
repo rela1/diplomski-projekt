@@ -24,9 +24,11 @@ class Dataset:
         test_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(test_dir)]
         test_tfrecords = [os.path.join(test_dir, test_tfrecords_dir, test_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for test_tfrecords_dir in test_tfrecords_dirs]
 
-        self.num_train_examples = number_of_examples(train_tfrecords)
-        self.num_valid_examples = number_of_examples(valid_tfrecords)
-        self.num_test_examples = number_of_examples(test_tfrecords)
+        self.num_train_examples = number_of_examples(train_tfrecords_dirs)
+        self.num_valid_examples = number_of_examples(valid_tfrecords_dirs)
+        self.num_test_examples = number_of_examples(test_tfrecords_dirs)
+
+        print('Train examples {}, validate examples {}, test examples {}'.format(self.num_train_examples, self.num_valid_examples, self.num_test_examples))
 
         train_file_queue = tf.train.string_input_producer(train_tfrecords)
         valid_file_queue = tf.train.string_input_producer(valid_tfrecords)
@@ -49,24 +51,23 @@ class Dataset:
             [test_images, test_labels], batch_size=batch_size, shapes=shapes, allow_smaller_final_batch=True)
 
     def mean_image_normalization(self, sess):
-        with tf.device("/cpu:0"):
-            num_batches = int(math.ceil(self.num_train_examples / self.batch_size))
-            print('Mean image dataset normalization...')
-            image_shape = self.train_images.get_shape().as_list()[1:]
-            print('Image shape', image_shape)
-            mean_image = np.zeros((image_shape))
-            for i in range(num_batches):
-              print('Normalization step {}/{}'.format(i + 1, num_batches))
-              image_vals = sess.run(self.train_images)
-              print(image_vals.shape)
-              for j in range(len(image_vals)):
+        num_batches = int(math.ceil(self.num_train_examples / self.batch_size))
+        print('Mean image dataset normalization...')
+        image_shape = self.train_images.get_shape().as_list()[1:]
+        print('Image shape', image_shape)
+        mean_image = np.zeros((image_shape))
+        for i in range(num_batches):
+            print('Normalization step {}/{}'.format(i + 1, num_batches))
+            image_vals = sess.run(self.train_images)
+            print(image_vals.shape)
+            for j in range(len(image_vals)):
                 np.add(mean_image, image_vals[j], mean_image)
-            np.divide(mean_image, float(self.num_train_examples), mean_image)
-            tf_mean_image = tf.constant(mean_image, dtype=tf.float32)
-            self.train_images = tf.subtract(self.train_images, tf_mean_image, name='train_images_mean_image_normalization')
-            self.valid_images = tf.subtract(self.valid_images, tf_mean_image, name='valid_images_mean_image_normalization')
-            self.test_images = tf.subtract(self.test_images, tf_mean_image, name='test_images_mean_image_normalization')
-            print('Done with mean image dataset normalization...')
+        np.divide(mean_image, float(self.num_train_examples), mean_image)
+        tf_mean_image = tf.constant(mean_image, dtype=tf.float32)
+        self.train_images = tf.subtract(self.train_images, tf_mean_image, name='train_images_mean_image_normalization')
+        self.valid_images = tf.subtract(self.valid_images, tf_mean_image, name='valid_images_mean_image_normalization')
+        self.test_images = tf.subtract(self.test_images, tf_mean_image, name='test_images_mean_image_normalization')
+        print('Done with mean image dataset normalization...')
 
 
 class SingleImageDataset(Dataset):
@@ -133,9 +134,9 @@ def input_decoder(filename_queue, example_parser):
   return example_parser(record_string)
 
 
-def number_of_examples(tfrecords_files):
+def number_of_examples(tfrecord_dirs):
   examples = 0
-  for tfrecords_file in tfrecords_files:
-    for record in tf.python_io.tf_record_iterator(tfrecords_file, options=tf.python_io.TFRecordOptions(tf.python_io.TFRecordCompressionType.GZIP)):
-      examples += 1
+  for tfrecord_dir in tfrecord_dirs:
+    with open(os.path.join(tfrecord_dir, 'examples.txt')) as examples_file:
+        examples += int(examples_file.read().strip())
   return examples

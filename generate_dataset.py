@@ -352,6 +352,9 @@ def process_video(video_name, intersection_lines, max_distance_to_intersection):
 
             log_file.write('Number of positive examples: {}, number of negative examples: {}\n'.format(number_of_positive_examples, number_of_positive_examples))
 
+            with open(os.path.join(video_name, 'examples.txt')) as examples_file:
+                f.write(str(number_of_positive_examples * 2))
+
     clear_redundant_data(found_intersections, frames_dir, log_file_path, video_full_path, video_name)
 
     return found_intersections
