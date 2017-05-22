@@ -241,14 +241,14 @@ def get_positive_images_ranges(intersection_lines, frames_per_second, tree, poin
     return sorted(positive_images_ranges)
 
 
-def extract_video_frames(video_name, video_full_path, video_duration_seconds, frames_per_second, image_width, image_height):
+def extract_video_frames(video_name, video_full_path, video_duration_seconds, frames_per_second, image_width, image_height, image_format='png'):
     approximate_number_of_frames = video_duration_seconds * frames_per_second
     zero_pad_number = len(str(approximate_number_of_frames))
     frames_dir = os.path.join(video_name, 'frames')
 
     if not os.path.exists(frames_dir):
         os.mkdir(frames_dir)
-        frame_extract_info = subprocess.getoutput('ffmpeg -i "{}" -s {}x{} {}/frames/%0{}d.png'.format(video_full_path, image_width, image_height, video_name, zero_pad_number))
+        frame_extract_info = subprocess.getoutput('ffmpeg -i "{}" -s {}x{} {}/frames/%0{}d.{}'.format(video_full_path, image_width, image_height, video_name, zero_pad_number, image_format))
 
     number_of_frames = len(os.listdir(frames_dir))
     return frames_dir, number_of_frames, zero_pad_number

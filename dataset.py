@@ -82,6 +82,12 @@ class ImageSequenceDataset(Dataset):
         super().__init__(parse_sequence_example, 'sequential', dataset_root, batch_size, input_shape, is_training=is_training)
 
 
+class ConvolutionalImageData(Dataset):
+
+    def __init__(self, dataset_root, input_shape):
+        super().__init__(parse_single_example, 'convolutional', dataset_root, 1, input_shape, is_training=False)
+
+
 def parse_sequence_example(record_string):
   features = tf.parse_single_example(
                     record_string,

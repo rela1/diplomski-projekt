@@ -237,7 +237,7 @@ class SequentialImageTemporalFCModelOnline:
           scope='logits'
         )
 
-        loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=labels, logits=self.logits)
+        loss = tf.nn.tf.nn.weighted_cross_entropy_with_logits(logits=self.logits, labels, 1e3)
         xent_loss = tf.reduce_mean(loss)
         regularization_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
         self.loss = tf.add_n([xent_loss] + regularization_losses, name='total_loss')
