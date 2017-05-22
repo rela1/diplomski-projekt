@@ -15,18 +15,18 @@ class Dataset:
         valid_dir = os.path.join(dataset_root, 'validate')
         test_dir = os.path.join(dataset_root, 'test')
 
-        train_tfrecords_dirs = [os.path.join(train_dir, tfrecords_dir) for tfrecords_dir in os.listdir(train_dir)]
-        train_tfrecords = [os.path.join(train_tfrecords_dir, train_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for train_tfrecords_dir in train_tfrecords_dirs]
+        train_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(train_dir)]
+        train_tfrecords = [os.path.join(train_dir, train_tfrecords_dir, train_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for train_tfrecords_dir in train_tfrecords_dirs]
         
-        valid_tfrecords_dirs = [os.path.join(valid_dir, tfrecords_dir) for tfrecords_dir in os.listdir(valid_dir)]
-        valid_tfrecords = [os.path.join(valid_tfrecords_dir, valid_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for valid_tfrecords_dir in valid_tfrecords_dirs]
+        valid_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(valid_dir)]
+        valid_tfrecords = [os.path.join(valid_dir, valid_tfrecords_dir, valid_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for valid_tfrecords_dir in valid_tfrecords_dirs]
 
-        test_tfrecords_dirs = [os.path.join(test_dir, tfrecords_dir) for tfrecords_dir in os.listdir(test_dir)]
-        test_tfrecords = [os.path.join(test_tfrecords_dir, test_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for test_tfrecords_dir in test_tfrecords_dirs]
+        test_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(test_dir)]
+        test_tfrecords = [os.path.join(test_dir, test_tfrecords_dir, test_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for test_tfrecords_dir in test_tfrecords_dirs]
 
-        self.num_train_examples = number_of_examples(train_tfrecords_dirs)
-        self.num_valid_examples = number_of_examples(valid_tfrecords_dirs)
-        self.num_test_examples = number_of_examples(test_tfrecords_dirs)
+        self.num_train_examples = number_of_examples(train_tfrecords_dirs, train_dir)
+        self.num_valid_examples = number_of_examples(valid_tfrecords_dirs, valid_dir)
+        self.num_test_examples = number_of_examples(test_tfrecords_dirs, test_dir)
 
         print('Train examples {}, validate examples {}, test examples {}'.format(self.num_train_examples, self.num_valid_examples, self.num_test_examples))
 
@@ -61,7 +61,7 @@ class Dataset:
             image_vals = sess.run(self.train_images)
             print(image_vals.shape)
             for j in range(len(image_vals)):
-                np.add(mean_image, image_vals[j], mean_image)
+            np.add(mean_image, image_vals[j], mean_image)
         np.divide(mean_image, float(self.num_train_examples), mean_image)
         tf_mean_image = tf.constant(mean_image, dtype=tf.float32)
         self.train_images = tf.subtract(self.train_images, tf_mean_image, name='train_images_mean_image_normalization')
@@ -134,9 +134,9 @@ def input_decoder(filename_queue, example_parser):
   return example_parser(record_string)
 
 
-def number_of_examples(tfrecord_dirs):
+def number_of_examples(tfrecord_dirs, path_prefix):
   examples = 0
   for tfrecord_dir in tfrecord_dirs:
-    with open(os.path.join(tfrecord_dir, 'examples.txt')) as examples_file:
+    with open(os.path.join(path_prefix, tfrecord_dir, 'examples.txt')) as examples_file:
         examples += int(examples_file.read().strip())
   return examples
