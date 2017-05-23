@@ -176,10 +176,7 @@ class SequentialImageTemporalFCModelOnline:
 
       self.representation = layers.flatten(net)
 
-      loss = tf.matmul(self.representation, self.final_gradient)
-      xent_loss = tf.reduce_mean(loss)
-      regularization_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
-      self.loss = tf.add_n([xent_loss] + regularization_losses, name='total_loss')
+      self.loss = tf.matmul(self.representation, self.final_gradient, name='total_loss_spatial')
 
       if is_training:
         self.trainer = tf.train.AdamOptimizer(learning_rate)
@@ -241,7 +238,7 @@ class SequentialImageTemporalFCModelOnline:
         loss = tf.nn.tf.nn.weighted_cross_entropy_with_logits(logits=self.logits, targets=labels, pos_weights=1e3)
         xent_loss = tf.reduce_mean(loss)
         regularization_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
-        self.loss = tf.add_n([xent_loss] + regularization_losses, name='total_loss')
+        self.loss = tf.add_n([xent_loss] + regularization_losses, name='total_loss_temporal')
         self.labels = labels
 
         if is_training:

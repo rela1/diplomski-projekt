@@ -58,7 +58,7 @@ def train_model(model, dataset, sequence_length, num_epochs, model_path):
       representation_t = model.spatials_train[t % sequence_length].forward(sess)
       temporal_data = model.temporal_train.forward_backward(sess, [representation_t])
       loss, cumulated_representation_gradient = temporal_data[0], temporal_data[2]
-      model.spatials_train[t % T - T + 1].backward(sess, cumulated_representation_gradient[0])
+      model.spatials_train[t % sequence_length - sequence_length + 1].backward(sess, cumulated_representation_gradient[0])
       duration = time.time() - start_time
 
       assert not np.isnan(loss), 'Model diverged with loss = NaN'    
