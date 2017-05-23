@@ -140,6 +140,7 @@ class SequentialImageTemporalFCModelOnline:
       input_shape = inputs.get_shape()
       horizontal_slice_size = int(round(int(input_shape[2]) / 3))
       vertical_slice_size = int(round(int(input_shape[1]) / 3))
+      inputs = tf.slice(inputs, begin=[0, vertical_slice_size, 0, 0], size=[-1, -1, horizontal_slice_size * 2, -1])
 
       self.final_gradient = tf.placeholder(tf.float32, name='final_gradient_ph{}'.format(index))
 
@@ -148,30 +149,30 @@ class SequentialImageTemporalFCModelOnline:
         normalizer_fn=None, weights_initializer=None,
         weights_regularizer=layers.l2_regularizer(weight_decay)):
 
-        net = layers.convolution2d(inputs, 64, scope='conv1_1', reuse=reuse)
-        net = layers.convolution2d(net, 64, scope='conv1_2', reuse=reuse)
+        net = layers.convolution2d(inputs, 64, scope='conv1_1')
+        net = layers.convolution2d(net, 64, scope='conv1_2')
         net = layers.max_pool2d(net, 2, 2, scope='pool1')
-        net = layers.convolution2d(net, 128, scope='conv2_1', reuse=reuse)
-        net = layers.convolution2d(net, 128, scope='conv2_2', reuse=reuse)
+        net = layers.convolution2d(net, 128, scope='conv2_1')
+        net = layers.convolution2d(net, 128, scope='conv2_2')
         net = layers.max_pool2d(net, 2, 2, scope='pool2')
-        net = layers.convolution2d(net, 256, scope='conv3_1', reuse=reuse)
-        net = layers.convolution2d(net, 256, scope='conv3_2', reuse=reuse)
-        net = layers.convolution2d(net, 256, scope='conv3_3', reuse=reuse)
+        net = layers.convolution2d(net, 256, scope='conv3_1')
+        net = layers.convolution2d(net, 256, scope='conv3_2')
+        net = layers.convolution2d(net, 256, scope='conv3_3')
         net = layers.max_pool2d(net, 2, 2, scope='pool3')
-        net = layers.convolution2d(net, 512, scope='conv4_1', reuse=reuse)
-        net = layers.convolution2d(net, 512, scope='conv4_2', reuse=reuse)
-        net = layers.convolution2d(net, 512, scope='conv4_3', reuse=reuse)
+        net = layers.convolution2d(net, 512, scope='conv4_1')
+        net = layers.convolution2d(net, 512, scope='conv4_2')
+        net = layers.convolution2d(net, 512, scope='conv4_3')
         net = layers.max_pool2d(net, 2, 2, scope='pool4')
-        net = layers.convolution2d(net, 512, scope='conv5_1', reuse=reuse)
-        net = layers.convolution2d(net, 512, scope='conv5_2', reuse=reuse)
-        net = layers.convolution2d(net, 512, scope='conv5_3', reuse=reuse)
+        net = layers.convolution2d(net, 512, scope='conv5_1')
+        net = layers.convolution2d(net, 512, scope='conv5_2')
+        net = layers.convolution2d(net, 512, scope='conv5_3')
         net = layers.max_pool2d(net, 2, 2, scope='pool5')
 
       with tf.contrib.framework.arg_scope([layers.fully_connected],
         activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
         weights_initializer=layers.variance_scaling_initializer(),
         weights_regularizer=layers.l2_regularizer(weight_decay)):
-        net = layers.fully_connected(net, spatial_fully_connected_size, scope='spatial_FC', reuse=reuse)
+        net = layers.fully_connected(net, spatial_fully_connected_size, scope='spatial_FC')
 
       self.representation = layers.flatten(net)
 
