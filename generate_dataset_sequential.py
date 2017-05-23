@@ -21,6 +21,7 @@ IMAGE_WIDTH = 350
 IMAGE_HEIGHT = 140
 SAME_TRESHOLD = 0.005
 MAX_DISTANCE_TO_INTERSECTION = 15 #meters
+INFO_STEPS = 100
 
 
 def extract_images(video_name, positive_images_ranges, tf_records_writer, zero_pad_number, treshold, number_of_frames):
@@ -28,6 +29,8 @@ def extract_images(video_name, positive_images_ranges, tf_records_writer, zero_p
     added_images = 0
     positive_examples = 0
     for i in range(1, number_of_frames + 1):
+        if not i % INFO_STEPS:
+            print('tfrecords step {}/{}'.format(i, number_of_frames))
         img = imread(os.path.join(video_name, 'frames', str(i).zfill(zero_pad_number) + '.png'))
         if prev_img is not None:
             diff = np.sum(np.abs(img - prev_img))
