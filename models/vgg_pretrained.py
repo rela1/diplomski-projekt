@@ -197,7 +197,7 @@ class SequentialImageTemporalFCModelOnline:
   class TemporalPart:
 
     def __init__(self, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, labels, learning_rate, weight_decay=0.0, is_training=False):
-      self.build(sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay=weight_decay, is_training=is_training)
+      self.build(sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, labels, learning_rate, weight_decay=weight_decay, is_training=is_training)
 
     def build(self, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, labels, learning_rate, weight_decay=0.0, is_training=False):
       bn_params = {
