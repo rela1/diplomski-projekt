@@ -219,12 +219,12 @@ class SequentialImageTemporalFCModelOnline:
       self.sequence = tf.Variable(np.zeros((sequence_length, spatial_fully_connected_size)), dtype=tf.float32, trainable=False, name='sequence_var')
       self.sequence_gradient = tf.Variable(np.zeros((sequence_length, spatial_fully_connected_size)), dtype=tf.float32, trainable=False, name='sequence_grad')
 
-      self.add_sequence_new = self.sequence.assign(tf.concat([tf.slice(self.sequence, begin=[1, 0], size=[-1, -1]), self.sequence_new], 0))
-      self.add_sequence_gradient_new = self.sequence_gradient.assign(tf.concat([self.sequence_gradient, tf.zeros_like(self.sequence_new)], 0))
+      self.add_sequence_new_op = self.sequence.assign(tf.concat([tf.slice(self.sequence, begin=[1, 0], size=[-1, -1]), self.sequence_new], 0))
+      self.add_sequence_gradient_new_op = self.sequence_gradient.assign(tf.concat([tf.slice(self.sequence_gradient, begin=[1, 0], size=[-1, -1]), tf.zeros_like(self.sequence_new)], 0))
       
       net = tf.reshape(self.sequence, (-1, sequence_length * spatial_fully_connected_size))
 
-      with tf.control_dependencies([self.add_sequence_new, self.add_sequence_gradient_new]): 
+      with tf.control_dependencies([self.add_sequence_new_op, self.add_sequence_gradient_new_op]): 
         with tf.contrib.framework.arg_scope([layers.fully_connected],
           activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
           weights_initializer=layers.variance_scaling_initializer(),
@@ -259,7 +259,7 @@ class SequentialImageTemporalFCModelOnline:
       return logits, labels
 
     def forward_backward(self, sess, sequence_new):
-      data = sess.run([self.loss, self.train_op, self.sequence_gradient, self.sequence_gradient_new, self.sequence, self.logits], feed_dict={self.sequence_new: sequence_new})
+      data = sess.run([self.loss, self.train_op, self.add_sequence_gradient_new, self.sequence_gradient_new, self.sequence, self.logits], feed_dict={self.sequence_new: sequence_new})
       return data
 
   def __init__(self, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, dataset, learning_rate, weight_decay=0.0, vgg_init_dir=None, is_training=False):
