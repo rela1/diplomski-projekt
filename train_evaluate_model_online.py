@@ -23,7 +23,7 @@ def get_saver_variables():
   return filtered_vars_map
 
 
-def train_model(model, dataset, sequence_length, num_epochs, model_path):
+def train_model(model, dataset, sequence_length, num_epochs, learning_rate, model_path):
   sess = tf.Session()
 
   global_step = tf.get_variable('global_step', [], dtype=tf.int64, initializer=tf.constant_initializer(0), trainable=False)

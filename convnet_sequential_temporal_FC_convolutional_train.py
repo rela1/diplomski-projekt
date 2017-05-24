@@ -23,4 +23,4 @@ if __name__ == '__main__':
 
   model = SequentialImageTemporalFCModelOnline(SEQUENCE_LENGTH, SPATIAL_FULLY_CONNECTED, TEMPORAL_FULLY_CONNECTED, dataset, LEARNING_RATE, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=True)
 
-  train_model(model, dataset, SEQUENCE_LENGTH, EPOCHS, model_path)
+  train_model(model, dataset, SEQUENCE_LENGTH, EPOCHS, LEARNING_RATE, model_path)
