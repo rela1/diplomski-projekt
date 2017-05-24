@@ -85,7 +85,7 @@ class ImageSequenceDataset(Dataset):
 class ConvolutionalImageData(Dataset):
 
     def __init__(self, dataset_root, input_shape):
-        super().__init__(parse_single_example, 'convolutional', dataset_root, 2, input_shape, is_training=False)
+        super().__init__(parse_single_example, 'convolutional', dataset_root, 1, input_shape, is_training=False)
 
 
 def parse_sequence_example(record_string):
