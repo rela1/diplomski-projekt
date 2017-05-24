@@ -216,7 +216,7 @@ class SequentialImageTemporalFCModelOnline:
       self.add_sequence_gradient_new = self.sequence_gradient.assign(tf.concat([self.sequence_gradient, tf.zeros_like(self.sequence_new)], 0))
       
       print(self.sequence.get_shape())
-      net = layers.flatten(self.sequence)
+      net = tf.reshape(self.sequence, sequence_length * spatial_fully_connected_size)
       print(net.get_shape())
 
       with tf.control_dependencies([self.add_sequence_new, self.add_sequence_gradient_new]): 
