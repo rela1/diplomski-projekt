@@ -179,7 +179,7 @@ class SequentialImageTemporalFCModelOnline:
 
       self.representation = layers.flatten(net)
 
-      self.loss = tf.matmul(self.representation, self.final_gradient, name='total_loss_spatial')
+      self.loss = tf.matmul(self.representation, tf.transpose(self.final_gradient), name='total_loss_spatial')
 
       if is_training:
         self.trainer = tf.train.AdamOptimizer(learning_rate)
