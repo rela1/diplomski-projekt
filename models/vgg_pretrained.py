@@ -215,7 +215,7 @@ class SequentialImageTemporalFCModelOnline:
         'updates_collections': None,
         'is_training': is_training,
       }
-      self.sequence_new = tf.placeholder(np.zeros((spatial_fully_connected_size)), tf.float32, name='sequence_new_ph')
+      self.sequence_new = tf.placeholder(tf.float32, shape=(spatial_fully_connected_size), name='sequence_new_ph')
       self.sequence = tf.Variable(np.zeros((sequence_length, spatial_fully_connected_size)), dtype=tf.float32, trainable=False, name='sequence_var')
       self.sequence_gradient = tf.Variable(np.zeros((sequence_length, spatial_fully_connected_size)), dtype=tf.float32, trainable=False, name='sequence_grad')
 
