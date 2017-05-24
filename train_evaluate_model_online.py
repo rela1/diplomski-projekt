@@ -50,15 +50,15 @@ def train_model(model, dataset, sequence_length, num_epochs, model_path):
   for i in range(num_epochs):
 
     for t in range(sequence_length - 1):
-      representation_t = model.spatials_train[t].forward(sess)
+      representation_t = model.spatials_train.forward(sess, t)
       logits = model.temporal_train.forward(sess, [representation_t])
 
     for t in range(sequence_length - 1, dataset.num_train_examples):
       start_time = time.time()
-      representation_t = model.spatials_train[t % sequence_length].forward(sess)
+      representation_t = model.spatials_train.forward(sess, t % sequence_length)
       temporal_data = model.temporal_train.forward_backward(sess, [representation_t])
       loss, cumulated_representation_gradient = temporal_data[0], temporal_data[2]
-      model.spatials_train[t % sequence_length - sequence_length + 1].backward(sess, cumulated_representation_gradient[0])
+      model.spatials_train.backward(sess, cumulated_representation_gradient[0], t % sequence_length - sequence_length + 1)
       duration = time.time() - start_time
 
       assert not np.isnan(loss), 'Model diverged with loss = NaN'    
