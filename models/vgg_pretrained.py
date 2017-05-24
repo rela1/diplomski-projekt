@@ -265,22 +265,22 @@ class SequentialImageTemporalFCModelOnline:
   def __init__(self, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, dataset, learning_rate, weight_decay=0.0, vgg_init_dir=None, is_training=False):
     if is_training:
       with tf.variable_scope('model') as scope:
-        self.spatials_train = self.SpatialsPart(sequence_length, spatial_fully_connected_size, dataset.train_images, learning_rate, weight_decay=weight_decay, vgg_init_dir, is_training=True)
+        self.spatials_train = self.SpatialsPart(sequence_length, spatial_fully_connected_size, dataset.train_images, learning_rate, weight_decay=weight_decay, vgg_init_dir=vgg_init_dir, is_training=True)
         self.vgg_init = self.spatials_train.vgg_init
         self.temporal_train = self.TemporalPart(sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, dataset.train_labels, learning_rate, weight_decay=weight_decay, is_training=True)
       with tf.variable_scope('model', reuse=True) as scope:
-        self.spatials_valid = self.SpatialsPart(sequence_length, spatial_fully_connected_size, dataset.valid_images, learning_rate, weight_decay=weight_decay, vgg_init_dir, is_training=False)
+        self.spatials_valid = self.SpatialsPart(sequence_length, spatial_fully_connected_size, dataset.valid_images, learning_rate, weight_decay=weight_decay, vgg_init_dir=vgg_init_dir, is_training=False)
         self.temporal_valid = self.TemporalPart(sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, dataset.valid_labels, learning_rate, weight_decay=weight_decay, is_training=False)
-        self.spatials_test = self.SpatialsPart(sequence_length, spatial_fully_connected_size, dataset.test_images, learning_rate, weight_decay=weight_decay, vgg_init_dir, is_training=False)
+        self.spatials_test = self.SpatialsPart(sequence_length, spatial_fully_connected_size, dataset.test_images, learning_rate, weight_decay=weight_decay, vgg_init_dir=vgg_init_dir, is_training=False)
         self.temporal_test = self.TemporalPart(sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, dataset.test_labels, learning_rate, weight_decay=weight_decay, is_training=False)
     else:
       with tf.variable_scope('model') as scope:
-        self.spatials_train = self.SpatialsPart(sequence_length, spatial_fully_connected_size, dataset.train_images, learning_rate, weight_decay=weight_decay, vgg_init_dir, is_training=False)
+        self.spatials_train = self.SpatialsPart(sequence_length, spatial_fully_connected_size, dataset.train_images, learning_rate, weight_decay=weight_decay, vgg_init_dir=vgg_init_dir, is_training=False)
         self.temporal_train = self.TemporalPart(sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, dataset.train_labels, learning_rate, weight_decay=weight_decay, is_training=False)
       with tf.variable_scope('model', reuse=True) as scope:
-        self.spatials_valid = self.SpatialsPart(sequence_length, spatial_fully_connected_size, dataset.valid_images, learning_rate, weight_decay=weight_decay, vgg_init_dir, is_training=False)
+        self.spatials_valid = self.SpatialsPart(sequence_length, spatial_fully_connected_size, dataset.valid_images, learning_rate, weight_decay=weight_decay, vgg_init_dir=vgg_init_dir, is_training=False)
         self.temporal_valid = self.TemporalPart(sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, dataset.valid_labels, learning_rate, weight_decay=weight_decay, is_training=False)
-        self.spatials_test = self.SpatialsPart(sequence_length, spatial_fully_connected_size, dataset.test_images, learning_rate, weight_decay=weight_decay, vgg_init_dir, is_training=False)
+        self.spatials_test = self.SpatialsPart(sequence_length, spatial_fully_connected_size, dataset.test_images, learning_rate, weight_decay=weight_decay, vgg_init_dir=vgg_init_dir, is_training=False)
         self.temporal_test = self.TemporalPart(sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, dataset.test_labels, learning_rate, weight_decay=weight_decay, is_training=False)
 
 
