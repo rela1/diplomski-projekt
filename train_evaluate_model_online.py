@@ -43,6 +43,8 @@ def train_model(model, dataset, sequence_length, num_epochs, model_path):
   coord = tf.train.Coordinator()
   threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
+  time.sleep(5)
+
   dataset.mean_image_normalization(sess)
 
   best_valid_accuracy = 0.0
