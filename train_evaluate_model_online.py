@@ -82,7 +82,7 @@ def train_model(model, dataset, sequence_length, num_epochs, learning_rate, mode
 
 
 def evaluate(dataset_name, sess, sequence_length, spatials_model, temporal_model, number_of_examples):
-  print("\nRunning evaluation: ", name)
+  print("\nRunning evaluation: ", dataset_name)
   y_true = []
   y_pred = []
   y_prob = []
