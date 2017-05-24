@@ -175,7 +175,9 @@ class SequentialImageTemporalFCModelOnline:
         weights_regularizer=layers.l2_regularizer(weight_decay)):
         net = layers.fully_connected(net, spatial_fully_connected_size, scope='spatial_FC')
 
+      print(net.get_shape())
       self.representation = layers.flatten(net)
+      print(net.get_shape())
 
       self.loss = tf.matmul(self.representation, self.final_gradient, name='total_loss_spatial')
 
