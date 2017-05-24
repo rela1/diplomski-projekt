@@ -179,7 +179,7 @@ class SequentialImageTemporalFCModelOnline:
       self.loss = tf.matmul(self.representation, self.final_gradient, name='total_loss_spatial')
 
       if is_training:
-        self.trainer = tf.train.AdamOptimizer(learning_rate, name=)
+        self.trainer = tf.train.AdamOptimizer(learning_rate, name='Adam_spatial')
         self.train_op = self.trainer.minimize(self.loss)
         with tf.control_dependencies([self.train_op]):
           self.with_train_op = self.loss
@@ -242,7 +242,7 @@ class SequentialImageTemporalFCModelOnline:
       self.labels = labels
 
       if is_training:
-        self.trainer = tf.train.AdamOptimizer(learning_rate)
+        self.trainer = tf.train.AdamOptimizer(learning_rate, name='Adam_tempral')
         self.train_op = self.trainer.minimize(self.loss)
         self.sequence_gradient_new = tf.gradients(self.loss, [self.sequence])[0]
         self.add_sequence_gradient_new = tf.assign_add(self.sequence_gradient, self.sequence_gradient_new)
