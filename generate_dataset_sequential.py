@@ -43,7 +43,7 @@ def extract_images(video_name, positive_images_ranges, tf_records_writer, zero_p
             positive_examples += 1
         else:
             label = 0
-        write_single_example(img, label, tf_records_writer)
+        write_single_example(img.astype(dtype=np.float32), label, tf_records_writer)
         added_images += 1
 
     return added_images, positive_examples
