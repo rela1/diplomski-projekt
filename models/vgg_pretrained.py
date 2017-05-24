@@ -217,7 +217,7 @@ class SequentialImageTemporalFCModelOnline:
       
       net = layers.flatten(self.sequence)
 
-      with tf.control_dependencies([self.add_sequence_new, add_sequence_gradient_new]): 
+      with tf.control_dependencies([self.add_sequence_new, self.add_sequence_gradient_new]): 
         with tf.contrib.framework.arg_scope([layers.fully_connected],
           activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
           weights_initializer=layers.variance_scaling_initializer(),
