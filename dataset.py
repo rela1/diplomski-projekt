@@ -84,6 +84,7 @@ class ImageSequenceDataset(Dataset):
     def mean_image_normalization(self, sess):
         num_batches = int(math.ceil(self.num_train_examples / self.batch_size))
         print('Mean image dataset normalization...')
+        sequence_length = self.train_images.get_shape().as_list()[1]
         image_shape = self.train_images.get_shape().as_list()[2:]
         print('Image shape', image_shape)
         mean_image = np.zeros((image_shape))
@@ -94,7 +95,7 @@ class ImageSequenceDataset(Dataset):
             np.add(mean_image, np.sum(np.sum(image_vals, axis=0), axis=0), mean_image)
             del image_vals
         np.divide(mean_image, float(self.num_train_examples), mean_image)
-        tf_mean_image = tf.constant(mean_image, dtype=tf.float32)
+        tf_mean_image = tf.constant(np.array([mean_image] * sequence_length), dtype=tf.float32)
         self.train_images = tf.subtract(self.train_images, tf_mean_image, name='train_images_mean_image_normalization')
         self.valid_images = tf.subtract(self.valid_images, tf_mean_image, name='valid_images_mean_image_normalization')
         self.test_images = tf.subtract(self.test_images, tf_mean_image, name='test_images_mean_image_normalization')

@@ -95,6 +95,7 @@ def evaluate(dataset_name, sess, sequence_length, spatials_model, temporal_model
     y_true.extend(labels_val)
     y_prob.extend(probs_val)
   for t in range(sequence_length - 1, number_of_examples):
+    start_time = time.time()
     representation_t = spatials_model.forward(sess, t % sequence_length)
     logits_val, labels_val = temporal_model.forward(sess, representation_t)
     preds_val = np.argmax(logits_val, axis=1)
@@ -102,6 +103,7 @@ def evaluate(dataset_name, sess, sequence_length, spatials_model, temporal_model
     y_pred.extend(preds_val)
     y_true.extend(labels_val)
     y_prob.extend(probs_val)
+    duration = time.time() - start_time
     if not t % 10:
       print('\tstep {}/{}, {} examples/sec, {} sec/batch'.format(t+1, number_of_examples, 1 / duration, duration))
   metrics = evaluate_default_metric_functions(y_true, y_pred)
