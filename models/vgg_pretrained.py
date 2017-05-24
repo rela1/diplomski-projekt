@@ -124,10 +124,10 @@ class SequentialImageTemporalFCModelOnline:
 
   class SpatialPart:
 
-    def __init__(self, index, spatial_fully_connected_size, input_shape, learning_rate, weight_decay=0.0, is_training=False):
-      self.build(index, spatial_fully_connected_size, input_shape, weight_decay, is_training)
+    def __init__(self, index, spatial_fully_connected_size, inputs, learning_rate, weight_decay=0.0, is_training=False):
+      self.build(index, spatial_fully_connected_size, inputs, learning_rate, weight_decay, is_training)
 
-    def build(self, index, spatial_fully_connected_size, inputs, weight_decay, is_training):
+    def build(self, index, spatial_fully_connected_size, inputs, learning_rate, weight_decay, is_training):
       bn_params = {
       'decay': 0.999,
       'center': True,
