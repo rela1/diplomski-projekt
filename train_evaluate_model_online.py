@@ -43,7 +43,7 @@ def train_model(model, dataset, sequence_length, num_epochs, learning_rate, mode
   coord = tf.train.Coordinator()
   threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
-  dataset.mean_image_normalization(sess)
+  #dataset.mean_image_normalization(sess)
 
   best_valid_accuracy = 0.0
 
