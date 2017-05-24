@@ -215,7 +215,9 @@ class SequentialImageTemporalFCModelOnline:
       self.add_sequence_new = self.sequence.assign(tf.concat([self.sequence[1:], self.sequence_new], 0))
       self.add_sequence_gradient_new = self.sequence_gradient.assign(tf.concat([self.sequence_gradient, tf.zeros_like(self.sequence_new)], 0))
       
+      print(self.sequence.get_shape())
       net = layers.flatten(self.sequence)
+      print(net.get_shape())
 
       with tf.control_dependencies([self.add_sequence_new, self.add_sequence_gradient_new]): 
         with tf.contrib.framework.arg_scope([layers.fully_connected],
@@ -227,25 +229,27 @@ class SequentialImageTemporalFCModelOnline:
               net = layers.fully_connected(net, fully_connected_num, scope='temporal_FC{}'.format(layer_num))
               layer_num += 1
 
-        self.logits = layers.fully_connected(
-          net, 2, activation_fn=None, 
-          weights_initializer=layers.xavier_initializer(),
-          weights_regularizer=layers.l2_regularizer(weight_decay),
-          biases_initializer=tf.zeros_initializer(), 
-          scope='logits'
-        )
+      print(net.get_shape())
 
-        loss = tf.nn.weighted_cross_entropy_with_logits(logits=self.logits, targets=labels, pos_weight=1e3)
-        xent_loss = tf.reduce_mean(loss)
-        regularization_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
-        self.loss = tf.add_n([xent_loss] + regularization_losses, name='total_loss_temporal')
-        self.labels = labels
+      self.logits = layers.fully_connected(
+        net, 2, activation_fn=None, 
+        weights_initializer=layers.xavier_initializer(),
+        weights_regularizer=layers.l2_regularizer(weight_decay),
+        biases_initializer=tf.zeros_initializer(),
+        scope='logits'
+      )
 
-        if is_training:
-          self.trainer = tf.train.AdamOptimizer(learning_rate)
-          self.train_op = self.trainer.minimize(self.loss)
-          self.sequence_gradient_new = tf.gradients(self.loss, [self.sequence])[0]
-          self.add_sequence_gradient_new = tf.assign_add(self.sequence_gradient, self.sequence_gradient_new)
+      loss = tf.nn.weighted_cross_entropy_with_logits(logits=self.logits, targets=labels, pos_weight=1e3)
+      xent_loss = tf.reduce_mean(loss)
+      regularization_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
+      self.loss = tf.add_n([xent_loss] + regularization_losses, name='total_loss_temporal')
+      self.labels = labels
+
+      if is_training:
+        self.trainer = tf.train.AdamOptimizer(learning_rate)
+        self.train_op = self.trainer.minimize(self.loss)
+        self.sequence_gradient_new = tf.gradients(self.loss, [self.sequence])[0]
+        self.add_sequence_gradient_new = tf.assign_add(self.sequence_gradient, self.sequence_gradient_new)
 
     def forward(self, sess, sequence_new,):
       logits, labels = sess.run([self.logits, self.labels], feed_dict={self.sequence_new: sequence_new})
