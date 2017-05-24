@@ -215,9 +215,7 @@ class SequentialImageTemporalFCModelOnline:
       self.add_sequence_new = self.sequence.assign(tf.concat([self.sequence[1:], self.sequence_new], 0))
       self.add_sequence_gradient_new = self.sequence_gradient.assign(tf.concat([self.sequence_gradient, tf.zeros_like(self.sequence_new)], 0))
       
-      print(self.sequence.get_shape())
       net = tf.reshape(self.sequence, (-1, sequence_length * spatial_fully_connected_size))
-      print(net.get_shape())
 
       with tf.control_dependencies([self.add_sequence_new, self.add_sequence_gradient_new]): 
         with tf.contrib.framework.arg_scope([layers.fully_connected],
@@ -229,8 +227,6 @@ class SequentialImageTemporalFCModelOnline:
               net = layers.fully_connected(net, fully_connected_num, scope='temporal_FC{}'.format(layer_num))
               layer_num += 1
 
-      print(net.get_shape())
-
       self.logits = layers.fully_connected(
         net, 2, activation_fn=None, 
         weights_initializer=layers.xavier_initializer(),
@@ -239,7 +235,7 @@ class SequentialImageTemporalFCModelOnline:
         scope='logits'
       )
 
-      loss = tf.nn.weighted_cross_entropy_with_logits(logits=tf.argmax(self.logits, axis=1, name='logits_argmax'), targets=labels, pos_weight=1000)
+      loss = tf.nn.weighted_cross_entropy_with_logits(logits=self.logits, targets=tf.one_hot(labels, depth=2), pos_weight=1000)
       xent_loss = tf.reduce_mean(loss)
       regularization_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
       self.loss = tf.add_n([xent_loss] + regularization_losses, name='total_loss_temporal')
