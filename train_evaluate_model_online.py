@@ -87,7 +87,7 @@ def evaluate(dataset_name, sess, sequence_length, spatials_model, temporal_model
   y_pred = []
   y_prob = []
   for t in range(sequence_length - 1):
-    representation_t = spatials_model[t].forward(sess)
+    representation_t = spatials_model.forward(sess, t)
     logits, labels_val = temporal_model.forward(sess, representation_t)
     preds_val = np.argmax(logits, axis=1)
     probs_val = softmax(logits_val)
@@ -95,7 +95,7 @@ def evaluate(dataset_name, sess, sequence_length, spatials_model, temporal_model
     y_true.extend(labels_val)
     y_prob.extend(probs_val)
   for t in range(sequence_length - 1, dataset.num_train_examples):
-    representation_t = spatials_model[t % sequence_length].forward(sess)
+    representation_t = spatials_model.forward(sess, t % sequence_length)
     logits, labels_val = temporal_model.forward(sess, representation_t)
     preds_val = np.argmax(logits, axis=1)
     probs_val = softmax(logits_val)
