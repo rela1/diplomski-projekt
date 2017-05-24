@@ -94,7 +94,7 @@ class ImageSequenceDataset(Dataset):
             print(image_vals.shape)
             np.add(mean_image, np.sum(np.sum(image_vals, axis=0), axis=0), mean_image)
             del image_vals
-        np.divide(mean_image, float(self.num_train_examples), mean_image)
+        np.divide(mean_image, float(self.num_train_examples * sequence_length), mean_image)
         tf_mean_image = tf.constant(np.array([mean_image] * sequence_length), dtype=tf.float32)
         self.train_images = tf.subtract(self.train_images, tf_mean_image, name='train_images_mean_image_normalization')
         self.valid_images = tf.subtract(self.valid_images, tf_mean_image, name='valid_images_mean_image_normalization')
