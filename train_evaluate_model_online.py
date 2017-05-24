@@ -102,7 +102,7 @@ def evaluate(dataset_name, sess, sequence_length, spatials_model, temporal_model
     y_pred.extend(preds_val)
     y_true.extend(labels_val)
     y_prob.extend(probs_val)
-    if not i % 10:
+    if not t % 10:
       print('\tstep {}/{}, {} examples/sec, {} sec/batch'.format(i+1, num_batches, 1 / duration, duration))
   metrics = evaluate_default_metric_functions(y_true, y_pred)
   print_metrics(metrics)
