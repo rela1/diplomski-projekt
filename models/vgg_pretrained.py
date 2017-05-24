@@ -257,10 +257,10 @@ class SequentialImageTemporalFCModelOnline:
 
   def create_spatial_models(self, num, scope, spatial_fully_connected_size, images, learning_rate, weight_decay, is_training):
     spatials = []
-    spatials.append(self.SpatialPart(0, spatial_fully_connected_size, dataset.train_images, learning_rate, weight_decay=weight_decay, is_training=is_training))
+    spatials.append(self.SpatialPart(0, spatial_fully_connected_size, images, learning_rate, weight_decay=weight_decay, is_training=is_training))
     scope.reuse_variables()
     for i in range(1, num):
-      spatials.append(self.SpatialPart(i, spatial_fully_connected_size, dataset.train_images, learning_rate, weight_decay=weight_decay, is_training=is_training))
+      spatials.append(self.SpatialPart(i, spatial_fully_connected_size, images, learning_rate, weight_decay=weight_decay, is_training=is_training))
     return spatials
 
   def __init__(self, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, dataset, learning_rate, weight_decay=0.0, vgg_init_dir=None, is_training=False):
