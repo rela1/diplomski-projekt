@@ -181,11 +181,13 @@ class SequentialImageTemporalFCModelOnline:
 
       self.loss = tf.matmul(self.representation, tf.transpose(self.final_gradient), name='total_loss_spatial')
 
+      self.partial_run_setup_objs = [self.representation, self.loss]
       if is_training:
         self.trainer = tf.train.AdamOptimizer(learning_rate)
         self.train_op = self.trainer.minimize(self.loss)
         with tf.control_dependencies([self.train_op]):
           self.with_train_op = self.loss
+        self.partial_run_setup_objs.append(self.train_op)
 
       vgg_layers, vgg_layer_names = read_vgg_init(vgg_init_dir)
       init_op, init_feed, pretrained_vars = create_init_op(vgg_layers)
@@ -194,7 +196,7 @@ class SequentialImageTemporalFCModelOnline:
 
 
     def forward(self, sess, index):
-      handle = sess.partial_run_setup([self.representation, self.loss, self.train_op], [self.final_gradient])
+      handle = sess.partial_run_setup([self.partial_run_setup_objs], [self.final_gradient])
       self.handles[index] = handle
       representation = sess.partial_run(self.handles[index], self.representation)
       return representation
