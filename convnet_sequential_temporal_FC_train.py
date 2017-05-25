@@ -8,7 +8,7 @@ from train_evaluate_model import freezed_pretrained_train_model
 WEIGHT_DECAY = 1e-3
 LEARNING_RATE = 5e-4
 SPATIAL_FULLY_CONNECTED = 64
-TEMPORAL_FULLY_CONNECTED = [200]
+TEMPORAL_FULLY_CONNECTED = [64]
 EPOCHS = 10
 BATCH_SIZE = 5
 INPUT_SHAPE = [25, 140, 350, 3]
