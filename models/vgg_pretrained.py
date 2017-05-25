@@ -358,30 +358,24 @@ class SequentialImageTemporalFCModel:
         net = layers.convolution2d(net, 512, scope='conv5_3', reuse=reuse)
         net = layers.max_pool2d(net, 2, 2, scope='pool5')
 
-        """
         net = layers.batch_norm(net, decay=bn_params['decay'], center=bn_params['center'], 
                 scale=bn_params['scale'], epsilon=bn_params['epsilon'], 
                 updates_collections=bn_params['updates_collections'], is_training=bn_params['is_training'],
                 scope='batch_norm', reuse=reuse)
-        """
 
-      """
       net_shape = net.get_shape()
 
       global_pooling_kernel = [int(net_shape[1]), int(net_shape[2])]
       net = layers.max_pool2d(net, kernel_size=global_pooling_kernel, stride=global_pooling_kernel, scope='global_pool1')
-      """
       net_shape = net.get_shape()
 
       net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2]) * int(net_shape[3])])
       
-      """
       with tf.contrib.framework.arg_scope([layers.fully_connected],
         activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
         weights_initializer=layers.variance_scaling_initializer(),
         weights_regularizer=layers.l2_regularizer(weight_decay)):
         net = layers.fully_connected(net, spatial_fully_connected_size, scope='spatial_FC', reuse=reuse)
-      """
 
       if concated is None:
         concated = tf.expand_dims(net, axis=1)
