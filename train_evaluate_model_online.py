@@ -43,7 +43,7 @@ def train_model(model, dataset, sequence_length, num_epochs, learning_rate, mode
   coord = tf.train.Coordinator()
   threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
-  #dataset.mean_image_normalization(sess)
+  dataset.mean_image_normalization(sess)
 
   best_valid_accuracy = 0.0
 
@@ -53,7 +53,7 @@ def train_model(model, dataset, sequence_length, num_epochs, learning_rate, mode
       representation_t = model.spatials_train.forward(sess, t)
       logits = model.temporal_train.forward(sess, representation_t)
 
-    for t in range(sequence_length - 1, 50):
+    for t in range(sequence_length - 1, dataset.num_train_examples):
       start_time = time.time()
       representation_t = model.spatials_train.forward(sess, t % sequence_length)
       temporal_data = model.temporal_train.forward_backward(sess, representation_t)
@@ -94,7 +94,7 @@ def evaluate(dataset_name, sess, sequence_length, spatials_model, temporal_model
     y_pred.extend(preds_val)
     y_true.extend(labels_val)
     y_prob.extend(probs_val)
-  for t in range(sequence_length - 1, 50):
+  for t in range(sequence_length - 1, number_of_examples):
     start_time = time.time()
     representation_t = spatials_model.forward(sess, t % sequence_length)
     logits_val, labels_val = temporal_model.forward(sess, representation_t)
