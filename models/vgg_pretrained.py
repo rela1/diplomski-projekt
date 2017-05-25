@@ -240,16 +240,16 @@ class SequentialImageTemporalFCModelOnline:
               layer_num += 1
 
       self.logits = layers.fully_connected(
-        net, 1, activation_fn=None, 
+        net, 2, activation_fn=None, 
         weights_initializer=layers.xavier_initializer(),
         weights_regularizer=layers.l2_regularizer(weight_decay),
         biases_initializer=tf.zeros_initializer(),
         scope='logits'
       )
-      self.logits = tf.squeeze(self.logits, axis=1)
 
-      loss = tf.nn.weighted_cross_entropy_with_logits(logits=self.logits, targets=labels, pos_weight=1000)
-      xent_loss = tf.reduce_mean(loss)
+      softmax = tf.nn.softmax(self.logits)
+      cross_entropy = -tf.reduce_sum(tf.mul(labels * tf.log(softmax + 1e-3), [1, 1000]), reduction_indices=[1])
+      xent_loss = tf.reduce_mean(cross_entropy)
       regularization_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
       self.loss = tf.add_n([xent_loss] + regularization_losses, name='total_loss_temporal')
       self.labels = labels
