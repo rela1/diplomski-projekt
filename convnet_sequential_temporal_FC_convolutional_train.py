@@ -17,10 +17,11 @@ SEQUENCE_LENGTH = 25
 if __name__ == '__main__':
   vgg_init_dir = sys.argv[1]
   dataset_root = sys.argv[2]
-  model_path = sys.argv[3]
+  pretrained_model_path = sys.argv[3]
+  model_path = sys.argv[4]
 
   dataset = ConvolutionalImageData(dataset_root, INPUT_SHAPE)
 
   model = SequentialImageTemporalFCModelOnline(SEQUENCE_LENGTH, SPATIAL_FULLY_CONNECTED, TEMPORAL_FULLY_CONNECTED, dataset, LEARNING_RATE, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=True)
 
-  train_model(model, dataset, SEQUENCE_LENGTH, EPOCHS, LEARNING_RATE, model_path)
+  train_model(model, dataset, SEQUENCE_LENGTH, EPOCHS, LEARNING_RATE, pretrained_model_path, model_path)

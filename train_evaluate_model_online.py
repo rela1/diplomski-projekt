@@ -23,7 +23,7 @@ def get_saver_variables():
   return filtered_vars_map
 
 
-def train_model(model, dataset, sequence_length, num_epochs, learning_rate, model_path):
+def train_model(model, dataset, sequence_length, num_epochs, learning_rate, pretrained_model_path, model_path):
   sess = tf.Session()
 
   global_step = tf.get_variable('global_step', [], dtype=tf.int64, initializer=tf.constant_initializer(0), trainable=False)
@@ -32,7 +32,9 @@ def train_model(model, dataset, sequence_length, num_epochs, learning_rate, mode
 
   sess.run(tf.global_variables_initializer())
   sess.run(tf.local_variables_initializer())
-  sess.run(init_op, feed_dict=init_feed)
+  
+  saver = tf.train.Saver(get_saver_variables())
+  saver.restore(sess, pretrained_model_path)
 
   saver = tf.train.Saver(get_saver_variables())
 
@@ -45,7 +47,8 @@ def train_model(model, dataset, sequence_length, num_epochs, learning_rate, mode
 
   dataset.mean_image_normalization(sess)
 
-  best_valid_accuracy = 0.0
+  metrics, y_true, y_pred, y_prob = evaluate('Validation', sess, sequence_length, model.spatials_valid, model.temporal_valid, dataset.num_valid_examples)
+  best_valid_accuracy = metrics['accuracy_score']
 
   for i in range(num_epochs):
 

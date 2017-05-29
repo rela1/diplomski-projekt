@@ -179,7 +179,7 @@ class SequentialImageTemporalFCModelOnline:
 
       self.representation = layers.flatten(net)
 
-      self.loss = tf.matmul(self.representation, tf.transpose(self.final_gradient), name='total_loss_spatial')
+      self.loss = tf.matmul(self.representation, tf.transpose(self.final_gradient))
 
       self.partial_run_setup_objs = [self.representation, self.loss]
       if is_training:
@@ -240,17 +240,17 @@ class SequentialImageTemporalFCModelOnline:
               layer_num += 1
 
       self.logits = layers.fully_connected(
-        net, 1, activation_fn=None, 
+        net, 2, activation_fn=None, 
         weights_initializer=layers.xavier_initializer(),
         weights_regularizer=layers.l2_regularizer(weight_decay),
         biases_initializer=tf.zeros_initializer(),
         scope='logits'
       )
 
-      loss = tf.nn.weighted_cross_entropy_with_logits(logits=self.logits, targets=labels, pos_weight=tf.constant(1000.0))
+      loss = tf.nn.weighted_cross_entropy_with_logits(logits=self.logits, targets=tf.one_hot(labels, depth=2, dtype=tf.float32), pos_weight=tf.constant([0.01, 100.0]))
       xent_loss = tf.reduce_mean(loss)
       regularization_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
-      self.loss = tf.add_n([xent_loss] + regularization_losses, name='total_loss_temporal')
+      self.loss = tf.add_n([xent_loss] + regularization_losses)
       self.labels = labels
 
       if is_training:
