@@ -29,7 +29,7 @@ def get_restore_variables(model_path):
   all_vars = tf.global_variables()
   var_names = sorted([(var.name, var.name.split(':')[0]) for var in all_vars
           if var.name.split(':')[0] in saved_shapes])
-  print(all_vars)
+  print([var.name for var in all_vars])
   print(var_names)
   print(saved_shapes)
   restore_vars = {}
