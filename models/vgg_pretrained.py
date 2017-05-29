@@ -172,7 +172,7 @@ class SequentialImageTemporalFCModelOnline:
         net = layers.batch_norm(net, decay=bn_params['decay'], center=bn_params['center'], 
           scale=bn_params['scale'], epsilon=bn_params['epsilon'], 
           updates_collections=bn_params['updates_collections'], is_training=bn_params['is_training'],
-          scope='batch_norm', reuse=reuse)
+          scope='batch_norm')
 
       net_shape = net.get_shape()
 
