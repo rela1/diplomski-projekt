@@ -18,9 +18,24 @@ INFO_STEP = 20
 
 def get_saver_variables():
   all_vars = tf.global_variables()
-  filtered_vars = [var for var in all_vars if 'global_step' not in var.name and 'Adam' not in var.name and not var.name.startswith('_')]
+  filtered_vars = [var for var in all_vars if 'global_step' not in var.name and 'Adam' not in var.name]
   filtered_vars_map = {var.name: var for var in filtered_vars}
   return filtered_vars_map
+
+
+def get_restore_variables(model_path):
+  reader = tf.train.NewCheckpointReader(model_path)
+  saved_shapes = reader.get_variable_to_shape_map()
+  var_names = sorted([(var.name, var.name.split(':')[0]) for var in tf.global_variables()
+          if var.name.split(':')[0] in saved_shapes])
+  restore_vars = {}
+  with tf.variable_scope('', reuse=True):
+    for var_name, saved_var_name in var_names:
+      curr_var = tf.get_variable(saved_var_name)
+      var_shape = curr_var.get_shape().as_list()
+      if var_shape == saved_shapes[saved_var_name]:
+        restore_vars[curr_var.name] = curr_var
+  return restore_vars
 
 
 def train_model(model, dataset, sequence_length, num_epochs, learning_rate, pretrained_model_path, model_path):
@@ -33,9 +48,10 @@ def train_model(model, dataset, sequence_length, num_epochs, learning_rate, pret
   sess.run(tf.global_variables_initializer())
   sess.run(tf.local_variables_initializer())
   
+  loader = tf.train.Saver(get_restore_variables())
+  loader.restore(sess, pretrained_model_path)
+
   saver = tf.train.Saver(get_saver_variables())
-  print(get_saver_variables())
-  saver.restore(sess, pretrained_model_path)
 
   writer = tf.summary.FileWriter(os.path.join(model_path, 'tensorboard'), sess.graph)
   print('\nTensorboard command: tensorboard --logdir="{}"'.format(os.path.abspath(os.path.join(model_path, 'tensorboard'))))
