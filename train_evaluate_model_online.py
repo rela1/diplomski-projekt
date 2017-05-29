@@ -28,9 +28,6 @@ def get_restore_variables(model_path):
   saved_shapes = reader.get_variable_to_shape_map()
   all_vars = tf.global_variables()
   restore_vars = {var.name: var for var in all_vars if var.name in saved_shapes}
-  print([var.name for var in all_vars])
-  print(restore_vars)
-  print(saved_shapes)
   return restore_vars
 
 
@@ -44,8 +41,11 @@ def train_model(model, dataset, sequence_length, num_epochs, learning_rate, pret
   sess.run(tf.global_variables_initializer())
   sess.run(tf.local_variables_initializer())
   
-  loader = tf.train.Saver(get_restore_variables(pretrained_model_path))
+  restore_vars = get_restore_variables(pretrained_model_path)
+  loader = tf.train.Saver(restore_vars)
+  print('Restored', restore_vars)
   loader.restore(sess, pretrained_model_path)
+  time.sleep(5)
 
   saver = tf.train.Saver(get_saver_variables())
 
