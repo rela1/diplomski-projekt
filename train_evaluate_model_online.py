@@ -26,8 +26,10 @@ def get_saver_variables():
 def get_restore_variables(model_path):
   reader = tf.train.NewCheckpointReader(model_path)
   saved_shapes = reader.get_variable_to_shape_map()
-  var_names = sorted([(var.name, var.name.split(':')[0]) for var in tf.global_variables()
+  all_vars = tf.global_variables()
+  var_names = sorted([(var.name, var.name.split(':')[0]) for var in all_vars
           if var.name.split(':')[0] in saved_shapes])
+  print(all_vars)
   print(var_names)
   print(saved_shapes)
   restore_vars = {}
