@@ -169,6 +169,16 @@ class SequentialImageTemporalFCModelOnline:
         net = layers.convolution2d(net, 512, scope='conv5_3')
         net = layers.max_pool2d(net, 2, 2, scope='pool5')
 
+        net = layers.batch_norm(net, decay=bn_params['decay'], center=bn_params['center'], 
+          scale=bn_params['scale'], epsilon=bn_params['epsilon'], 
+          updates_collections=bn_params['updates_collections'], is_training=bn_params['is_training'],
+          scope='batch_norm', reuse=reuse)
+
+      net_shape = net.get_shape()
+
+      global_pooling_kernel = [int(net_shape[1]), int(net_shape[2])]
+      net = layers.max_pool2d(net, kernel_size=global_pooling_kernel, stride=global_pooling_kernel, scope='global_pool1')
+
       net = layers.flatten(net)
 
       with tf.contrib.framework.arg_scope([layers.fully_connected],
