@@ -142,7 +142,7 @@ class SequentialImageTemporalFCModelOnline:
       vertical_slice_size = int(round(int(input_shape[1]) / 3))
       inputs = tf.slice(inputs, begin=[0, vertical_slice_size, 0, 0], size=[-1, -1, horizontal_slice_size * 2, -1])
 
-      self.final_gradient = tf.placeholder(tf.float32, shape=(1, spatial_fully_connected_size), name='final_gradient_ph')
+      self.final_gradient = tf.placeholder(tf.float32, shape=(1, spatial_fully_connected_size), name='_final_gradient_ph')
       self.handles = [None] * sequence_length
 
       with tf.contrib.framework.arg_scope([layers.convolution2d],
@@ -179,7 +179,7 @@ class SequentialImageTemporalFCModelOnline:
 
       self.representation = layers.flatten(net)
 
-      self.loss = tf.matmul(self.representation, tf.transpose(self.final_gradient))
+      self.loss = tf.matmul(self.representation, tf.transpose(self.final_gradient), name='_spatial_loss')
 
       self.partial_run_setup_objs = [self.representation, self.loss]
       if is_training:
@@ -220,9 +220,9 @@ class SequentialImageTemporalFCModelOnline:
         'updates_collections': None,
         'is_training': is_training,
       }
-      self.sequence_new = tf.placeholder(tf.float32, shape=(1, spatial_fully_connected_size), name='sequence_new_ph')
-      self.sequence = tf.Variable(np.zeros((sequence_length, spatial_fully_connected_size)), dtype=tf.float32, trainable=False, name='sequence_var')
-      self.sequence_gradient = tf.Variable(np.zeros((sequence_length, spatial_fully_connected_size)), dtype=tf.float32, trainable=False, name='sequence_grad')
+      self.sequence_new = tf.placeholder(tf.float32, shape=(1, spatial_fully_connected_size), name='_sequence_new_ph')
+      self.sequence = tf.Variable(np.zeros((sequence_length, spatial_fully_connected_size)), dtype=tf.float32, trainable=False, name='_sequence_var')
+      self.sequence_gradient = tf.Variable(np.zeros((sequence_length, spatial_fully_connected_size)), dtype=tf.float32, trainable=False, name='_sequence_grad')
 
       self.add_sequence_new_op = self.sequence.assign(tf.concat([tf.slice(self.sequence, begin=[1, 0], size=[-1, -1]), self.sequence_new], 0))
       self.add_sequence_gradient_new_op = self.sequence_gradient.assign(tf.concat([tf.slice(self.sequence_gradient, begin=[1, 0], size=[-1, -1]), tf.zeros_like(self.sequence_new)], 0))
@@ -247,7 +247,7 @@ class SequentialImageTemporalFCModelOnline:
         scope='logits'
       )
 
-      loss = tf.nn.weighted_cross_entropy_with_logits(logits=self.logits, targets=tf.one_hot(labels, depth=2, dtype=tf.float32), pos_weight=tf.constant([0.01, 100.0]))
+      loss = tf.nn.weighted_cross_entropy_with_logits(logits=self.logits, targets=tf.one_hot(labels, depth=2, dtype=tf.float32), pos_weight=tf.constant([0.001, 1000.0]), name='_temporal_loss')
       xent_loss = tf.reduce_mean(loss)
       regularization_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
       self.loss = tf.add_n([xent_loss] + regularization_losses)

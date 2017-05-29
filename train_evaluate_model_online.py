@@ -18,7 +18,7 @@ INFO_STEP = 20
 
 def get_saver_variables():
   all_vars = tf.global_variables()
-  filtered_vars = [var for var in all_vars if 'global_step' not in var.name and 'Adam' not in var.name]
+  filtered_vars = [var for var in all_vars if 'global_step' not in var.name and 'Adam' not in var.name and not var.name.startswith('_')]
   filtered_vars_map = {var.name: var for var in filtered_vars}
   return filtered_vars_map
 
@@ -35,8 +35,6 @@ def train_model(model, dataset, sequence_length, num_epochs, learning_rate, pret
   
   saver = tf.train.Saver(get_saver_variables())
   saver.restore(sess, pretrained_model_path)
-
-  saver = tf.train.Saver(get_saver_variables())
 
   writer = tf.summary.FileWriter(os.path.join(model_path, 'tensorboard'), sess.graph)
   print('\nTensorboard command: tensorboard --logdir="{}"'.format(os.path.abspath(os.path.join(model_path, 'tensorboard'))))
