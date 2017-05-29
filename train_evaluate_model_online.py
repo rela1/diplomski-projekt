@@ -43,9 +43,7 @@ def train_model(model, dataset, sequence_length, num_epochs, learning_rate, pret
   
   restore_vars = get_restore_variables(pretrained_model_path)
   loader = tf.train.Saver(restore_vars)
-  print('Restored', restore_vars)
   loader.restore(sess, pretrained_model_path)
-  time.sleep(5)
 
   saver = tf.train.Saver(get_saver_variables())
 
