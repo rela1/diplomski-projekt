@@ -34,6 +34,7 @@ def train_model(model, dataset, sequence_length, num_epochs, learning_rate, pret
   sess.run(tf.local_variables_initializer())
   
   saver = tf.train.Saver(get_saver_variables())
+  print(get_saver_variables())
   saver.restore(sess, pretrained_model_path)
 
   writer = tf.summary.FileWriter(os.path.join(model_path, 'tensorboard'), sess.graph)
