@@ -101,7 +101,7 @@ class SequentialImageLSTMModel:
       shape=[2], 
       initializer=tf.zeros_initializer()
     )
-    lstm = tf.contrib.rnn.BasicLSTMCell(lstm_state_size)            
+    lstm = tf.contrib.rnn.BasicLSTMCell(lstm_state_size)
 
     if is_training:
       init_op, init_feed, pretrained_vars = create_init_op(vgg_layers)
@@ -257,8 +257,13 @@ class SequentialImageTemporalFCModelOnline:
         scope='logits'
       )
 
-      loss = tf.nn.weighted_cross_entropy_with_logits(logits=self.logits, targets=tf.one_hot(labels, depth=2, dtype=tf.float32), pos_weight=tf.constant([0.001, 1000.0]), name='_temporal_loss')
-      xent_loss = tf.reduce_mean(loss)
+      softmax = tf.nn.softmax(self.logits)
+      coefficients = tf.constant([0.0001, 1.0])
+      cross_entropy = -tf.reduce_sum(tf.mul(tf.one_hot(labels, depth=2) * tf.log(softmax + 1e-6), coefficients), reduction_indices=[1])
+      xent_loss = tf.reduce_mean(cross_entropy, name='_temporal_loss')
+
+      #loss = tf.nn.weighted_cross_entropy_with_logits(logits=self.logits, targets=tf.one_hot(labels, depth=2, dtype=tf.float32), pos_weight=tf.constant([0.001, 1000.0]), name='_temporal_loss')
+      #xent_loss = tf.reduce_mean(loss)
       regularization_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
       self.loss = tf.add_n([xent_loss] + regularization_losses)
       self.labels = labels
