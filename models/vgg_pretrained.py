@@ -7,26 +7,26 @@ from tensorflow.contrib.layers.python.layers import initializers
 
 class SequentialImageLSTMModel:
 
-  def __init__(self, lstm_state_size, dataset, weight_decay=0.0, vgg_init_dir=None, is_training=False):
+  def __init__(self, lstm_state_sizes, dataset, weight_decay=0.0, vgg_init_dir=None, is_training=False):
     if is_training:
       
       with tf.variable_scope('model'):
-        logits, loss, init_op, init_feed = self.build(lstm_state_size, dataset.train_images, dataset.train_labels, weight_decay, vgg_init_dir, True)
+        logits, loss, init_op, init_feed = self.build(lstm_state_sizes, dataset.train_images, dataset.train_labels, weight_decay, vgg_init_dir, True)
         self.vgg_init = (init_op, init_feed)
         self.train_loss = loss
         self.train_logits = logits
       with tf.variable_scope('model', reuse=True):
-        self.valid_logits, self.valid_loss = self.build(lstm_state_size, dataset.valid_images, dataset.valid_labels, weight_decay, vgg_init_dir, False)
-        self.test_logits, self.test_loss = self.build(lstm_state_size, dataset.test_images, dataset.test_labels, weight_decay, vgg_init_dir, False)
+        self.valid_logits, self.valid_loss = self.build(lstm_state_sizes, dataset.valid_images, dataset.valid_labels, weight_decay, vgg_init_dir, False)
+        self.test_logits, self.test_loss = self.build(lstm_state_sizes, dataset.test_images, dataset.test_labels, weight_decay, vgg_init_dir, False)
     
     else:
       with tf.variable_scope('model'):
-        self.train_logits, self.train_loss = self.build(lstm_state_size, dataset.train_images, dataset.train_labels, weight_decay, vgg_init_dir, False)
+        self.train_logits, self.train_loss = self.build(lstm_state_sizes, dataset.train_images, dataset.train_labels, weight_decay, vgg_init_dir, False)
       with tf.variable_scope('model', reuse=True):
-        self.valid_logits, self.valid_loss = self.build(lstm_state_size, dataset.valid_images, dataset.valid_labels, weight_decay, vgg_init_dir, False)
-        self.test_logits, self.test_loss = self.build(lstm_state_size, dataset.test_images, dataset.test_labels, weight_decay, vgg_init_dir, False)
+        self.valid_logits, self.valid_loss = self.build(lstm_state_sizes, dataset.valid_images, dataset.valid_labels, weight_decay, vgg_init_dir, False)
+        self.test_logits, self.test_loss = self.build(lstm_state_sizes, dataset.test_images, dataset.test_labels, weight_decay, vgg_init_dir, False)
 
-  def build(self, lstm_state_size, inputs, labels, weight_decay, vgg_init_dir, is_training):
+  def build(self, lstm_state_sizes, inputs, labels, weight_decay, vgg_init_dir, is_training):
     bn_params = {
       'decay': 0.999,
       'center': True,
@@ -52,7 +52,7 @@ class SequentialImageLSTMModel:
     for sequence_image in range(sequence_length):
       with tf.contrib.framework.arg_scope([layers.convolution2d],
         kernel_size=3, stride=1, padding='SAME', rate=1, activation_fn=tf.nn.relu,
-        normalizer_fn=None, weights_initializer=None,
+        normalizer_fn=layers.batch_norm, normalizer_params=bn_params, weights_initializer=None,
         weights_regularizer=layers.l2_regularizer(weight_decay)):
 
         net = layers.convolution2d(inputs[:, sequence_image], 64, scope='conv1_1', reuse=reuse)
@@ -73,14 +73,7 @@ class SequentialImageLSTMModel:
         net = layers.convolution2d(net, 512, scope='conv5_2', reuse=reuse)
         net = layers.convolution2d(net, 512, scope='conv5_3', reuse=reuse)
         net = layers.max_pool2d(net, 2, 2, scope='pool5')
-
-        """
-        net = layers.batch_norm(net, decay=bn_params['decay'], center=bn_params['center'], 
-                scale=bn_params['scale'], epsilon=bn_params['epsilon'], 
-                updates_collections=bn_params['updates_collections'], is_training=bn_params['is_training'],
-                scope='batch_norm', reuse=reuse)
-        """
-
+      
       net_shape = net.get_shape()
 
       net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2]) * int(net_shape[3])])
@@ -101,14 +94,17 @@ class SequentialImageLSTMModel:
       shape=[2], 
       initializer=tf.zeros_initializer()
     )
-    lstm = tf.contrib.rnn.BasicLSTMCell(lstm_state_size)
+
+    lstms = [tf.contrib.rnn.BasicLSTMCell(lstm_state_size) for lstm_state_size in lstm_state_sizes]
+    
+    multi_layered_lstms = tf.contrib.rnn.MultiRNNCell(lstms)
 
     if is_training:
       init_op, init_feed, pretrained_vars = create_init_op(vgg_layers)
       self.pretrained_vars = pretrained_vars
 
     net = tf.unstack(concated, num=sequence_length, axis=0)
-    outputs, states = tf.contrib.rnn.static_rnn(lstm, net, dtype=tf.float32)
+    outputs, states = tf.contrib.rnn.static_rnn(multi_layered_lstms, net, dtype=tf.float32)
     
     logits = tf.matmul(outputs[-1], output_weights) + output_bias
 
@@ -258,7 +254,7 @@ class SequentialImageTemporalFCModelOnline:
       )
 
       softmax = tf.nn.softmax(self.logits)
-      coefficients = tf.constant([0.0001, 1.0])
+      coefficients = tf.constant([0.001, 1.0])
       cross_entropy = -tf.reduce_sum(tf.multiply(tf.one_hot(labels, depth=2) * tf.log(softmax + 1e-6), coefficients), reduction_indices=[1])
       xent_loss = tf.reduce_mean(cross_entropy, name='_temporal_loss')
 
