@@ -85,7 +85,7 @@ class SequentialImageLSTMModel:
 
     output_weights = tf.get_variable(
       'lstm_output_weights', 
-      shape=[lstm_state_size, 2], 
+      shape=[lstm_state_sizes[-1], 2], 
       initializer=layers.xavier_initializer(), 
       regularizer=layers.l2_regularizer(weight_decay)
     )
