@@ -10,7 +10,7 @@ LEARNING_RATE = 5e-4
 LSTM_STATE_SIZES = [128, 64, 32]
 EPOCHS = 10
 BATCH_SIZE = 5
-INPUT_SHAPE = [25, 150, 340, 3]
+INPUT_SHAPE = [25, 140, 350, 3]
 
 
 if __name__ == '__main__':
