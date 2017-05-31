@@ -4,6 +4,8 @@ import numpy as np
 from models.model_helper import read_vgg_init
 from tensorflow.contrib.layers.python.layers import initializers
 
+DROPOUT_KEEP_PROB = tf.constant(0.5, name='dropout_keep_prob')
+
 
 class SequentialImageLSTMModel:
 
@@ -378,6 +380,7 @@ class SequentialImageTemporalFCModel:
         weights_initializer=layers.variance_scaling_initializer(),
         weights_regularizer=layers.l2_regularizer(weight_decay)):
         net = layers.fully_connected(net, spatial_fully_connected_size, scope='spatial_FC', reuse=reuse)
+        net = layers.dropout(net, keep_prob=DROPOUT_KEEP_PROB, is_training=is_training, scope='spatial_FC_dropout')
 
       if concated is None:
         concated = tf.expand_dims(net, axis=1)
@@ -402,6 +405,7 @@ class SequentialImageTemporalFCModel:
         layer_num = 1
         for fully_connected_num in temporal_fully_connected_layers:
             net = layers.fully_connected(net, fully_connected_num, scope='temporal_FC{}'.format(layer_num))
+            net = layers.dropout(net, keep_prob=DROPOUT_KEEP_PROB, is_training=is_training, scope='temporal_FC_dropout{}'.format(layer_num))
             layer_num += 1
 
     logits = layers.fully_connected(
