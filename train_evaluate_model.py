@@ -73,10 +73,11 @@ def fine_tune_train_model(model, dataset, learning_rate, num_epochs, model_path)
   train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op, saver, best_valid_evaluate=True)
 
 
-def train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op, saver, best_valid_evaluate=False):
+def train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op, saver, best_valid_evaluate=False, decay_learning_rate=True):
 
   num_batches = int(math.ceil(dataset.num_train_examples / dataset.batch_size))
-  learning_rate = tf.train.exponential_decay(learning_rate, global_step, num_batches, 0.95, staircase=False)
+  if decay_learning_rate:
+    learning_rate = tf.train.exponential_decay(learning_rate, global_step, num_batches, 0.95, staircase=False)
   print('\nNumber of steps per epoch: {}'.format(num_batches))
 
   writer = tf.summary.FileWriter(os.path.join(model_path, 'tensorboard'), sess.graph)
@@ -94,12 +95,19 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path, sess, glo
   else:
     best_valid_accuracy = 0.0
 
+  operations = [train_op, model.train_loss]
+
+  if decay_learning_rate:
+    operations.append(learning_rate)
+
   for i in range(num_epochs):
 
     for j in range(num_batches):
 
       start_time = time.time()
-      _, loss_val, learning_rate_val = sess.run([train_op, model.train_loss, learning_rate])
+      operations_results = sess.run(operations)
+      loss_val = operations_results[1]
+      learning_rate_val = operations_results[2] if decay_learning_rate else learning_rate
       duration = time.time() - start_time
 
       assert not np.isnan(loss_val), 'Model diverged with loss = NaN'    
