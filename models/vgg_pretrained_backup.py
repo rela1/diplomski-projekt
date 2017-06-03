@@ -375,6 +375,7 @@ class SequentialImageTemporalFCModel:
 
       net_shape = net.get_shape()
 
+      """
       global_pooling_kernel = [int(net_shape[1]), int(net_shape[2])]
       net = layers.max_pool2d(net, kernel_size=global_pooling_kernel, stride=global_pooling_kernel, scope='global_pool1')
 
@@ -388,6 +389,7 @@ class SequentialImageTemporalFCModel:
         weights_regularizer=layers.l2_regularizer(weight_decay)):
         net = layers.fully_connected(net, spatial_fully_connected_size, scope='spatial_FC', reuse=reuse)
         net = layers.dropout(net, keep_prob=DROPOUT_KEEP_PROB, is_training=is_training, scope='spatial_FC_dropout')
+      """
 
       if concated is None:
         concated = tf.expand_dims(net, axis=1)
