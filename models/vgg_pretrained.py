@@ -351,7 +351,7 @@ class SequentialImageTemporalFCModel:
     for sequence_image in range(int(inputs_shape[1])):
       with tf.contrib.framework.arg_scope([layers.convolution2d],
         kernel_size=3, stride=1, padding='SAME', rate=1, activation_fn=tf.nn.relu,
-        normalizer_fn=layers.batch_norm, normalizer_params=bn_params, weights_initializer=None,
+        normalizer_fn=None, weights_initializer=None,
         weights_regularizer=layers.l2_regularizer(weight_decay)):
 
         net = layers.convolution2d(inputs[:, sequence_image], 64, scope='conv1_1', reuse=reuse)
@@ -370,11 +370,12 @@ class SequentialImageTemporalFCModel:
         net = layers.max_pool2d(net, 2, 2, scope='pool4')
         net = layers.convolution2d(net, 512, scope='conv5_1', reuse=reuse)
         net = layers.convolution2d(net, 512, scope='conv5_2', reuse=reuse)
-        net = layers.convolution2d(net, 512, scope='conv5_3', reuse=reuse)
+        net = layers.convolution2d(net, 512, scope='conv5_3', reuse=reuse, normalizer_fn=layers.batch_norm, normalizer_params=bn_params)
         net = layers.max_pool2d(net, 2, 2, scope='pool5')
 
       net_shape = net.get_shape()
 
+      """
       global_pooling_kernel = [int(net_shape[1]), int(net_shape[2])]
       net = layers.max_pool2d(net, kernel_size=global_pooling_kernel, stride=global_pooling_kernel, scope='global_pool1')
 
@@ -388,6 +389,7 @@ class SequentialImageTemporalFCModel:
         weights_regularizer=layers.l2_regularizer(weight_decay)):
         net = layers.fully_connected(net, spatial_fully_connected_size, scope='spatial_FC', reuse=reuse)
         net = layers.dropout(net, keep_prob=DROPOUT_KEEP_PROB, is_training=is_training, scope='spatial_FC_dropout')
+      """
 
       if concated is None:
         concated = tf.expand_dims(net, axis=1)
@@ -401,6 +403,10 @@ class SequentialImageTemporalFCModel:
       self.pretrained_vars = pretrained_vars
 
     net = concated
+
+    print(net.get_shape())
+    tf.reduce_mean(net, axis=1, name='average_image')
+    print(net.get_shape())
 
     net_shape = net.get_shape()
     net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2])])
