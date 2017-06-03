@@ -405,7 +405,7 @@ class SequentialImageTemporalFCModel:
     net = concated
 
     print(net.get_shape())
-    tf.reduce_mean(net, axis=1, name='average_image')
+    net = tf.reduce_mean(net, axis=1, name='average_image')
     print(net.get_shape())
 
     net_shape = net.get_shape()
