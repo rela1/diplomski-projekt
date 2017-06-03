@@ -410,8 +410,7 @@ class SequentialImageTemporalFCModel:
     net = concated
 
     net_shape = net.get_shape()
-    print(net_shape)
-    net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2] * int(net_shape[3]))])
+    net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2])])
 
     sequence_logits = layers.fully_connected(
         net, 2, activation_fn=None, 
