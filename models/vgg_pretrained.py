@@ -404,12 +404,10 @@ class SequentialImageTemporalFCModel:
 
     net = concated
 
-    print(net.get_shape())
     net = tf.reduce_mean(net, axis=1, name='average_image')
-    print(net.get_shape())
 
     net_shape = net.get_shape()
-    net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2])])
+    net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2] * int(net_shape[3]))])
 
     with tf.contrib.framework.arg_scope([layers.fully_connected],
         activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
