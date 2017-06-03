@@ -255,7 +255,7 @@ class SequentialImageTemporalFCModelOnline:
         scope='logits'
       )
 
-      softmax = tf.nn.softmax(self.logits)
+      softmax = tf.nn.softmax(self.logits, name='_softmax')
       coefficients = tf.constant([0.001, 1.0])
       cross_entropy = -tf.reduce_sum(tf.multiply(tf.one_hot(labels, depth=2) * tf.log(softmax + 1e-6), coefficients), reduction_indices=[1])
       xent_loss = tf.reduce_mean(cross_entropy, name='_temporal_loss')

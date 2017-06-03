@@ -40,10 +40,13 @@ def train_model(model, dataset, sequence_length, num_epochs, learning_rate, pret
 
   sess.run(tf.global_variables_initializer())
   sess.run(tf.local_variables_initializer())
-  
+  sess.run(init_op, feed_dict=init_feed)
+
+  """
   restore_vars = get_restore_variables(pretrained_model_path)
   loader = tf.train.Saver(restore_vars)
   loader.restore(sess, pretrained_model_path)
+  """
 
   saver = tf.train.Saver(get_saver_variables())
 
