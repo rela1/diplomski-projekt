@@ -410,9 +410,9 @@ class SequentialImageTemporalFCModel:
         net = layers.convolution2d(net, num_outputs=64, rate=5, scope='conv6_2')
         net = layers.convolution2d(net, num_outputs=64, rate=10, scope='conv6_3')
         net = layers.max_pool2d(net, 2, 2, scope='pool6')
-        net = layers.convolution2d(net, num_outputs=128, rate=1, scope='conv6_1')
-        net = layers.convolution2d(net, num_outputs=128, rate=5, scope='conv6_2')
-        net = layers.convolution2d(net, num_outputs=128, rate=10, scope='conv6_3')
+        net = layers.convolution2d(net, num_outputs=128, rate=1, scope='conv7_1')
+        net = layers.convolution2d(net, num_outputs=128, rate=5, scope='conv7_2')
+        net = layers.convolution2d(net, num_outputs=128, rate=10, scope='conv7_3')
         net = layers.max_pool2d(net, 2, 2, scope='pool7')
 
     net_shape = net.get_shape()
