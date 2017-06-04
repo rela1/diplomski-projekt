@@ -306,26 +306,26 @@ class SequentialImageTemporalFCModelOnline:
 
 class SequentialImageTemporalFCModel:
 
-  def __init__(self, spatial_fully_connected_size, temporal_fully_connected_layers, dataset, weight_decay=0.0, vgg_init_dir=None, is_training=False):
+  def __init__(self, spatial_fully_connected_layers, temporal_fully_connected_layers, dataset, weight_decay=0.0, vgg_init_dir=None, is_training=False):
     if is_training:
       
       with tf.variable_scope('model'):
-        logits, loss, init_op, init_feed = self.build(spatial_fully_connected_size, temporal_fully_connected_layers, dataset.train_images, dataset.train_labels, weight_decay, vgg_init_dir, True)
+        logits, loss, init_op, init_feed = self.build(spatial_fully_connected_layers, temporal_fully_connected_layers, dataset.train_images, dataset.train_labels, weight_decay, vgg_init_dir, True)
         self.vgg_init = (init_op, init_feed)
         self.train_loss = loss
         self.train_logits = logits
       with tf.variable_scope('model', reuse=True):
-        self.valid_logits, self.valid_loss = self.build(spatial_fully_connected_size, temporal_fully_connected_layers, dataset.valid_images, dataset.valid_labels, weight_decay, vgg_init_dir, False)
-        self.test_logits, self.test_loss = self.build(spatial_fully_connected_size, temporal_fully_connected_layers, dataset.test_images, dataset.test_labels, weight_decay, vgg_init_dir, False)
+        self.valid_logits, self.valid_loss = self.build(spatial_fully_connected_layers, temporal_fully_connected_layers, dataset.valid_images, dataset.valid_labels, weight_decay, vgg_init_dir, False)
+        self.test_logits, self.test_loss = self.build(spatial_fully_connected_layers, temporal_fully_connected_layers, dataset.test_images, dataset.test_labels, weight_decay, vgg_init_dir, False)
     
     else:
       with tf.variable_scope('model'):
-        self.train_logits, self.train_loss = self.build(spatial_fully_connected_size, temporal_fully_connected_layers, dataset.train_images, dataset.train_labels, weight_decay, vgg_init_dir, False)
+        self.train_logits, self.train_loss = self.build(spatial_fully_connected_layers, temporal_fully_connected_layers, dataset.train_images, dataset.train_labels, weight_decay, vgg_init_dir, False)
       with tf.variable_scope('model', reuse=True):
-        self.valid_logits, self.valid_loss = self.build(spatial_fully_connected_size, temporal_fully_connected_layers, dataset.valid_images, dataset.valid_labels, weight_decay, vgg_init_dir, False)
-        self.test_logits, self.test_loss = self.build(spatial_fully_connected_size, temporal_fully_connected_layers, dataset.test_images, dataset.test_labels, weight_decay, vgg_init_dir, False)
+        self.valid_logits, self.valid_loss = self.build(spatial_fully_connected_layers, temporal_fully_connected_layers, dataset.valid_images, dataset.valid_labels, weight_decay, vgg_init_dir, False)
+        self.test_logits, self.test_loss = self.build(spatial_fully_connected_layers, temporal_fully_connected_layers, dataset.test_images, dataset.test_labels, weight_decay, vgg_init_dir, False)
 
-  def build(self, spatial_fully_connected_size, temporal_fully_connected_layers, inputs, labels, weight_decay, vgg_init_dir, is_training):
+  def build(self, spatial_fully_connected_layers, temporal_fully_connected_layers, inputs, labels, weight_decay, vgg_init_dir, is_training):
     bn_params = {
       'decay': 0.999,
       'center': True,
@@ -375,21 +375,17 @@ class SequentialImageTemporalFCModel:
 
       net_shape = net.get_shape()
 
-      """
-      global_pooling_kernel = [int(net_shape[1]), int(net_shape[2])]
-      net = layers.max_pool2d(net, kernel_size=global_pooling_kernel, stride=global_pooling_kernel, scope='global_pool1')
-
-      net_shape = net.get_shape()
-
       net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2]) * int(net_shape[3])])
       
       with tf.contrib.framework.arg_scope([layers.fully_connected],
         activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
         weights_initializer=layers.variance_scaling_initializer(),
         weights_regularizer=layers.l2_regularizer(weight_decay)):
-        net = layers.fully_connected(net, spatial_fully_connected_size, scope='spatial_FC', reuse=reuse)
-        net = layers.dropout(net, keep_prob=DROPOUT_KEEP_PROB, is_training=is_training, scope='spatial_FC_dropout')
-      """
+        layer_num = 1
+        for fully_connected_num in temporal_fully_connected_layers:
+            net = layers.fully_connected(net, fully_connected_num, scope='spatial_FC{}'.format(layer_num))
+            net = layers.dropout(net, keep_prob=DROPOUT_KEEP_PROB, is_training=is_training, scope='spatial_FC_dropout{}'.format(layer_num))
+            layer_num += 1
 
       if concated is None:
         concated = tf.expand_dims(net, axis=1)
@@ -403,11 +399,8 @@ class SequentialImageTemporalFCModel:
       self.pretrained_vars = pretrained_vars
 
     net = concated
-
-    net = tf.reduce_mean(net, axis=1, name='average_image')
-
     net_shape = net.get_shape()
-    net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2] * int(net_shape[3]))])
+    net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2])])
 
     with tf.contrib.framework.arg_scope([layers.fully_connected],
         activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
