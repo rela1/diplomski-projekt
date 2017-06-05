@@ -382,7 +382,7 @@ class SequentialImageTemporalFCModel:
         weights_initializer=layers.variance_scaling_initializer(),
         weights_regularizer=layers.l2_regularizer(weight_decay)):
         layer_num = 1
-        for fully_connected_num in temporal_fully_connected_layers:
+        for fully_connected_num in spatial_fully_connected_layers:
             net = layers.fully_connected(net, fully_connected_num, scope='spatial_FC{}'.format(layer_num))
             net = layers.dropout(net, keep_prob=DROPOUT_KEEP_PROB, is_training=is_training, scope='spatial_FC_dropout{}'.format(layer_num))
             layer_num += 1
@@ -419,7 +419,6 @@ class SequentialImageTemporalFCModel:
 
     net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2]) * int(net_shape[3])])
 
-    """
     with tf.contrib.framework.arg_scope([layers.fully_connected],
         activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
         weights_initializer=layers.variance_scaling_initializer(),
@@ -429,7 +428,6 @@ class SequentialImageTemporalFCModel:
             net = layers.fully_connected(net, fully_connected_num, scope='temporal_FC{}'.format(layer_num))
             net = layers.dropout(net, keep_prob=DROPOUT_KEEP_PROB, is_training=is_training, scope='temporal_FC_dropout{}'.format(layer_num))
             layer_num += 1
-    """
 
     logits = layers.fully_connected(
       net, 2, activation_fn=None, 
