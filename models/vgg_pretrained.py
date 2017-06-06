@@ -372,7 +372,7 @@ class SequentialImageTemporalFCModel:
         weights_initializer=layers.variance_scaling_initializer(),
         weights_regularizer=layers.l2_regularizer(weight_decay)):
         layer_num = 1
-        for fully_connected_num in fully_connected_layers:
+        for fully_connected_num in temporal_fully_connected_layers:
           net = layers.fully_connected(net, fully_connected_num, scope='fc{}'.format(layer_num))
           layer_num += 1
 
