@@ -390,7 +390,7 @@ class SequentialImageTemporalFCModel:
         weights_regularizer=layers.l2_regularizer(weight_decay)):
         layer_num = 1
         for fully_connected_num in temporal_fully_connected_layers:
-            net = layers.fully_connected(net, fully_connected_num, scope='single_FC{}'.format(layer_num))
+            net = layers.fully_connected(net, fully_connected_num, scope='single_FC{}'.format(layer_num), reuse=reuse)
             net = layers.dropout(net, keep_prob=DROPOUT_KEEP_PROB, is_training=is_training, scope='single_FC_dropout{}'.format(layer_num))
             layer_num += 1
 
