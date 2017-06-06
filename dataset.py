@@ -15,14 +15,14 @@ class Dataset:
         self.valid_dir = os.path.join(dataset_root, 'validate')
         self.test_dir = os.path.join(dataset_root, 'test')
 
-        self.train_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(train_dir)]
-        self.train_tfrecords = [os.path.join(train_dir, train_tfrecords_dir, train_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for train_tfrecords_dir in train_tfrecords_dirs]
+        self.train_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(self.train_dir)]
+        self.train_tfrecords = [os.path.join(self.train_dir, train_tfrecords_dir, train_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for train_tfrecords_dir in self.train_tfrecords_dirs]
         
-        self.valid_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(valid_dir)]
-        self.valid_tfrecords = [os.path.join(valid_dir, valid_tfrecords_dir, valid_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for valid_tfrecords_dir in valid_tfrecords_dirs]
+        self.valid_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(self.valid_dir)]
+        self.valid_tfrecords = [os.path.join(self.valid_dir, valid_tfrecords_dir, valid_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for valid_tfrecords_dir in self.valid_tfrecords_dirs]
 
-        self.test_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(test_dir)]
-        self.test_tfrecords = [os.path.join(test_dir, test_tfrecords_dir, test_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for test_tfrecords_dir in test_tfrecords_dirs]
+        self.test_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(self.test_dir)]
+        self.test_tfrecords = [os.path.join(self.test_dir, test_tfrecords_dir, test_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for test_tfrecords_dir in self.test_tfrecords_dirs]
 
         self.num_train_examples = number_of_examples(self.train_tfrecords_dirs, self.train_dir)
         self.num_valid_examples = number_of_examples(self.valid_tfrecords_dirs, self.valid_dir)
@@ -30,9 +30,9 @@ class Dataset:
 
         print('Train examples {}, validate examples {}, test examples {}'.format(self.num_train_examples, self.num_valid_examples, self.num_test_examples))
 
-        train_file_queue = tf.train.string_input_producer(train_tfrecords, capacity=len(train_tfrecords))
-        valid_file_queue = tf.train.string_input_producer(valid_tfrecords, capacity=len(valid_tfrecords))
-        test_file_queue = tf.train.string_input_producer(test_tfrecords, capacity=len(test_tfrecords))
+        train_file_queue = tf.train.string_input_producer(self.train_tfrecords, capacity=len(self.train_tfrecords))
+        valid_file_queue = tf.train.string_input_producer(self.valid_tfrecords, capacity=len(self.valid_tfrecords))
+        test_file_queue = tf.train.string_input_producer(self.test_tfrecords, capacity=len(self.test_tfrecords))
 
         train_images, train_labels = input_decoder(train_file_queue, example_parser)
         if is_training:
