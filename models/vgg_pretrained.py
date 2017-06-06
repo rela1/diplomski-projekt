@@ -361,7 +361,7 @@ class SequentialImageTemporalFCModel:
         net = layers.max_pool2d(net, 2, 2, scope='pool4')
         net = layers.convolution2d(net, 512, scope='conv5_1', reuse=reuse)
         net = layers.convolution2d(net, 512, scope='conv5_2', reuse=reuse)
-        net = layers.convolution2d(net, 512, scope='conv5_3', reuse=reuse)
+        net = layers.convolution2d(net, 512, scope='conv5_3', reuse=reuse, normalizer_fn=layers.batch_norm, normalizer_params=bn_params)
         net = layers.max_pool2d(net, 2, 2, scope='pool5')
 
         """
