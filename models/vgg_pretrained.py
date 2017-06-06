@@ -373,7 +373,7 @@ class SequentialImageTemporalFCModel:
         weights_regularizer=layers.l2_regularizer(weight_decay)):
         layer_num = 1
         for fully_connected_num in temporal_fully_connected_layers:
-          net = layers.fully_connected(net, fully_connected_num, scope='fc{}'.format(layer_num))
+          net = layers.fully_connected(net, fully_connected_num, scope='fc{}'.format(layer_num), reuse=reuse)
           layer_num += 1
 
       single_logits = layers.fully_connected(
@@ -381,7 +381,8 @@ class SequentialImageTemporalFCModel:
         weights_initializer=layers.xavier_initializer(),
         weights_regularizer=layers.l2_regularizer(weight_decay),
         biases_initializer=tf.zeros_initializer(), 
-        scope='single_logits'
+        scope='single_logits',
+        reuse=reuse
       )
 
       if concated is None:
