@@ -154,7 +154,7 @@ def evaluate_model(model, dataset, model_path):
   sess.close()
 
 
-def plot_wrong_classifications(model, dataset, model_path):
+def plot_wrong_classifications(model, dataset, model_path, save_path=None):
 
   sess = tf.Session()
 
@@ -167,6 +167,8 @@ def plot_wrong_classifications(model, dataset, model_path):
   coord = tf.train.Coordinator()
   threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
+  fig_cnt = 0
+
   for i in range(dataset.num_test_examples):
 
     logits_vals, label_vals, image_vals = sess.run([model.test_logits, dataset.test_labels, dataset.test_images])
@@ -176,6 +178,8 @@ def plot_wrong_classifications(model, dataset, model_path):
     for j in range(dataset.batch_size):
 
       if label_vals[j] != prediction_vals[j]:
+
+          plt.figure(figsize=(10, 10))
 
         if len(image_vals.shape) == 5:
 
@@ -193,4 +197,10 @@ def plot_wrong_classifications(model, dataset, model_path):
           plt.imshow(image_vals[j])
 
         plt.suptitle('True label {}, prediction: {}, probabilities: {}'.format(label_vals[j], prediction_vals[j], probability_vals[j]))
-        plt.show()
+
+        if save_path is None:
+          plt.show()
+        else:
+          plt.savefig(os.path.join(save_path, str(fig_cnt) + '.png'))
+
+        fig_cnt += 1
