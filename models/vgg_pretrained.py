@@ -381,9 +381,6 @@ class SequentialImageTemporalFCModel:
         net = layers.fully_connected(net, spatial_fully_connected_size, scope='spatial_FC')
         #net = layers.dropout(net, keep_prob=DROPOUT_KEEP_PROB, is_training=is_training, scope='spatial_FC_dropout{}'.format(layer_num))
 
-      net_shape = net.get_shape()
-      net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2]) * int(net_shape[3])])
-
       if concated is None:
         concated = tf.expand_dims(single_logits, axis=1)
       else:
