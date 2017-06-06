@@ -404,9 +404,9 @@ class SequentialImageTemporalFCModel:
       )
 
       if concated is None:
-        concated = tf.expand_dims(net, axis=1)
+        concated = tf.expand_dims(single_logits, axis=1)
       else:
-        concated = tf.concat([concated, tf.expand_dims(net, axis=1)], axis=1)
+        concated = tf.concat([concated, tf.expand_dims(single_logits, axis=1)], axis=1)
 
       reuse=True
 
