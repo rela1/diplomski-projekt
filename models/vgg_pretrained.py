@@ -136,6 +136,7 @@ class SequentialImageTemporalFCModelOnline:
       }
 
       input_shape = inputs.get_shape()
+      print(input_shape)
       horizontal_slice_size = int(round(int(input_shape[2]) / 3))
       vertical_slice_size = int(round(int(input_shape[1]) / 3))
       inputs = tf.slice(inputs, begin=[0, vertical_slice_size, 0, 0], size=[-1, -1, horizontal_slice_size * 2, -1])
