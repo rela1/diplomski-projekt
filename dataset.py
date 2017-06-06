@@ -11,22 +11,22 @@ class Dataset:
         self.batch_size = batch_size
         shapes = [input_shape, []]
 
-        train_dir = os.path.join(dataset_root, 'train')
-        valid_dir = os.path.join(dataset_root, 'validate')
-        test_dir = os.path.join(dataset_root, 'test')
+        self.train_dir = os.path.join(dataset_root, 'train')
+        self.valid_dir = os.path.join(dataset_root, 'validate')
+        self.test_dir = os.path.join(dataset_root, 'test')
 
-        train_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(train_dir)]
-        train_tfrecords = [os.path.join(train_dir, train_tfrecords_dir, train_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for train_tfrecords_dir in train_tfrecords_dirs]
+        self.train_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(train_dir)]
+        self.train_tfrecords = [os.path.join(train_dir, train_tfrecords_dir, train_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for train_tfrecords_dir in train_tfrecords_dirs]
         
-        valid_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(valid_dir)]
-        valid_tfrecords = [os.path.join(valid_dir, valid_tfrecords_dir, valid_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for valid_tfrecords_dir in valid_tfrecords_dirs]
+        self.valid_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(valid_dir)]
+        self.valid_tfrecords = [os.path.join(valid_dir, valid_tfrecords_dir, valid_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for valid_tfrecords_dir in valid_tfrecords_dirs]
 
-        test_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(test_dir)]
-        test_tfrecords = [os.path.join(test_dir, test_tfrecords_dir, test_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for test_tfrecords_dir in test_tfrecords_dirs]
+        self.test_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(test_dir)]
+        self.test_tfrecords = [os.path.join(test_dir, test_tfrecords_dir, test_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for test_tfrecords_dir in test_tfrecords_dirs]
 
-        self.num_train_examples = number_of_examples(train_tfrecords_dirs, train_dir)
-        self.num_valid_examples = number_of_examples(valid_tfrecords_dirs, valid_dir)
-        self.num_test_examples = number_of_examples(test_tfrecords_dirs, test_dir)
+        self.num_train_examples = number_of_examples(self.train_tfrecords_dirs, self.train_dir)
+        self.num_valid_examples = number_of_examples(self.valid_tfrecords_dirs, self.valid_dir)
+        self.num_test_examples = number_of_examples(self.test_tfrecords_dirs, self.test_dir)
 
         print('Train examples {}, validate examples {}, test examples {}'.format(self.num_train_examples, self.num_valid_examples, self.num_test_examples))
 
@@ -49,6 +49,7 @@ class Dataset:
         test_images, test_labels = input_decoder(test_file_queue, example_parser)
         self.test_images, self.test_labels = tf.train.batch(
             [test_images, test_labels], batch_size=batch_size, shapes=shapes)
+
 
     def mean_image_normalization(self, sess):
         num_batches = int(math.ceil(self.num_train_examples / self.batch_size))
@@ -106,6 +107,12 @@ class ConvolutionalImageData(Dataset):
 
     def __init__(self, dataset_root, input_shape):
         super().__init__(parse_single_example, 'convolutional', dataset_root, 1, input_shape, is_training=False)
+        self.num_positive_train_examples = number_of_examples(self.train_tfrecords_dirs, self.train_dir, 'positive_examples.txt')
+        self.num_positive_valid_examples = number_of_examples(self.valid_tfrecords_dirs, self.valid_dir, 'positive_examples.txt')
+        self.num_positive_test_examples = number_of_examples(self.test_tfrecords_dirs, self.test_dir, 'positive_examples.txt')
+
+        print('Positive train examples {}, positive validate examples {}, positive test examples {}'.format(self.num_positive_train_examples, self.num_positive_valid_examples, self.num_positive_test_examples))
+
 
 
 def parse_sequence_example(record_string):
@@ -160,9 +167,9 @@ def input_decoder(filename_queue, example_parser):
   return example_parser(record_string)
 
 
-def number_of_examples(tfrecord_dirs, path_prefix):
+def number_of_examples(tfrecord_dirs, path_prefix, examples_file_name='examples.txt'):
   examples = 0
   for tfrecord_dir in tfrecord_dirs:
-    with open(os.path.join(path_prefix, tfrecord_dir, 'examples.txt')) as examples_file:
+    with open(os.path.join(path_prefix, tfrecord_dir, examples_file_name)) as examples_file:
         examples += int(examples_file.read().strip())
   return examples

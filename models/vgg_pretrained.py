@@ -164,20 +164,8 @@ class SequentialImageTemporalFCModelOnline:
         net = layers.max_pool2d(net, 2, 2, scope='pool4')
         net = layers.convolution2d(net, 512, scope='conv5_1')
         net = layers.convolution2d(net, 512, scope='conv5_2')
-        net = layers.convolution2d(net, 512, scope='conv5_3')
+        net = layers.convolution2d(net, 512, scope='conv5_3', normalizer_fn=layers.batch_norm, normalizer_params=bn_params)
         net = layers.max_pool2d(net, 2, 2, scope='pool5')
-
-        net = layers.batch_norm(net, decay=bn_params['decay'], center=bn_params['center'], 
-          scale=bn_params['scale'], epsilon=bn_params['epsilon'], 
-          updates_collections=bn_params['updates_collections'], is_training=bn_params['is_training'],
-          scope='batch_norm')
-
-      net_shape = net.get_shape()
-
-      """
-      global_pooling_kernel = [int(net_shape[1]), int(net_shape[2])]
-      net = layers.max_pool2d(net, kernel_size=global_pooling_kernel, stride=global_pooling_kernel, scope='global_pool1')
-      """
 
       net = layers.flatten(net)
 
@@ -218,10 +206,10 @@ class SequentialImageTemporalFCModelOnline:
 
   class TemporalPart:
 
-    def __init__(self, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, labels, learning_rate, weight_decay=0.0, is_training=False):
-      self.build(sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, labels, learning_rate, weight_decay=weight_decay, is_training=is_training)
+    def __init__(self, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, labels, positive_class_weight, learning_rate, weight_decay=0.0, is_training=False):
+      self.build(sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, labels, positive_class_weight, learning_rate, weight_decay=weight_decay, is_training=is_training)
 
-    def build(self, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, labels, learning_rate, weight_decay=0.0, is_training=False):
+    def build(self, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, labels, positive_class_weight, learning_rate, weight_decay=0.0, is_training=False):
       bn_params = {
         'decay': 0.999,
         'center': True,
@@ -258,12 +246,10 @@ class SequentialImageTemporalFCModelOnline:
       )
 
       softmax = tf.nn.softmax(self.logits, name='_softmax')
-      coefficients = tf.constant([0.001, 1.0])
-      cross_entropy = -tf.reduce_sum(tf.multiply(tf.one_hot(labels, depth=2) * tf.log(softmax + 1e-6), coefficients), reduction_indices=[1])
+      coefficients = tf.constant([1.0, positive_class_weight])
+      cross_entropy = -tf.reduce_sum(tf.multiply(tf.one_hot(labels, depth=2) * tf.log(softmax + 1e-7), coefficients), reduction_indices=[1])
       xent_loss = tf.reduce_mean(cross_entropy, name='_temporal_loss')
 
-      #loss = tf.nn.weighted_cross_entropy_with_logits(logits=self.logits, targets=tf.one_hot(labels, depth=2, dtype=tf.float32), pos_weight=tf.constant([0.001, 1000.0]), name='_temporal_loss')
-      #xent_loss = tf.reduce_mean(loss)
       regularization_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
       self.loss = tf.add_n([xent_loss] + regularization_losses)
       self.labels = labels
@@ -287,21 +273,27 @@ class SequentialImageTemporalFCModelOnline:
       with tf.variable_scope('model') as scope:
         self.spatials_train = self.SpatialsPart(sequence_length, spatial_fully_connected_size, dataset.train_images, learning_rate, weight_decay=weight_decay, vgg_init_dir=vgg_init_dir, is_training=True)
         self.vgg_init = self.spatials_train.vgg_init
-        self.temporal_train = self.TemporalPart(sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, dataset.train_labels, learning_rate, weight_decay=weight_decay, is_training=True)
+        train_positive_class_weight = float(dataset.num_positive_train_examples) / float(dataset.num_train_examples)
+        self.temporal_train = self.TemporalPart(sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, dataset.train_labels, train_positive_class_weight, learning_rate, weight_decay=weight_decay, is_training=True)
       with tf.variable_scope('model', reuse=True) as scope:
         self.spatials_valid = self.SpatialsPart(sequence_length, spatial_fully_connected_size, dataset.valid_images, learning_rate, weight_decay=weight_decay, vgg_init_dir=vgg_init_dir, is_training=False)
-        self.temporal_valid = self.TemporalPart(sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, dataset.valid_labels, learning_rate, weight_decay=weight_decay, is_training=False)
+        valid_positive_class_weight = float(dataset.num_positive_valid_examples) / float(dataset.num_valid_examples)
+        self.temporal_valid = self.TemporalPart(sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, dataset.valid_labels, valid_positive_class_weight, learning_rate, weight_decay=weight_decay, is_training=False)
         self.spatials_test = self.SpatialsPart(sequence_length, spatial_fully_connected_size, dataset.test_images, learning_rate, weight_decay=weight_decay, vgg_init_dir=vgg_init_dir, is_training=False)
-        self.temporal_test = self.TemporalPart(sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, dataset.test_labels, learning_rate, weight_decay=weight_decay, is_training=False)
+        test_positive_class_weight = float(dataset.num_positive_test_examples) / float(dataset.num_test_examples)
+        self.temporal_test = self.TemporalPart(sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, dataset.test_labels, test_positive_class_weight, learning_rate, weight_decay=weight_decay, is_training=False)
     else:
       with tf.variable_scope('model') as scope:
         self.spatials_train = self.SpatialsPart(sequence_length, spatial_fully_connected_size, dataset.train_images, learning_rate, weight_decay=weight_decay, vgg_init_dir=vgg_init_dir, is_training=False)
-        self.temporal_train = self.TemporalPart(sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, dataset.train_labels, learning_rate, weight_decay=weight_decay, is_training=False)
+        train_positive_class_weight = float(dataset.num_positive_train_examples) / float(dataset.num_train_examples)
+        self.temporal_train = self.TemporalPart(sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, dataset.train_labels, train_positive_class_weight, learning_rate, weight_decay=weight_decay, is_training=False)
       with tf.variable_scope('model', reuse=True) as scope:
         self.spatials_valid = self.SpatialsPart(sequence_length, spatial_fully_connected_size, dataset.valid_images, learning_rate, weight_decay=weight_decay, vgg_init_dir=vgg_init_dir, is_training=False)
-        self.temporal_valid = self.TemporalPart(sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, dataset.valid_labels, learning_rate, weight_decay=weight_decay, is_training=False)
+        valid_positive_class_weight = float(dataset.num_positive_valid_examples) / float(dataset.num_valid_examples)
+        self.temporal_valid = self.TemporalPart(sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, dataset.valid_labels, valid_positive_class_weight, learning_rate, weight_decay=weight_decay, is_training=False)
         self.spatials_test = self.SpatialsPart(sequence_length, spatial_fully_connected_size, dataset.test_images, learning_rate, weight_decay=weight_decay, vgg_init_dir=vgg_init_dir, is_training=False)
-        self.temporal_test = self.TemporalPart(sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, dataset.test_labels, learning_rate, weight_decay=weight_decay, is_training=False)
+        test_positive_class_weight = float(dataset.num_positive_test_examples) / float(dataset.num_test_examples)
+        self.temporal_test = self.TemporalPart(sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, dataset.test_labels, test_positive_class_weight, learning_rate, weight_decay=weight_decay, is_training=False)
 
 
 class SequentialImageTemporalFCModel:
@@ -400,24 +392,7 @@ class SequentialImageTemporalFCModel:
 
     net = concated
     net_shape = net.get_shape()
-    net = tf.reshape(net, [batch_size, int(net_shape[1]), int(net_shape[2]), 1])
-
-    with tf.contrib.framework.arg_scope([layers.convolution2d],
-        kernel_size=[int(net_shape[1]), 1], stride=1, padding='SAME', activation_fn=tf.nn.relu,
-        normalizer_fn=layers.batch_norm, normalizer_params=bn_params, weights_initializer=layers.variance_scaling_initializer(),
-        weights_regularizer=layers.l2_regularizer(weight_decay)):
-        net = layers.convolution2d(net, num_outputs=64, rate=1, scope='conv6_1')
-        net = layers.convolution2d(net, num_outputs=64, rate=5, scope='conv6_2')
-        net = layers.convolution2d(net, num_outputs=64, rate=10, scope='conv6_3')
-        net = layers.max_pool2d(net, 2, 2, scope='pool6')
-        net = layers.convolution2d(net, num_outputs=128, rate=1, scope='conv7_1')
-        net = layers.convolution2d(net, num_outputs=128, rate=5, scope='conv7_2')
-        net = layers.convolution2d(net, num_outputs=128, rate=10, scope='conv7_3')
-        net = layers.max_pool2d(net, 2, 2, scope='pool7')
-
-    net_shape = net.get_shape()
-
-    net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2]) * int(net_shape[3])])
+    net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2])])
 
     with tf.contrib.framework.arg_scope([layers.fully_connected],
         activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
