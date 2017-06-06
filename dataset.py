@@ -69,7 +69,7 @@ class Dataset:
         self.valid_images = tf.subtract(self.valid_images, tf_mean_image, name='valid_images_mean_image_normalization')
         self.test_images = tf.subtract(self.test_images, tf_mean_image, name='test_images_mean_image_normalization')
         print('Done with mean image dataset normalization...')
-        return tf_mean_image
+        return mean_image
 
 
 class SingleImageDataset(Dataset):
@@ -102,7 +102,7 @@ class ImageSequenceDataset(Dataset):
         self.valid_images = tf.subtract(self.valid_images, tf_mean_image, name='valid_images_mean_image_normalization')
         self.test_images = tf.subtract(self.test_images, tf_mean_image, name='test_images_mean_image_normalization')
         print('Done with mean image dataset normalization...')
-        return tf_mean_image
+        return mean_image
 
 
 class ConvolutionalImageData(Dataset):
