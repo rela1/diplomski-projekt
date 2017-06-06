@@ -168,7 +168,6 @@ def plot_wrong_classifications(model, dataset, model_path, save_path=None):
   threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
   mean_image_val = dataset.mean_image_normalization(sess)
-  print('Mean image shape ', mean_image_val.shape)
 
   fig_cnt = 0
 

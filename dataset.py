@@ -90,7 +90,7 @@ class ImageSequenceDataset(Dataset):
         image_shape = self.train_images.get_shape().as_list()[2:]
         print('Image shape', image_shape)
         mean_image = np.zeros((image_shape))
-        for i in range(2):
+        for i in range(num_batches):
             print('Normalization step {}/{}'.format(i + 1, num_batches))
             image_vals = sess.run(self.train_images)
             print(image_vals.shape)
