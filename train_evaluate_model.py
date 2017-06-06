@@ -167,11 +167,12 @@ def plot_wrong_classifications(model, dataset, model_path, save_path=None):
   coord = tf.train.Coordinator()
   threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
-  dataset.mean_image_normalization(sess)
+  mean_image = dataset.mean_image_normalization(sess)
+  mean_image_val = sess.run([mean_image])
 
   fig_cnt = 0
 
-  plt.figure(figsize=(10, 10))
+  plt.figure(figsize=(20, 20))
 
   num_batches = int(math.ceil(dataset.num_test_examples / dataset.batch_size))
 
@@ -194,11 +195,11 @@ def plot_wrong_classifications(model, dataset, model_path, save_path=None):
 
           for k in range(1, sequence_length + 1):
             plt.subplot(rows, cols, k)
-            plt.imshow(image_vals[j][k - 1])
+            plt.imshow(image_vals[j][k - 1] + mean_image_val)
 
         else:
 
-          plt.imshow(image_vals[j])
+          plt.imshow(image_vals[j] + mean_image_val)
 
         plt.suptitle('True label {}, prediction: {}, probabilities: {}'.format(label_vals[j], prediction_vals[j], probability_vals[j]))
 
