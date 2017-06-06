@@ -382,7 +382,7 @@ class SequentialImageTemporalFCModel:
         #net = layers.dropout(net, keep_prob=DROPOUT_KEEP_PROB, is_training=is_training, scope='spatial_FC_dropout{}'.format(layer_num))
 
       if concated is None:
-        concated = tf.expand_dims(single_logits, axis=1)
+        concated = tf.expand_dims(net, axis=1)
       else:
         concated = tf.concat([concated, tf.expand_dims(single_logits, axis=1)], axis=1)
 
