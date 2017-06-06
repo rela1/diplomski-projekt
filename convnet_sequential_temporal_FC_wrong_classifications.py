@@ -7,7 +7,7 @@ from train_evaluate_model import plot_wrong_classifications
 
 SPATIAL_FULLY_CONNECTED = 200
 TEMPORAL_FULLY_CONNECTED = [64]
-BATCH_SIZE = 1
+BATCH_SIZE = 30
 INPUT_SHAPE = [25, 140, 350, 3]
 
 
