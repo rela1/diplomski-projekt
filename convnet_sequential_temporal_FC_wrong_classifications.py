@@ -6,9 +6,9 @@ from train_evaluate_model import plot_wrong_classifications
 
 
 SPATIAL_FULLY_CONNECTED = 64
-TEMPORAL_FULLY_CONNECTED = [200]
-BATCH_SIZE = 5
-INPUT_SHAPE = [25, 140, 350, 3]
+TEMPORAL_FULLY_CONNECTED = [64]
+BATCH_SIZE = 10
+INPUT_SHAPE = [25, 80, 200, 3]
 
 
 if __name__ == '__main__':
