@@ -398,6 +398,7 @@ class SequentialImageTemporalFCModel:
 
     net = concated
     net_shape = net.get_shape()
+    print(net_shape)
     net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2])])
 
 
