@@ -169,6 +169,7 @@ def plot_wrong_classifications(model, dataset, model_path, save_path=None):
 
   mean_image = dataset.mean_image_normalization(sess)
   mean_image_val = sess.run([mean_image])
+  print('Mean image shape ', mean_image_val.shape)
 
   fig_cnt = 0
 
@@ -195,11 +196,12 @@ def plot_wrong_classifications(model, dataset, model_path, save_path=None):
 
           for k in range(1, sequence_length + 1):
             plt.subplot(rows, cols, k)
-            plt.imshow(image_vals[j][k - 1] + mean_image_val)
+            np.add(image_vals[j][k - 1], mean_image_val, image_vals[j][k - 1])
+            plt.imshow(image_vals[j][k - 1])
 
         else:
-
-          plt.imshow(image_vals[j] + mean_image_val)
+          np.add(image_vals[j], mean_image_val, image_vals[j])
+          plt.imshow(image_vals[j])
 
         plt.suptitle('True label {}, prediction: {}, probabilities: {}'.format(label_vals[j], prediction_vals[j], probability_vals[j]))
 
