@@ -28,8 +28,6 @@ def extract_images(video_name, positive_images_ranges, tf_records_writer, zero_p
     prev_img = None
     added_images = 0
     positive_examples = 0
-    for positive_images_range in positive_images_ranges:
-    	prev_img = None
     for i in range(1, number_of_frames + 1):
         if not i % INFO_STEPS:
             print('tfrecords step {}/{}'.format(i, number_of_frames))

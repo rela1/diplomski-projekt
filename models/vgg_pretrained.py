@@ -365,6 +365,7 @@ class SequentialImageTemporalFCModel:
         net = layers.convolution2d(net, 512, scope='conv5_3', reuse=reuse, normalizer_fn=layers.batch_norm, normalizer_params=bn_params)
         net = layers.max_pool2d(net, 2, 2, scope='pool5')
 
+      """
       net_shape = net.get_shape()
 
       net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2]) * int(net_shape[3])])
@@ -378,6 +379,27 @@ class SequentialImageTemporalFCModel:
             net = layers.fully_connected(net, fully_connected_num, scope='spatial_FC{}'.format(layer_num))
             net = layers.dropout(net, keep_prob=DROPOUT_KEEP_PROB, is_training=is_training, scope='spatial_FC_dropout{}'.format(layer_num))
             layer_num += 1
+      """
+      batch_size = tf.shape(inputs)[0]
+      net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2]) * int(net_shape[3])])
+
+      with tf.contrib.framework.arg_scope([layers.fully_connected],
+        activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
+        weights_initializer=layers.variance_scaling_initializer(),
+        weights_regularizer=layers.l2_regularizer(weight_decay)):
+        layer_num = 1
+        for fully_connected_num in temporal_fully_connected_layers:
+            net = layers.fully_connected(net, fully_connected_num, scope='single_FC{}'.format(layer_num))
+            net = layers.dropout(net, keep_prob=DROPOUT_KEEP_PROB, is_training=is_training, scope='single_FC_dropout{}'.format(layer_num))
+            layer_num += 1
+
+      single_logits = layers.fully_connected(
+        net, 2, activation_fn=None, 
+        weights_initializer=layers.xavier_initializer(),
+        weights_regularizer=layers.l2_regularizer(weight_decay),
+        biases_initializer=tf.zeros_initializer(), 
+        scope='single_logits'
+      )
 
       if concated is None:
         concated = tf.expand_dims(net, axis=1)
@@ -394,6 +416,7 @@ class SequentialImageTemporalFCModel:
     net_shape = net.get_shape()
     net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2])])
 
+    """
     with tf.contrib.framework.arg_scope([layers.fully_connected],
         activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
         weights_initializer=layers.variance_scaling_initializer(),
@@ -411,13 +434,21 @@ class SequentialImageTemporalFCModel:
       biases_initializer=tf.zeros_initializer(), 
       scope='logits'
     )
+    """
+    sequence_logits = layers.fully_connected(
+        net, 2, activation_fn=None, 
+        weights_initializer=layers.xavier_initializer(),
+        weights_regularizer=layers.l2_regularizer(weight_decay),
+        biases_initializer=tf.zeros_initializer(), 
+        scope='sequence_logits'
+    )
 
-    total_loss = loss(logits, labels, is_training)
+    total_loss = loss(sequence_logits, labels, is_training)
 
     if is_training:
-        return logits, total_loss, init_op, init_feed
+        return sequence_logits, total_loss, init_op, init_feed
     else:
-        return logits, total_loss
+        return sequence_logits, total_loss
 
 
 class SequentialImagePoolingModel:
