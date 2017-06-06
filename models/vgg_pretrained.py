@@ -374,10 +374,6 @@ class SequentialImageTemporalFCModel:
 
       net_shape = net.get_shape()
 
-      net = layers.max_pool2d(net, kernel_size=[int(net_shape[1]), int(net_shape[2])], stride=[int(net_shape[1]), int(net_shape[2])])
-
-      net_shape = net.get_shape()
-
       net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2]) * int(net_shape[3])])
       
       with tf.contrib.framework.arg_scope([layers.fully_connected],
