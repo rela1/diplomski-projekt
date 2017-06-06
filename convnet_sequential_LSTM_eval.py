@@ -5,10 +5,10 @@ from models.vgg_pretrained import SequentialImageLSTMModel
 from train_evaluate_model import evaluate_model
 
 
-SPATIAL_FULLY_CONNECTED = 64
-TEMPORAL_FULLY_CONNECTED = [64]
+WEIGHT_DECAY = 5e-3
+LSTM_STATE_SIZES = [128, 64, 32]
 BATCH_SIZE = 10
-INPUT_SHAPE = [25, 40, 100, 3]
+INPUT_SHAPE = [25, 140, 350, 3]
 
 
 if __name__ == '__main__':
@@ -17,6 +17,6 @@ if __name__ == '__main__':
 
   dataset = ImageSequenceDataset(dataset_root, BATCH_SIZE, INPUT_SHAPE, is_training=False)
 
-  model = SequentialImageLSTMModel(LSTM_STATE_SIZE, dataset, is_training=False)
+  model = SequentialImageLSTMModel(LSTM_STATE_SIZES, dataset, weight_decay=WEIGHT_DECAY, is_training=False)
 
   evaluate_model(model, dataset, model_path)
