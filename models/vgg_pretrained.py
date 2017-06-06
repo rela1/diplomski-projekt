@@ -366,6 +366,8 @@ class SequentialImageTemporalFCModel:
         net = layers.max_pool2d(net, 2, 2, scope='pool5')
 
       net_shape = net.get_shape()
+
+      net = layers.flatten(net)
       
       with tf.contrib.framework.arg_scope([layers.fully_connected],
         activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
