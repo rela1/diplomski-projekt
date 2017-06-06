@@ -171,7 +171,9 @@ def plot_wrong_classifications(model, dataset, model_path, save_path=None):
 
   plt.figure(figsize=(10, 10))
 
-  for i in range(dataset.num_test_examples):
+  num_batches = int(math.ceil(dataset.num_test_examples / dataset.batch_size))
+
+  for i in range(num_batches):
 
     logits_vals, label_vals, image_vals = sess.run([model.test_logits, dataset.test_labels, dataset.test_images])
     probability_vals = softmax(logits_vals)
@@ -204,3 +206,5 @@ def plot_wrong_classifications(model, dataset, model_path, save_path=None):
           plt.savefig(os.path.join(save_path, str(fig_cnt) + '.png'))
 
         fig_cnt += 1
+
+    print('Done with step {}/{} wrong classified: {}'.format(i + 1, num_batches, fig_cnt))
