@@ -7,14 +7,14 @@ from train_evaluate_model import plot_wrong_classifications
 
 SPATIAL_FULLY_CONNECTED = 64
 TEMPORAL_FULLY_CONNECTED = [200]
-BATCH_SIZE = 10
+BATCH_SIZE = 5
 INPUT_SHAPE = [25, 140, 350, 3]
 
 
 if __name__ == '__main__':
   dataset_root = sys.argv[1]
   model_path = sys.argv[2]
-  wrong_classified_save_path = sys.argv[2] if sys.argv[2] is not None else None
+  wrong_classified_save_path = sys.argv[3] if sys.argv[3] is not None else None
 
   dataset = ImageSequenceDataset(dataset_root, BATCH_SIZE, INPUT_SHAPE, is_training=False)
 
