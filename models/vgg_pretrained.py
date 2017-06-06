@@ -381,6 +381,7 @@ class SequentialImageTemporalFCModel:
             layer_num += 1
       """
       batch_size = tf.shape(inputs)[0]
+      net_shape = net.get_shape()
       net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2]) * int(net_shape[3])])
 
       with tf.contrib.framework.arg_scope([layers.fully_connected],
