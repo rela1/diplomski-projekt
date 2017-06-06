@@ -362,32 +362,33 @@ class SequentialImageTemporalFCModel:
         net = layers.max_pool2d(net, 2, 2, scope='pool4')
         net = layers.convolution2d(net, 512, scope='conv5_1', reuse=reuse)
         net = layers.convolution2d(net, 512, scope='conv5_2', reuse=reuse)
-        net = layers.convolution2d(net, 512, scope='conv5_3', reuse=reuse, normalizer_fn=layers.batch_norm, normalizer_params=bn_params)
+        net = layers.convolution2d(net, 512, scope='conv5_3', reuse=reuse)
         net = layers.max_pool2d(net, 2, 2, scope='pool5')
 
+        net = layers.batch_norm(net, decay=bn_params['decay'], center=bn_params['center'], 
+                scale=bn_params['scale'], epsilon=bn_params['epsilon'], 
+                updates_collections=bn_params['updates_collections'], is_training=bn_params['is_training'],
+                scope='batch_norm', reuse=reuse)
+
       net_shape = net.get_shape()
+
+      net = layers.max_pool2d(net, kernel_size=[int(net_shape[1]), int(net_shape[2])], stride=[int(net_shape[1]), int(net_shape[2])])
+
+      net_shape = net.get_shape()
+
+      net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2]) * int(net_shape[3])])
       
       with tf.contrib.framework.arg_scope([layers.fully_connected],
         activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
         weights_initializer=layers.variance_scaling_initializer(),
         weights_regularizer=layers.l2_regularizer(weight_decay)):
-        layer_num = 1
-        for fully_connected_num in fully_connected_layers:
-          net = layers.fully_connected(net, fully_connected_num, scope='fc{}'.format(layer_num))
-          layer_num += 1
-
-      single_logits = layers.fully_connected(
-        net, 2, activation_fn=None, 
-        weights_initializer=layers.xavier_initializer(),
-        weights_regularizer=layers.l2_regularizer(weight_decay),
-        biases_initializer=tf.zeros_initializer(), 
-        scope='single_logits'
-      )
+        net = layers.fully_connected(net, spatial_fully_connected_size, scope='spatial_FC')
+        #net = layers.dropout(net, keep_prob=DROPOUT_KEEP_PROB, is_training=is_training, scope='spatial_FC_dropout{}'.format(layer_num))
 
       if concated is None:
-        concated = tf.expand_dims(single_logits, axis=1)
+        concated = tf.expand_dims(net, axis=1)
       else:
-        concated = tf.concat([concated, tf.expand_dims(single_logits, axis=1)], axis=1)
+        concated = tf.concat([concated, tf.expand_dims(net, axis=1)], axis=1)
 
       reuse=True
 
@@ -399,21 +400,30 @@ class SequentialImageTemporalFCModel:
     net_shape = net.get_shape()
     net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2])])
 
+    with tf.contrib.framework.arg_scope([layers.fully_connected],
+        activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
+        weights_initializer=layers.variance_scaling_initializer(),
+        weights_regularizer=layers.l2_regularizer(weight_decay)):
+        layer_num = 1
+        for fully_connected_num in temporal_fully_connected_layers:
+            net = layers.fully_connected(net, fully_connected_num, scope='temporal_FC{}'.format(layer_num))
+            #net = layers.dropout(net, keep_prob=DROPOUT_KEEP_PROB, is_training=is_training, scope='temporal_FC_dropout{}'.format(layer_num))
+            layer_num += 1
 
-    sequence_logits = layers.fully_connected(
+    logits = layers.fully_connected(
       net, 2, activation_fn=None, 
       weights_initializer=layers.xavier_initializer(),
       weights_regularizer=layers.l2_regularizer(weight_decay),
       biases_initializer=tf.zeros_initializer(), 
-      scope='sequence_logits'
+      scope='logits'
     )
 
-    total_loss = loss(sequence_logits, labels, is_training)
+    total_loss = loss(logits, labels, is_training)
 
     if is_training:
-        return sequence_logits, total_loss, init_op, init_feed
+        return logits, total_loss, init_op, init_feed
     else:
-        return sequence_logits, total_loss
+        return logits, total_loss
 
 
 class SequentialImagePoolingModel:
