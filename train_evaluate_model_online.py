@@ -59,8 +59,8 @@ def train_model(model, dataset, sequence_length, num_epochs, learning_rate, pret
 
   dataset.mean_image_normalization(sess)
 
-  metrics, y_true, y_pred, y_prob = evaluate('Validation', sess, sequence_length, model.spatials_valid, model.temporal_valid, dataset.num_valid_examples)
-  best_valid_accuracy = metrics['accuracy_score']
+  #metrics, y_true, y_pred, y_prob = evaluate('Validation', sess, sequence_length, model.spatials_valid, model.temporal_valid, dataset.num_valid_examples)
+  best_valid_accuracy = 0.0#metrics['accuracy_score']
 
   for i in range(num_epochs):
 
