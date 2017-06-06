@@ -169,6 +169,8 @@ def plot_wrong_classifications(model, dataset, model_path, save_path=None):
 
   fig_cnt = 0
 
+  plt.figure(figsize=(10, 10))
+
   for i in range(dataset.num_test_examples):
 
     logits_vals, label_vals, image_vals = sess.run([model.test_logits, dataset.test_labels, dataset.test_images])
@@ -178,8 +180,6 @@ def plot_wrong_classifications(model, dataset, model_path, save_path=None):
     for j in range(dataset.batch_size):
 
       if label_vals[j] != prediction_vals[j]:
-
-          plt.figure(figsize=(10, 10))
 
         if len(image_vals.shape) == 5:
 
