@@ -399,7 +399,8 @@ class SequentialImageTemporalFCModel:
         weights_initializer=layers.xavier_initializer(),
         weights_regularizer=layers.l2_regularizer(weight_decay),
         biases_initializer=tf.zeros_initializer(), 
-        scope='single_logits'
+        scope='single_logits',
+        reuse=reuse
       )
 
       if concated is None:
