@@ -167,6 +167,8 @@ def plot_wrong_classifications(model, dataset, model_path, save_path=None):
   coord = tf.train.Coordinator()
   threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
+  dataset.mean_image_normalization(sess)
+
   fig_cnt = 0
 
   plt.figure(figsize=(10, 10))
