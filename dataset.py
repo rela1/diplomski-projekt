@@ -56,20 +56,19 @@ class Dataset:
         print('Mean image dataset normalization...')
         image_shape = self.train_images.get_shape().as_list()[1:]
         print('Image shape', image_shape)
-        mean_image = np.zeros((image_shape))
+        mean_channels = np.zeros((3))
         for i in range(num_batches):
             print('Normalization step {}/{}'.format(i + 1, num_batches))
             image_vals = sess.run(self.train_images)
-            print(image_vals.shape)
-            np.add(mean_image, np.sum(image_vals, axis=0), mean_image)
-            del image_vals
-        np.divide(mean_image, float(self.num_train_examples), mean_image)
-        tf_mean_image = tf.constant(mean_image, dtype=tf.float32)
-        self.train_images = tf.subtract(self.train_images, tf_mean_image, name='train_images_mean_image_normalization')
-        self.valid_images = tf.subtract(self.valid_images, tf_mean_image, name='valid_images_mean_image_normalization')
-        self.test_images = tf.subtract(self.test_images, tf_mean_image, name='test_images_mean_image_normalization')
-        print('Done with mean image dataset normalization...')
-        return mean_image
+            mean_image_vals = np.mean(image_vals, axis=0)
+            mean_image_channels = np.mean(mean_image_vals, axis=(0, 1))
+            np.add(mean_channels, mean_image_channels, mean_channels)
+        np.divide(mean_channels, float(num_batches), mean_image)
+        self.train_images = vgg_normalization(self.train_images, mean_channels)
+        self.valid_images = vgg_normalization(self.valid_images, mean_channels)
+        self.test_images = vgg_normalization(self.test_images, mean_channels)
+        print('Done with mean channel image dataset normalization...')
+        return mean_channels
 
 
 class SingleImageDataset(Dataset):
@@ -89,20 +88,19 @@ class ImageSequenceDataset(Dataset):
         sequence_length = self.train_images.get_shape().as_list()[1]
         image_shape = self.train_images.get_shape().as_list()[2:]
         print('Image shape', image_shape)
-        mean_image = np.zeros((image_shape))
+        mean_channels = np.zeros((3))
         for i in range(num_batches):
             print('Normalization step {}/{}'.format(i + 1, num_batches))
             image_vals = sess.run(self.train_images)
-            print(image_vals.shape)
-            np.add(mean_image, np.sum(np.sum(image_vals, axis=0), axis=0), mean_image)
-            del image_vals
-        np.divide(mean_image, float(self.num_train_examples * sequence_length), mean_image)
-        tf_mean_image = tf.constant(np.array([mean_image] * sequence_length), dtype=tf.float32)
-        self.train_images = tf.subtract(self.train_images, tf_mean_image, name='train_images_mean_image_normalization')
-        self.valid_images = tf.subtract(self.valid_images, tf_mean_image, name='valid_images_mean_image_normalization')
-        self.test_images = tf.subtract(self.test_images, tf_mean_image, name='test_images_mean_image_normalization')
+            mean_image_vals = np.mean(image_vals, axis=(0, 1))
+            mean_image_channels = np.mean(mean_image_vals, axis=(0, 1))
+            np.add(mean_channels, mean_image_channels, mean_channels)
+        np.divide(mean_channels, float(num_batches), mean_image)
+        self.train_images = vgg_normalization(self.train_images, mean_channels)
+        self.valid_images = vgg_normalization(self.valid_images, mean_channels)
+        self.test_images = vgg_normalization(self.test_images, mean_channels)
         print('Done with mean image dataset normalization...')
-        return mean_image
+        return mean_channels
 
 
 class ConvolutionalImageData(Dataset):
@@ -115,6 +113,15 @@ class ConvolutionalImageData(Dataset):
 
         print('Positive train examples {}, positive validate examples {}, positive test examples {}'.format(self.num_positive_train_examples, self.num_positive_valid_examples, self.num_positive_test_examples))
 
+
+def vgg_normalization(images, rgb_mean):
+    r, g, b = tf.split(axis=3, num_or_size_splits=3, value=images)
+    bgr = tf.concat(axis=3, values=[
+        b - rgb_mean[2],
+        g - rgb_mean[1],
+        r - rgb_mean[0]
+    ])
+    return bgr
 
 
 def parse_sequence_example(record_string):
