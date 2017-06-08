@@ -15,7 +15,7 @@ class Dataset:
         self.valid_dir = os.path.join(dataset_root, 'validate')
         self.test_dir = os.path.join(dataset_root, 'test')
 
-        self.train_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(self.train_dir)][0:1]
+        self.train_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(self.train_dir)]
         self.train_tfrecords = [os.path.join(self.train_dir, train_tfrecords_dir, train_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for train_tfrecords_dir in self.train_tfrecords_dirs]
         
         self.valid_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(self.valid_dir)]
@@ -89,7 +89,7 @@ class ImageSequenceDataset(Dataset):
         image_shape = self.train_images.get_shape().as_list()[2:]
         print('Image shape', image_shape)
         mean_channels = np.zeros((3))
-        for i in range(num_batches):
+        for i in range(3):
             print('Normalization step {}/{}'.format(i + 1, num_batches))
             image_vals = sess.run(self.train_images)
             mean_image_vals = np.mean(image_vals, axis=(0, 1))
