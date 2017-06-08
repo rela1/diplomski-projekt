@@ -164,15 +164,16 @@ class SequentialImageTemporalFCModelOnline:
         net = layers.max_pool2d(net, 2, 2, scope='pool4')
         net = layers.convolution2d(net, 512, scope='conv5_1')
         net = layers.convolution2d(net, 512, scope='conv5_2')
-        net = layers.convolution2d(net, 512, scope='conv5_3', normalizer_fn=layers.batch_norm, normalizer_params=bn_params)
+        net = layers.convolution2d(net, 512, scope='conv5_3')
         net = layers.max_pool2d(net, 2, 2, scope='pool5')
 
       net = layers.flatten(net)
 
       with tf.contrib.framework.arg_scope([layers.fully_connected],
-        activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
+        activation_fn=tf.nn.relu, normalizer_fn=None,
         weights_initializer=layers.variance_scaling_initializer(),
-        weights_regularizer=layers.l2_regularizer(weight_decay)):
+        weights_regularizer=layers.l2_regularizer(weight_decay),
+        biases_initializer=tf.zeros_initializer()):
         net = layers.fully_connected(net, spatial_fully_connected_size, scope='spatial_FC')
 
       self.representation = layers.flatten(net)
@@ -229,9 +230,10 @@ class SequentialImageTemporalFCModelOnline:
 
       with tf.control_dependencies([self.add_sequence_new_op, self.add_sequence_gradient_new_op]): 
         with tf.contrib.framework.arg_scope([layers.fully_connected],
-          activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
+          activation_fn=tf.nn.relu, normalizer_fn=None,
           weights_initializer=layers.variance_scaling_initializer(),
-          weights_regularizer=layers.l2_regularizer(weight_decay)):
+          weights_regularizer=layers.l2_regularizer(weight_decay),
+          biases_initializer=tf.zeros_initializer()):
           layer_num = 1
           for fully_connected_num in temporal_fully_connected_layers:
               net = layers.fully_connected(net, fully_connected_num, scope='temporal_FC{}'.format(layer_num))
