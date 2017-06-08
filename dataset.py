@@ -15,7 +15,7 @@ class Dataset:
         self.valid_dir = os.path.join(dataset_root, 'validate')
         self.test_dir = os.path.join(dataset_root, 'test')
 
-        self.train_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(self.train_dir)]
+        self.train_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(self.train_dir)][0:1]
         self.train_tfrecords = [os.path.join(self.train_dir, train_tfrecords_dir, train_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for train_tfrecords_dir in self.train_tfrecords_dirs]
         
         self.valid_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(self.valid_dir)]
@@ -96,9 +96,9 @@ class ImageSequenceDataset(Dataset):
             mean_image_channels = np.mean(mean_image_vals, axis=(0, 1))
             np.add(mean_channels, mean_image_channels, mean_channels)
         np.divide(mean_channels, float(num_batches), mean_channels)
-        self.train_images = vgg_normalization(self.train_images, mean_channels)
-        self.valid_images = vgg_normalization(self.valid_images, mean_channels)
-        self.test_images = vgg_normalization(self.test_images, mean_channels)
+        self.train_images = vgg_normalization(self.train_images, mean_channels, axis=4)
+        self.valid_images = vgg_normalization(self.valid_images, mean_channels, axis=4)
+        self.test_images = vgg_normalization(self.test_images, mean_channels, axis=4)
         print('Done with mean image dataset normalization...')
         return mean_channels
 
@@ -114,9 +114,9 @@ class ConvolutionalImageData(Dataset):
         print('Positive train examples {}, positive validate examples {}, positive test examples {}'.format(self.num_positive_train_examples, self.num_positive_valid_examples, self.num_positive_test_examples))
 
 
-def vgg_normalization(images, rgb_mean):
-    r, g, b = tf.split(axis=3, num_or_size_splits=3, value=images)
-    bgr = tf.concat(axis=3, values=[
+def vgg_normalization(images, rgb_mean, axis=3):
+    r, g, b = tf.split(axis=axis, num_or_size_splits=3, value=images)
+    bgr = tf.concat(axis=axis, values=[
         b - rgb_mean[2],
         g - rgb_mean[1],
         r - rgb_mean[0]
