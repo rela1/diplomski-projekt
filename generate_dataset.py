@@ -11,6 +11,7 @@ import math
 import random
 import concurrent.futures
 import multiprocessing
+import operator
 
 from fastkml import kml
 from geopy.distance import vincenty
@@ -85,7 +86,7 @@ def write_example_sequence(img_sequence, label, tf_records_writer):
     tf_records_writer.write(sequence_example.SerializeToString())
 
 
-def write_sequenced_and_single_example(single_image_frame, video_name, label, images_before_single, images_after_single, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
+def get_images_sequence_and_single_image(single_image_frame, video_name, images_before_single, images_after_single, zero_pad_number, treshold, number_of_frames):
     images_sequence = []
     single_img = imread(os.path.join(video_name, 'frames', str(single_image_frame).zfill(zero_pad_number) + '.png'))
 
@@ -94,7 +95,7 @@ def write_sequenced_and_single_example(single_image_frame, video_name, label, im
     added_images = 0
     while added_images < images_before_single:
         if single_image_frame - i <= 0:
-            return False
+            return None, None, None
         img = imread(os.path.join(video_name, 'frames', str(single_image_frame - i).zfill(zero_pad_number) + '.png'))
         diff = np.sum(np.abs(img - prev_img))
         i += 1
@@ -114,7 +115,7 @@ def write_sequenced_and_single_example(single_image_frame, video_name, label, im
     added_images = 0
     while added_images < images_after_single:
         if single_image_frame + i > number_of_frames:
-            return False
+            return None, None, None
         img = imread(os.path.join(video_name, 'frames', str(single_image_frame + i).zfill(zero_pad_number) + '.png'))
         diff = np.sum(np.abs(img - prev_img))
         i += 1
@@ -126,7 +127,17 @@ def write_sequenced_and_single_example(single_image_frame, video_name, label, im
             images_sequence.append(img)
             added_images += 1
 
-    images_sequence = np.array(images_sequence)
+    images_sequence = np.array(images_sequence, dtype=np.float32)
+
+    return single_img, single_img_eq, images_sequence
+
+
+def write_sequenced_and_single_example(single_image_frame, video_name, label, images_before_single, images_after_single, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
+    single_img, single_img_eq, images_sequence = get_images_sequence_and_single_image(single_image_frame, video_name, images_before_single, images_after_single, zero_pad_number, treshold, number_of_frames)
+
+    if single_img is None:
+        return False
+
     images_sequence_resized = IMG_RESIZER.resize_images(images_sequence)
     write_example_sequence(images_sequence_resized, label, sequential_tf_records_writer)
 
@@ -142,15 +153,25 @@ def get_frame_closest_to(point, frames_per_second, points_index_tree, points, ti
     closer_distance = vincenty(point, closer_point).meters
     further_distance = vincenty(point, further_point).meters
     if closer_distance < max_distance_to_intersection:
+        points = [closer_point, further_point, point]
+        sorted_point_indexes = np.argsort(points)
+        point_index = sorted_point_indexes.tolist().index(2)
         closer_time = times[ind[0][0]]
         further_time = times[ind[0][1]]
         closer_speed = speeds[ind[0][0]]
         time_diff = closer_distance / closer_speed
+        closer_before_further = closer_time < further_time
         log_file.write('Closer time {}, closer distance {}, further time {}, further distance {}, closer speed {}, timediff {}\n'.format(closer_time, closer_distance, further_time, further_distance, closer_speed, time_diff))
-        if closer_time < further_time:
-            point_time = time_offset + closer_time + time_diff
+        if point_index == 1:
+            if closer_before_further:
+                point_time = time_offset + closer_time + time_diff
+            else:
+                point_time = time_offset + closer_time - time_diff
         else:
-            point_time = time_offset + closer_time - time_diff
+            if closer_before_further:
+                point_time = time_offset + closer_time - time_diff
+            else:
+                point_time = time_offset + closer_time + time_diff
         point_frame = round(frames_per_second * point_time)
         return point_time, point_frame
     else:
@@ -277,15 +298,16 @@ def extract_positive_examples(video_name, positive_images_ranges, frames_resolut
     treshold = SAME_TRESHOLD * frames_resolution
     for positive_images_range in positive_images_ranges:
         prev_img = None
-        for positive_image in range(positive_images_range[0], positive_images_range[1]):
-            img = imread(os.path.join(video_name, 'frames', str(positive_image).zfill(zero_pad_number) + '.png'))
-            if prev_img is not None:
-                diff = np.sum(np.abs(img - prev_img))
-                if diff < treshold:
-                    continue
-            prev_img = img
-            if write_sequenced_and_single_example(positive_image, video_name, 1, SEQUENCE_HALF_LENGTH * 2, 0, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
-                positive_examples += 1   
+        for positive_image in range(positive_images_range[0], positive_images_range[1] + 1):
+            if positive_image >= 0 and positive_image <= number_of_frames:
+                img = imread(os.path.join(video_name, 'frames', str(positive_image).zfill(zero_pad_number) + '.png'))
+                if prev_img is not None:
+                    diff = np.sum(np.abs(img - prev_img))
+                    if diff < treshold:
+                        continue
+                prev_img = img
+                if write_sequenced_and_single_example(positive_image, video_name, 1, SEQUENCE_HALF_LENGTH * 2, 0, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
+                    positive_examples += 1   
     return positive_examples
 
 

@@ -102,6 +102,8 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path, sess, glo
 
   for i in range(num_epochs):
 
+    epoch_start_time = time.time()
+
     for j in range(num_batches):
 
       start_time = time.time()
@@ -114,6 +116,9 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path, sess, glo
 
       if not j % INFO_STEP:
         print('\tEpoch: {}/{}, step: {}/{}, loss: {}, {} examples/sec, {} sec/batch, learning rate: {}'.format(i+1, num_epochs, j+1, num_batches, loss_val, dataset.batch_size / duration, duration, learning_rate_val))
+
+    epoch_duration = time.time() - epoch_start_time
+    print('Done with epoch {}/{}, time needed: {}'.format(i + 1, num_epochs, epoch_duration))
 
     metrics, y_true, y_pred, y_prob = evaluate('Validation', sess, model.valid_logits, model.valid_loss, dataset.valid_labels, dataset.num_valid_examples, dataset.batch_size)
     if metrics['accuracy_score'] > best_valid_accuracy:
