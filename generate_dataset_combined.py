@@ -74,7 +74,7 @@ def extract_negative_examples(video_name, number_of_positive_examples, speeds, p
         single_img, single_img_eq, images_sequence_eq = get_images_sequence_and_single_image(image, video_name, SEQUENCE_HALF_LENGTH * 2, 0, zero_pad_number, treshold, number_of_frames)
 
         if single_img is not None:
-            write_example_sequence(images_sequence_resized, label, sequential_tf_records_writer)
+            write_example_sequence(images_sequence_eq, 0, sequential_tf_records_writer)
             selected_single_images.add(image)
 
 
