@@ -155,7 +155,7 @@ def get_frame_closest_to(point, frames_per_second, points_index_tree, points, ti
     if closer_distance < max_distance_to_intersection:
         points = [closer_point, further_point, point]
         sorted_point_indexes = sorted(range(len(points)), key=lambda x: (points[x][0], points[x][1]))
-        point_index = sorted_point_indexes.tolist().index(2)
+        point_index = sorted_point_indexes.index(2)
         closer_time = times[ind[0][0]]
         further_time = times[ind[0][1]]
         closer_speed = speeds[ind[0][0]]
