@@ -1,14 +1,15 @@
+import random
+import sys
+import os
 import concurrent.futures
 import multiprocessing
 
 from skimage.exposure import equalize_adapthist
 from matplotlib.image import imread, imsave
+import numpy as np
 
 from generate_dataset import write_example_sequence, get_images_sequence_and_single_image, load_intersection_lines, get_not_processed_video_names, download_video_geoinformation, index_video_geoinformation, download_video, get_video_info, get_positive_images_ranges, extract_video_frames, get_frames_resolution, create_tf_records_writer, extract_negative_examples
 
-MP4_VIDEO_FORMAT = 'https://he.ftts-irap.org/video/{}.mp4' 
-MP4_VIDEO_REGEX = 'https://he.ftts-irap.org/video/(.*?).mp4'
-JSON_GEOINFORMATION_FORMAT = 'https://he.ftts-irap.org/video/{}.json'
 SEQUENCE_HALF_LENGTH = 12
 MIN_DISTANCE_TO_POSITIVE = 200 #meters
 MIN_VIDEO_DURATION = 600 #seconds
