@@ -111,7 +111,7 @@ class CombinedImageSequenceData(Dataset):
     def __init__(self, dataset_root, batch_size, input_shape, is_training=True):
         super().__init__(parse_single_example, 'convolutional', dataset_root, batch_size, input_shape, is_training=is_training)
         train_tfrecords_dirs = [os.path.join(self.train_dir, directory) for directory in self.train_tfrecords_dirs]
-        positives_dirs = [os.path.join('positives') for train_tfrecords_dir in train_tfrecords_dirs]
+        positives_dirs = [os.path.join(train_tfrecords_dir, 'positives') for train_tfrecords_dir in train_tfrecords_dirs]
         self.positive_sequences_dirs = []
         for positives_dir in positives_dirs:
             positives_dir_sequences = os.listdir(positives_dir)
