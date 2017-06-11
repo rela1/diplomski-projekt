@@ -115,7 +115,7 @@ class CombinedImageSequenceData(Dataset):
         self.positive_sequences_dirs = []
         for positives_dir in positives_dirs:
             positives_dir_sequences = os.listdir(positives_dir)
-            positive_sequences_dirs.extend([os.path.join(positives_dir, positives_dir_sequence) for positives_dir_sequence in positives_dir_sequences])
+            self.positive_sequences_dirs.extend([os.path.join(positives_dir, positives_dir_sequence) for positives_dir_sequence in positives_dir_sequences])
         self.positive_sequences_dirs_batch = self.positive_sequences_dirs[:]
         shuffle(self.positive_sequences_dirs_batch)
 
