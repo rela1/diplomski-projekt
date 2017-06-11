@@ -153,7 +153,7 @@ class CombinedImageSequenceData(Dataset):
         if len(self.positive_sequences_dirs_batch) < self.batch_size:
             self.positive_sequences_dirs_batch = self.positive_sequences_dirs[:]
             shuffle(self.positive_sequences_dirs_batch)
-        batch_dirs = self.positive_sequences_dirs_batch[0:batch_size]
+        batch_dirs = self.positive_sequences_dirs_batch[0:self.batch_size]
         batch_sequence_length = 0
         for batch_dir in batch_dirs:
             batch_sequence_length = max(batch_sequence_length, len(os.listdir(batch_dir)))
