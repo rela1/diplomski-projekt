@@ -77,7 +77,7 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path, sess, glo
 
   num_batches = int(math.ceil(dataset.num_train_examples / dataset.batch_size))
   if decay_learning_rate:
-    learning_rate = tf.train.exponential_decay(learning_rate, global_step, num_batches, 0.95, staircase=False)
+    learning_rate = tf.train.exponential_decay(learning_rate, global_step, num_batches, 0.96, staircase=True)
   print('\nNumber of steps per epoch: {}'.format(num_batches))
 
   writer = tf.summary.FileWriter(os.path.join(model_path, 'tensorboard'), sess.graph)
