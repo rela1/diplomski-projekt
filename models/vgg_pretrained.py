@@ -272,7 +272,6 @@ class SequentialImageTemporalFCModelOnline:
     if is_training:
       with tf.variable_scope('model') as scope:
         self.spatials_train = self.SpatialsPart(self.inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay, True, reuse_weights)
-        self.vgg_init = self.spatials_train.vgg_init
         self.temporal_train = self.TemporalPart(self.labels, self.loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay, True, reuse_weights)
       with tf.variable_scope('model', reuse=True) as scope:
         self.spatials_eval = self.SpatialsPart(self.inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay, False)
