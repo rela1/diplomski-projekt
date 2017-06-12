@@ -13,7 +13,7 @@ from evaluate_helper import softmax, evaluate_default_metric_functions, print_me
 np.set_printoptions(linewidth=250)
 
 
-INFO_STEP = 20
+INFO_STEP = 10
 
 
 def get_saver_variables():
@@ -103,7 +103,7 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
     epoch_duration = time.time() - epoch_start_time
     print('Done with epoch {}/{}, time needed: {}'.format(i + 1, num_epochs, epoch_duration))
 
-    metrics, y_true, y_pred, y_prob = evaluate('Validation', sess, sequence_length, fc_model.valid_logits, fc_model.valid_loss, convolutional_model, dataset, dataset.num_valid_examples / 2, dataset.positive_sequences_dirs_train)
+    metrics, y_true, y_pred, y_prob = evaluate('Validation', sess, sequence_length, fc_model.valid_logits, fc_model.valid_loss, convolutional_model, dataset, dataset.num_valid_examples / 2, dataset.positive_sequences_dirs_valid, mean_channels)
     if metrics['accuracy_score'] > best_valid_accuracy:
       best_valid_accuracy = metrics['accuracy_score']
       print('\tNew best validation accuracy', best_valid_accuracy)
@@ -111,14 +111,14 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
 
   print('Done training -- epoch limit reached')
   saver.restore(sess, model_path)
-  evaluate('Test', sess, sequence_length, fc_model.test_logits, fc_model.test_loss, convolutional_model, dataset, dataset.num_test_examples / 2, dataset.positive_sequences_dirs_test)
+  evaluate('Test', sess, sequence_length, fc_model.test_logits, fc_model.test_loss, convolutional_model, dataset, dataset.num_test_examples / 2, dataset.positive_sequences_dirs_test, mean_channels)
 
   coord.request_stop()
   coord.join(threads)
   sess.close()
 
 
-def evaluate(dataset_name, sess, sequence_length, fc_model_logits, fc_model_loss, convolutional_model, dataset, num_negative_examples, positives_sequences_dirs):
+def evaluate(dataset_name, sess, sequence_length, fc_model_logits, fc_model_loss, convolutional_model, dataset, num_negative_examples, positives_sequences_dirs, mean_channels):
   print("\nRunning evaluation: ", dataset_name)
   y_true = []
   y_pred = []
