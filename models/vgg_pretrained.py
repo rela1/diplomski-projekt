@@ -272,8 +272,8 @@ class SequentialImageTemporalFCModelOnline:
       self.labels = tf.placeholder(tf.float32, shape=(batch_size, ), name='x___labels')
       self.loss_mask = tf.placeholder(tf.float32, shape=(batch_size, ), name='x___loss_mask')
       if is_training:
-        self.trainer_spatials = tf.train.AdamOptimizer(learning_rate)
-        self.trainer_temporal = tf.train.AdamOptimizer(learning_rate)
+        trainer_spatials = tf.train.AdamOptimizer(learning_rate)
+        trainer_temporal = tf.train.AdamOptimizer(learning_rate)
     if is_training:
       with tf.variable_scope('model', reuse=reuse) as scope:
         self.spatials_train = self.SpatialsPart(self.inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay=weight_decay, vgg_init_dir=vgg_init_dir, is_training=True, trainer=trainer_spatials)
