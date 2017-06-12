@@ -77,6 +77,7 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
       num_positive_examples = batch_images.shape[0] - sequence_length + 1
 
       for t in range(sequence_length - 1):
+        print(batch_images[t].shape)
         representation_t = convolutional_model.spatials_train.forward(sess, t, batch_images[t])
         logits = model.temporal_train.forward(sess, representation_t, positive_batch_labels, batch_masks[t])
 
