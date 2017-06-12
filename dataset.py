@@ -166,9 +166,9 @@ class CombinedImageSequenceDataset(Dataset):
         batch_sequence_length = 0
         for batch_dir in batch_dirs:
             batch_sequence_length = max(batch_sequence_length, len(os.listdir(batch_dir)))
-        height = self.input_shape[0]
-        width = self.input_shape[1]
-        channels = self.input_shape[2]
+        height = self.input_shape[1]
+        width = self.input_shape[2]
+        channels = self.input_shape[3]
         batch_images = np.zeros((batch_sequence_length, batch_size, height, width, channels), dtype=np.float32)
         batch_masks = np.zeros((batch_sequence_length, batch_size), dtype=np.float32)
         batch_axis = 0
