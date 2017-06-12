@@ -182,11 +182,12 @@ class SequentialImageTemporalFCModelOnline:
 
       self.partial_run_setup_objs = [self.representation, self.loss]
       if is_training:
-        self.trainer = tf.train.AdamOptimizer(learning_rate)
-        self.train_op = self.trainer.minimize(self.loss)
-        with tf.control_dependencies([self.train_op]):
-          self.with_train_op = self.loss
-        self.partial_run_setup_objs.append(self.train_op)
+        with tf.variable_scope('trainer', reuse=False) as scope:
+          self.trainer = tf.train.AdamOptimizer(learning_rate)
+          self.train_op = self.trainer.minimize(self.loss)
+          with tf.control_dependencies([self.train_op]):
+            self.with_train_op = self.loss
+          self.partial_run_setup_objs.append(self.train_op)
 
       vgg_layers, vgg_layer_names = read_vgg_init(vgg_init_dir)
       init_op, init_feed, pretrained_vars = create_init_op(vgg_layers)
@@ -255,10 +256,11 @@ class SequentialImageTemporalFCModelOnline:
       self.loss = tf.add_n([xent_loss] + regularization_losses, name='x___total_loss')
 
       if is_training:
-        self.trainer = tf.train.AdamOptimizer(learning_rate)
-        self.train_op = self.trainer.minimize(self.loss)
-        self.sequence_gradient_new = tf.gradients(self.loss, [self.sequence])[0]
-        self.add_sequence_gradient_new = tf.assign_add(self.sequence_gradient, self.sequence_gradient_new)
+        with tf.variable_scope('trainer', reuse=False) as scope:
+          self.trainer = tf.train.AdamOptimizer(learning_rate)
+          self.train_op = self.trainer.minimize(self.loss)
+          self.sequence_gradient_new = tf.gradients(self.loss, [self.sequence])[0]
+          self.add_sequence_gradient_new = tf.assign_add(self.sequence_gradient, self.sequence_gradient_new)
 
     def forward(self, sess, sequence_new, labels, loss_mask):
       logits = sess.run([self.logits], feed_dict={self.sequence_new: sequence_new, self.labels: labels, self.loss_mask: loss_mask})
