@@ -126,7 +126,7 @@ class SequentialImageTemporalFCModelOnline:
       self.build(inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay, vgg_init_dir, is_training, reuse_weights=reuse_weights)
       self.inputs = inputs
 
-    def build(self, inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay, vgg_init_dir, is_training, reuse_weights=True):
+    def build(self, inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay, vgg_init_dir, is_training, reuse_weights):
       bn_params = {
       'decay': 0.999,
       'center': True,
@@ -212,7 +212,7 @@ class SequentialImageTemporalFCModelOnline:
       self.labels = labels
       self.loss_mask = loss_mask
 
-    def build(self, labels, loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay=0.0, is_training=False, reuse_weights=True):
+    def build(self, labels, loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay, is_training, reuse_weights):
       bn_params = {
         'decay': 0.999,
         'center': True,
