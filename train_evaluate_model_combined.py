@@ -43,7 +43,7 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
   with tf.control_dependencies([apply_gradient_op]):
     train_op = tf.no_op(name='train_op')
 
-  init_op, init_feed = model.vgg_init
+  init_op, init_feed = fc_model.vgg_init
 
   sess.run(tf.global_variables_initializer())
   sess.run(tf.local_variables_initializer())
