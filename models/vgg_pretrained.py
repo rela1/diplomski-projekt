@@ -225,8 +225,8 @@ class SequentialImageTemporalFCModelOnline:
       self.sequence = tf.Variable(np.zeros((batch_size, sequence_length, spatial_fully_connected_size)), dtype=tf.float32, trainable=False, name='x___sequence_var')
       self.sequence_gradient = tf.Variable(np.zeros((batch_size, sequence_length, spatial_fully_connected_size)), dtype=tf.float32, trainable=False, name='x___sequence_grad')
 
-      self.add_sequence_new_op = self.sequence.assign(tf.concat([tf.slice(self.sequence, begin=[0, 1, 0], size=[-1, -1, -1]), self.sequence_new], 1))
-      self.add_sequence_gradient_new_op = self.sequence_gradient.assign(tf.concat([tf.slice(self.sequence_gradient, begin=[0, 1, 0], size=[-1, -1, -1]), tf.zeros_like(self.sequence_new)], 1))
+      self.add_sequence_new_op = self.sequence.assign(tf.concat([tf.slice(self.sequence, begin=[0, 1, 0], size=[-1, -1, -1]), tf.reshape(self.sequence_new, (batch_size, 1, spatial_fully_connected_size))], 1))
+      self.add_sequence_gradient_new_op = self.sequence_gradient.assign(tf.concat([tf.slice(self.sequence_gradient, begin=[0, 1, 0], size=[-1, -1, -1]), tf.reshape(tf.zeros_like(self.sequence_new), (batch_size, 1, spatial_fully_connected_size))], 1))
       
       net = tf.reshape(self.sequence, (batch_size, sequence_length * spatial_fully_connected_size))
 
