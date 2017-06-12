@@ -62,7 +62,7 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
 
   best_valid_accuracy = 0.0
 
-  positive_batch_labels = np.ones((dataset.batch_size, ))
+  positive_batch_labels = np.ones((dataset.batch_size, ), dtype=np.int32)
   batch_handle = 0
   for i in range(num_epochs):
 
@@ -123,8 +123,8 @@ def evaluate(dataset_name, sess, sequence_length, fc_model_logits, fc_model_loss
   y_true = []
   y_pred = []
   y_prob = []
-  positive_batch_labels = np.ones((dataset.batch_size, ))
-  negative_batch_labels = np.zeros((dataset.batch_size, ))
+  positive_batch_labels = np.ones((dataset.batch_size, ), dtype=np.int32)
+  negative_batch_labels = np.zeros((dataset.batch_size, ), dtype=np.int32)
   batch_handle = 0
   step = 0
   print('Positive examples evaluation...')
