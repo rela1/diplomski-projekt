@@ -106,18 +106,24 @@ class ImageSequenceDataset(Dataset):
         return mean_channels
 
 
-class CombinedImageSequenceData(Dataset):
+class CombinedImageSequenceDataset(Dataset):
 
     def __init__(self, dataset_root, batch_size, input_shape, is_training=True):
         super().__init__(parse_sequence_example, 'sequential', dataset_root, batch_size, input_shape, is_training=is_training)
         train_tfrecords_dirs = [os.path.join(self.train_dir, directory) for directory in self.train_tfrecords_dirs]
+        self.positive_sequences_dirs_train = get_positive_sequences_dirs([os.path.join(train_tfrecords_dir, 'positives') for train_tfrecords_dir in train_tfrecords_dirs])
+        valid_tfrecords_dirs = [os.path.join(self.valid_dir, directory) for directory in self.valid_tfrecords_dirs]
+        self.positive_sequences_dirs_valid = get_positive_sequences_dirs([os.path.join(valid_tfrecords_dir, 'positives') for valid_tfrecords_dir in valid_tfrecords_dirs])
+        test_tfrecords_dirs = [os.path.join(self.test_dir, directory) for directory in self.test_tfrecords_dirs]
+        self.positive_sequences_dirs_test = get_positive_sequences_dirs([os.path.join(test_tfrecords_dir, 'positives') for test_tfrecords_dir in test_tfrecords_dirs])
+
+    def get_positive_sequences_dirs(self, tfrecords_dirs):
         positives_dirs = [os.path.join(train_tfrecords_dir, 'positives') for train_tfrecords_dir in train_tfrecords_dirs]
-        self.positive_sequences_dirs = []
+        positives_sequences_dirs = []
         for positives_dir in positives_dirs:
             positives_dir_sequences = os.listdir(positives_dir)
-            self.positive_sequences_dirs.extend([os.path.join(positives_dir, positives_dir_sequence) for positives_dir_sequence in positives_dir_sequences])
-        self.positive_sequences_dirs_batch = self.positive_sequences_dirs[:]
-        shuffle(self.positive_sequences_dirs_batch)
+            positives_sequences_dirs.extend([os.path.join(positives_dir, positives_dir_sequence) for positives_dir_sequence in positives_dir_sequences])
+        return positives_sequences_dirs
 
     def mean_image_normalization(self, sess):
         num_batches = int(math.ceil((self.num_train_examples / 2) / self.batch_size))
@@ -135,10 +141,9 @@ class CombinedImageSequenceData(Dataset):
             np.add(mean_channels, mean_image_channels, mean_channels)
         print('Normalizing positive examples...')
         positive_images_count = 0
-        for train_tfrecords_dir in [os.path.join(self.train_dir, directory) for directory in self.train_tfrecords_dirs]:
-            positives_dir = os.path.join(train_tfrecords_dir, 'positives')
-            for img_path in os.listdir(positives_dir):
-                img_val = imread(os.path.join(positives_dir, img_path))[:, :, 0:3]
+        for positive_sequence_dir in self.positive_sequences_dirs_train:
+            for img_path in os.listdir(positive_sequence_dir):
+                img_val = imread(os.path.join(positive_sequence_dir, img_path))[:, :, 0:3]
                 mean_image_channels = np.mean(img_val, axis=(0, 1))
                 positive_images_count += 1
                 np.add(mean_channels, mean_image_channels, mean_channels)
@@ -149,33 +154,36 @@ class CombinedImageSequenceData(Dataset):
         print('Done with mean image dataset normalization...')
         return mean_channels
 
-    def next_positive_batch(self, mean_channels):
-        if len(self.positive_sequences_dirs_batch) < self.batch_size:
-            self.positive_sequences_dirs_batch = self.positive_sequences_dirs[:]
-            shuffle(self.positive_sequences_dirs_batch)
-        batch_dirs = self.positive_sequences_dirs_batch[0:self.batch_size]
+    def next_positive_batch(self, mean_channels, positive_sequences_dirs, last_batch_handle, batch_size):
+        next_epoch = False
+        if len(positive_sequences_dirs) < batch_size * (last_batch_handle + 1):
+            next_epoch = True
+            shuffle(positive_sequences_dirs)
+            last_batch_handle = 0
+        batch_dirs = positive_sequences_dirs[last_batch_handle * batch_size : (last_batch_handle + 1) * batch_size]
         batch_sequence_length = 0
         for batch_dir in batch_dirs:
             batch_sequence_length = max(batch_sequence_length, len(os.listdir(batch_dir)))
         height = self.input_shape[0]
         width = self.input_shape[1]
         channels = self.input_shape[2]
-        batch_images = np.zeros((batch_sequence_length, self.batch_size, height, width, channels), dtype=np.float32)
-        batch_masks = np.zeros((batch_sequence_length, self.batch_size, height, width, channels), dtype=np.bool)
+        batch_images = np.zeros((batch_sequence_length, batch_size, height, width, channels), dtype=np.float32)
+        batch_masks = np.zeros((batch_sequence_length, batch_size), dtype=np.float32)
         batch_axis = 0
         for batch_dir in batch_dirs:
             batch_dir_images = [os.path.join(batch_dir, image) for image in os.listdir(batch_dir)]
             batch_dir_images.sort()
-            print(batch_dir_images)
             for index, batch_dir_image in enumerate(batch_dir_images):
                 img = imread(batch_dir_image)[:, :, 0:3]
                 img[:, :, 0] -= mean_channels[0]
                 img[:, :, 1] -= mean_channels[1]
                 img[:, :, 2] -= mean_channels[2]
                 batch_images[index, batch_axis, :, :, :] = img
-                batch_masks[index, batch_axis, :, :, :] = True
-        return batch_images, batch_masks
-
+                batch_masks[index, batch_axis] = 1.0
+            batch_axis += 1
+        if next_epoch:
+            
+        return batch_images, batch_masks, next_epoch, last_batch_handle + 1
         
 
 def vgg_normalization(images, rgb_mean, axis=3):
