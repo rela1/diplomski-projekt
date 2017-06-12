@@ -170,9 +170,10 @@ def evaluate(dataset_name, sess, sequence_length, fc_model_logits, fc_model_loss
     y_pred.extend(preds_val)
     y_true.extend(negative_batch_labels)
     y_prob.extend(probs_val)
+    duration = time.time() - start_time
 
     if not i % 10:
-      print('\tstep {}/{}, {} examples/sec, {} sec/batch'.format(i+1, num_batches, batch_size / duration, duration))
+      print('\tstep {}/{}, {} examples/sec, {} sec/batch'.format(i+1, num_batches, dataset.batch_size / duration, duration))
 
   metrics = evaluate_default_metric_functions(y_true, y_pred)
   print_metrics(metrics)
