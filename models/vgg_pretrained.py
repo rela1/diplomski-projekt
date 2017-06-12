@@ -257,7 +257,7 @@ class SequentialImageTemporalFCModelOnline:
         self.add_sequence_gradient_new = tf.assign_add(self.sequence_gradient, self.sequence_gradient_new)
 
     def forward(self, sess, sequence_new, labels, loss_mask):
-      logits = sess.run([self.logits], feed_dict={self.sequence_new: sequence_new, self.labels: labels, self.loss_mask: loss_mask})
+      logits = sess.run(self.logits, feed_dict={self.sequence_new: sequence_new, self.labels: labels, self.loss_mask: loss_mask})
       return logits
 
     def forward_backward(self, sess, sequence_new, labels, loss_mask):
