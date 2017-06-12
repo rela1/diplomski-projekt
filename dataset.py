@@ -181,7 +181,6 @@ class CombinedImageSequenceDataset(Dataset):
                 batch_images[index, batch_axis, :, :, :] = img
                 batch_masks[index, batch_axis] = 1.0
             batch_axis += 1
-        if next_epoch:
             
         return batch_images, batch_masks, next_epoch, last_batch_handle + 1
         
