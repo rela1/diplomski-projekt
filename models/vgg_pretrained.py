@@ -140,7 +140,6 @@ class SequentialImageTemporalFCModelOnline:
       horizontal_slice_size = int(round(int(input_shape[2]) / 3))
       vertical_slice_size = int(round(int(input_shape[1]) / 3))
       inputs = tf.slice(inputs, begin=[0, vertical_slice_size, 0, 0], size=[-1, -1, horizontal_slice_size * 2, -1])
-      print(inputs.get_shape())
 
       self.final_gradient = tf.placeholder(tf.float32, shape=(batch_size, spatial_fully_connected_size), name='x___final_gradient_ph')
       self.handles = [None] * sequence_length
