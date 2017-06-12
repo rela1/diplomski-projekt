@@ -291,26 +291,26 @@ class SequentialImageTemporalFCModelOnline:
 
 class SequentialImageTemporalFCModel:
 
-  def __init__(self, spatial_fully_connected_layers, temporal_fully_connected_layers, dataset, weight_decay=0.0, vgg_init_dir=None, is_training=False):
+  def __init__(self, spatial_fully_connected_size, temporal_fully_connected_layers, dataset, weight_decay=0.0, vgg_init_dir=None, is_training=False):
     if is_training:
       
       with tf.variable_scope('model'):
-        logits, loss, init_op, init_feed = self.build(spatial_fully_connected_layers, temporal_fully_connected_layers, dataset.train_images, dataset.train_labels, weight_decay, vgg_init_dir, True)
+        logits, loss, init_op, init_feed = self.build(spatial_fully_connected_size, temporal_fully_connected_layers, dataset.train_images, dataset.train_labels, weight_decay, vgg_init_dir, True)
         self.vgg_init = (init_op, init_feed)
         self.train_loss = loss
         self.train_logits = logits
       with tf.variable_scope('model', reuse=True):
-        self.valid_logits, self.valid_loss = self.build(spatial_fully_connected_layers, temporal_fully_connected_layers, dataset.valid_images, dataset.valid_labels, weight_decay, vgg_init_dir, False)
-        self.test_logits, self.test_loss = self.build(spatial_fully_connected_layers, temporal_fully_connected_layers, dataset.test_images, dataset.test_labels, weight_decay, vgg_init_dir, False)
+        self.valid_logits, self.valid_loss = self.build(spatial_fully_connected_size, temporal_fully_connected_layers, dataset.valid_images, dataset.valid_labels, weight_decay, vgg_init_dir, False)
+        self.test_logits, self.test_loss = self.build(spatial_fully_connected_size, temporal_fully_connected_layers, dataset.test_images, dataset.test_labels, weight_decay, vgg_init_dir, False)
     
     else:
       with tf.variable_scope('model'):
-        self.train_logits, self.train_loss = self.build(spatial_fully_connected_layers, temporal_fully_connected_layers, dataset.train_images, dataset.train_labels, weight_decay, vgg_init_dir, False)
+        self.train_logits, self.train_loss = self.build(spatial_fully_connected_size, temporal_fully_connected_layers, dataset.train_images, dataset.train_labels, weight_decay, vgg_init_dir, False)
       with tf.variable_scope('model', reuse=True):
-        self.valid_logits, self.valid_loss = self.build(spatial_fully_connected_layers, temporal_fully_connected_layers, dataset.valid_images, dataset.valid_labels, weight_decay, vgg_init_dir, False)
-        self.test_logits, self.test_loss = self.build(spatial_fully_connected_layers, temporal_fully_connected_layers, dataset.test_images, dataset.test_labels, weight_decay, vgg_init_dir, False)
+        self.valid_logits, self.valid_loss = self.build(spatial_fully_connected_size, temporal_fully_connected_layers, dataset.valid_images, dataset.valid_labels, weight_decay, vgg_init_dir, False)
+        self.test_logits, self.test_loss = self.build(spatial_fully_connected_size, temporal_fully_connected_layers, dataset.test_images, dataset.test_labels, weight_decay, vgg_init_dir, False)
 
-  def build(self, spatial_fully_connected_layers, temporal_fully_connected_layers, inputs, labels, weight_decay, vgg_init_dir, is_training):
+  def build(self, spatial_fully_connected_size, temporal_fully_connected_layers, inputs, labels, weight_decay, vgg_init_dir, is_training):
     bn_params = {
       'decay': 0.999,
       'center': True,
