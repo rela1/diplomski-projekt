@@ -18,7 +18,7 @@ INFO_STEP = 20
 
 def get_saver_variables():
   all_vars = tf.global_variables()
-  filtered_vars = [var for var in all_vars if 'global_step' not in var.name and 'Adam' not in var.name and '(x)' not in var.name]
+  filtered_vars = [var for var in all_vars if 'global_step' not in var.name and 'Adam' not in var.name and '_x_' not in var.name]
   filtered_vars_map = {var.name: var for var in filtered_vars}
   return filtered_vars_map
 

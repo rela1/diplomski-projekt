@@ -141,7 +141,7 @@ class SequentialImageTemporalFCModelOnline:
       vertical_slice_size = int(round(int(input_shape[1]) / 3))
       inputs = tf.slice(inputs, begin=[0, vertical_slice_size, 0, 0], size=[-1, -1, horizontal_slice_size * 2, -1])
 
-      self.final_gradient = tf.placeholder(tf.float32, shape=(batch_size, spatial_fully_connected_size), name='(x)final_gradient_ph')
+      self.final_gradient = tf.placeholder(tf.float32, shape=(batch_size, spatial_fully_connected_size), name='_x_final_gradient_ph')
       self.handles = [None] * sequence_length
 
       with tf.contrib.framework.arg_scope([layers.convolution2d],
@@ -178,7 +178,7 @@ class SequentialImageTemporalFCModelOnline:
 
       self.representation = layers.flatten(net)
 
-      self.loss = tf.matmul(self.representation, tf.transpose(self.final_gradient), name='(x)spatial_loss')
+      self.loss = tf.matmul(self.representation, tf.transpose(self.final_gradient), name='_x_spatial_loss')
 
       self.partial_run_setup_objs = [self.representation, self.loss]
       if is_training:
@@ -221,9 +221,9 @@ class SequentialImageTemporalFCModelOnline:
         'updates_collections': None,
         'is_training': is_training,
       }
-      self.sequence_new = tf.placeholder(tf.float32, shape=(batch_size, spatial_fully_connected_size), name='(x)sequence_new_ph')
-      self.sequence = tf.Variable(np.zeros((batch_size, sequence_length, spatial_fully_connected_size)), dtype=tf.float32, trainable=False, name='(x)sequence_var')
-      self.sequence_gradient = tf.Variable(np.zeros((batch_size, sequence_length, spatial_fully_connected_size)), dtype=tf.float32, trainable=False, name='(x)sequence_grad')
+      self.sequence_new = tf.placeholder(tf.float32, shape=(batch_size, spatial_fully_connected_size), name='_x_sequence_new_ph')
+      self.sequence = tf.Variable(np.zeros((batch_size, sequence_length, spatial_fully_connected_size)), dtype=tf.float32, trainable=False, name='_x_sequence_var')
+      self.sequence_gradient = tf.Variable(np.zeros((batch_size, sequence_length, spatial_fully_connected_size)), dtype=tf.float32, trainable=False, name='_x_sequence_grad')
 
       self.add_sequence_new_op = self.sequence.assign(tf.concat([tf.slice(self.sequence, begin=[0, 1, 0], size=[-1, -1, -1]), self.sequence_new], 1))
       self.add_sequence_gradient_new_op = self.sequence_gradient.assign(tf.concat([tf.slice(self.sequence_gradient, begin=[0, 1, 0], size=[-1, -1, -1]), tf.zeros_like(self.sequence_new)], 1))
@@ -252,7 +252,7 @@ class SequentialImageTemporalFCModelOnline:
       unreduced_xent_loss *= loss_mask
       xent_loss = tf.reduce_mean(unreduced_xent_loss)
       regularization_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
-      self.loss = tf.add_n([xent_loss] + regularization_losses, name='(x)total_loss')
+      self.loss = tf.add_n([xent_loss] + regularization_losses, name='_x_total_loss')
 
       if is_training:
         self.trainer = tf.train.AdamOptimizer(learning_rate)
@@ -269,9 +269,9 @@ class SequentialImageTemporalFCModelOnline:
       return data
 
   def __init__(self, sequence_length, batch_size, input_shape, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay=0.0, vgg_init_dir=None, is_training=False, reuse=None):
-    self.inputs = tf.placeholder(tf.float32, shape=(batch_size, input_shape[0], input_shape[1], input_shape[2]), name='(x)inputs')
-    self.labels = tf.placeholder(tf.float32, shape=(batch_size, ), name='(x)labels')
-    self.loss_mask = tf.placeholder(tf.float32, shape=(batch_size, ), name='(x)loss_mask')
+    self.inputs = tf.placeholder(tf.float32, shape=(batch_size, input_shape[0], input_shape[1], input_shape[2]), name='_x_inputs')
+    self.labels = tf.placeholder(tf.float32, shape=(batch_size, ), name='_x_labels')
+    self.loss_mask = tf.placeholder(tf.float32, shape=(batch_size, ), name='_x_loss_mask')
     if is_training:
       with tf.variable_scope('model', reuse=reuse) as scope:
         self.spatials_train = self.SpatialsPart(self.inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay=weight_decay, vgg_init_dir=vgg_init_dir, is_training=True)
@@ -634,7 +634,7 @@ def loss(logits, labels, is_training):
   unreduced_xent_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits, labels=labels)
   xent_loss = tf.reduce_mean(unreduced_xent_loss)
   regularization_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
-  total_loss = tf.add_n([xent_loss] + regularization_losses, name='(x)total_loss')
+  total_loss = tf.add_n([xent_loss] + regularization_losses, name='_x_total_loss')
   return total_loss
 
 
