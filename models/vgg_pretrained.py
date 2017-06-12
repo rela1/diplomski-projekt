@@ -122,11 +122,11 @@ class SequentialImageTemporalFCModelOnline:
 
   class SpatialsPart:
 
-    def __init__(self, inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay=0.0, vgg_init_dir=None, is_training=False):
-      self.build(inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay, vgg_init_dir, is_training)
+    def __init__(self, inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay=0.0, vgg_init_dir=None, is_training=False, trainer=None):
+      self.build(inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay, vgg_init_dir, is_training, trainer)
       self.inputs = inputs
 
-    def build(self, inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay, vgg_init_dir, is_training):
+    def build(self, inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay, vgg_init_dir, is_training, trainer):
       bn_params = {
       'decay': 0.999,
       'center': True,
@@ -182,12 +182,10 @@ class SequentialImageTemporalFCModelOnline:
 
       self.partial_run_setup_objs = [self.representation, self.loss]
       if is_training:
-        with tf.variable_scope('trainer', reuse=False) as scope:
-          self.trainer = tf.train.AdamOptimizer(learning_rate)
-          self.train_op = self.trainer.minimize(self.loss)
-          with tf.control_dependencies([self.train_op]):
-            self.with_train_op = self.loss
-          self.partial_run_setup_objs.append(self.train_op)
+        self.train_op = trainer.minimize(self.loss)
+        with tf.control_dependencies([self.train_op]):
+          self.with_train_op = self.loss
+        self.partial_run_setup_objs.append(self.train_op)
 
       vgg_layers, vgg_layer_names = read_vgg_init(vgg_init_dir)
       init_op, init_feed, pretrained_vars = create_init_op(vgg_layers)
@@ -208,8 +206,8 @@ class SequentialImageTemporalFCModelOnline:
 
   class TemporalPart:
 
-    def __init__(self, labels, loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay=0.0, is_training=False):
-      self.build(labels, loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay=weight_decay, is_training=is_training)
+    def __init__(self, labels, loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay=0.0, is_training=False, trainer=None):
+      self.build(labels, loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay=weight_decay, is_training=is_training, trainer=trainer)
       self.labels = labels
       self.loss_mask = loss_mask
 
@@ -256,11 +254,9 @@ class SequentialImageTemporalFCModelOnline:
       self.loss = tf.add_n([xent_loss] + regularization_losses, name='x___total_loss')
 
       if is_training:
-        with tf.variable_scope('trainer', reuse=False) as scope:
-          self.trainer = tf.train.AdamOptimizer(learning_rate)
-          self.train_op = self.trainer.minimize(self.loss)
-          self.sequence_gradient_new = tf.gradients(self.loss, [self.sequence])[0]
-          self.add_sequence_gradient_new = tf.assign_add(self.sequence_gradient, self.sequence_gradient_new)
+        self.train_op = trainer.minimize(self.loss)
+        self.sequence_gradient_new = tf.gradients(self.loss, [self.sequence])[0]
+        self.add_sequence_gradient_new = tf.assign_add(self.sequence_gradient, self.sequence_gradient_new)
 
     def forward(self, sess, sequence_new, labels, loss_mask):
       logits = sess.run([self.logits], feed_dict={self.sequence_new: sequence_new, self.labels: labels, self.loss_mask: loss_mask})
@@ -275,11 +271,14 @@ class SequentialImageTemporalFCModelOnline:
       self.inputs = tf.placeholder(tf.float32, shape=(batch_size, input_shape[0], input_shape[1], input_shape[2]), name='x___inputs')
       self.labels = tf.placeholder(tf.float32, shape=(batch_size, ), name='x___labels')
       self.loss_mask = tf.placeholder(tf.float32, shape=(batch_size, ), name='x___loss_mask')
+      if is_training:
+        self.trainer_spatials = tf.train.AdamOptimizer(learning_rate)
+        self.trainer_temporal = tf.train.AdamOptimizer(learning_rate)
     if is_training:
       with tf.variable_scope('model', reuse=reuse) as scope:
-        self.spatials_train = self.SpatialsPart(self.inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay=weight_decay, vgg_init_dir=vgg_init_dir, is_training=True)
+        self.spatials_train = self.SpatialsPart(self.inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay=weight_decay, vgg_init_dir=vgg_init_dir, is_training=True, trainer=trainer_spatials)
         self.vgg_init = self.spatials_train.vgg_init
-        self.temporal_train = self.TemporalPart(self.labels, self.loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay=weight_decay, is_training=True)
+        self.temporal_train = self.TemporalPart(self.labels, self.loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay=weight_decay, is_training=True, trainer=trainer_temporal)
       with tf.variable_scope('model', reuse=True) as scope:
         self.spatials_eval = self.SpatialsPart(self.inputs, sequence_length, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay=weight_decay, vgg_init_dir=vgg_init_dir, is_training=False)
         self.temporal_eval = self.TemporalPart(self.labels, self.loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay=weight_decay, is_training=False)
