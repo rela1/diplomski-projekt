@@ -118,7 +118,6 @@ class CombinedImageSequenceDataset(Dataset):
         self.positive_sequences_dirs_test = self.get_positive_sequences_dirs([os.path.join(test_tfrecords_dir, 'positives') for test_tfrecords_dir in test_tfrecords_dirs])
 
     def get_positive_sequences_dirs(self, tfrecords_dirs):
-        positives_dirs = [os.path.join(tfrecords_dir, 'positives') for tfrecords_dir in tfrecords_dirs]
         positives_sequences_dirs = []
         for positives_dir in positives_dirs:
             positives_dir_sequences = os.listdir(positives_dir)
