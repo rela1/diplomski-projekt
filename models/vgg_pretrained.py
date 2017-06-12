@@ -126,7 +126,7 @@ class SequentialImageTemporalFCModelOnline:
       self.build(inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay, vgg_init_dir, is_training, reuse_weights=reuse_weights)
       self.inputs = inputs
 
-    def build(self, inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay, vgg_init_dir, is_training, reuse_weights):
+    def build(self, inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay, vgg_init_dir, is_training, reuse_weights=True):
       bn_params = {
       'decay': 0.999,
       'center': True,
@@ -149,23 +149,23 @@ class SequentialImageTemporalFCModelOnline:
         normalizer_fn=None, weights_initializer=None,
         weights_regularizer=layers.l2_regularizer(weight_decay)):
 
-        net = layers.convolution2d(inputs, 64, scope='conv1_1', reuse=reuse)
-        net = layers.convolution2d(net, 64, scope='conv1_2', reuse=reuse)
+        net = layers.convolution2d(inputs, 64, scope='conv1_1', reuse=reuse_weights)
+        net = layers.convolution2d(net, 64, scope='conv1_2', reuse=reuse_weights)
         net = layers.max_pool2d(net, 2, 2, scope='pool1')
-        net = layers.convolution2d(net, 128, scope='conv2_1', reuse=reuse)
-        net = layers.convolution2d(net, 128, scope='conv2_2', reuse=reuse)
+        net = layers.convolution2d(net, 128, scope='conv2_1', reuse=reuse_weights)
+        net = layers.convolution2d(net, 128, scope='conv2_2', reuse=reuse_weights)
         net = layers.max_pool2d(net, 2, 2, scope='pool2')
-        net = layers.convolution2d(net, 256, scope='conv3_1', reuse=reuse)
-        net = layers.convolution2d(net, 256, scope='conv3_2', reuse=reuse)
-        net = layers.convolution2d(net, 256, scope='conv3_3', reuse=reuse)
+        net = layers.convolution2d(net, 256, scope='conv3_1', reuse=reuse_weights)
+        net = layers.convolution2d(net, 256, scope='conv3_2', reuse=reuse_weights)
+        net = layers.convolution2d(net, 256, scope='conv3_3', reuse=reuse_weights)
         net = layers.max_pool2d(net, 2, 2, scope='pool3')
-        net = layers.convolution2d(net, 512, scope='conv4_1', reuse=reuse)
-        net = layers.convolution2d(net, 512, scope='conv4_2', reuse=reuse)
-        net = layers.convolution2d(net, 512, scope='conv4_3', reuse=reuse)
+        net = layers.convolution2d(net, 512, scope='conv4_1', reuse=reuse_weights)
+        net = layers.convolution2d(net, 512, scope='conv4_2', reuse=reuse_weights)
+        net = layers.convolution2d(net, 512, scope='conv4_3', reuse=reuse_weights)
         net = layers.max_pool2d(net, 2, 2, scope='pool4')
-        net = layers.convolution2d(net, 512, scope='conv5_1', reuse=reuse)
-        net = layers.convolution2d(net, 512, scope='conv5_2', reuse=reuse)
-        net = layers.convolution2d(net, 512, scope='conv5_3', normalizer_fn=layers.batch_norm, normalizer_params=bn_params, reuse=reuse)
+        net = layers.convolution2d(net, 512, scope='conv5_1', reuse=reuse_weights)
+        net = layers.convolution2d(net, 512, scope='conv5_2', reuse=reuse_weights)
+        net = layers.convolution2d(net, 512, scope='conv5_3', normalizer_fn=layers.batch_norm, normalizer_params=bn_params, reuse=reuse_weights)
         net = layers.max_pool2d(net, 2, 2, scope='pool5')
 
       net = layers.flatten(net)
@@ -174,7 +174,7 @@ class SequentialImageTemporalFCModelOnline:
         activation_fn=tf.nn.relu, normalizer_fn=layers.batch_norm, normalizer_params=bn_params,
         weights_initializer=layers.variance_scaling_initializer(),
         weights_regularizer=layers.l2_regularizer(weight_decay)):
-        net = layers.fully_connected(net, spatial_fully_connected_size, scope='spatial_FC', reuse=reuse)
+        net = layers.fully_connected(net, spatial_fully_connected_size, scope='spatial_FC', reuse=reuse_weights)
 
       self.representation = layers.flatten(net)
 
@@ -207,12 +207,12 @@ class SequentialImageTemporalFCModelOnline:
 
   class TemporalPart:
 
-    def __init__(self, labels, loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay=0.0, is_training=False, reuse=True):
-      self.build(labels, loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay=weight_decay, is_training=is_training, reuse=reuse)
+    def __init__(self, labels, loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay=0.0, is_training=False, reuse_weights=True):
+      self.build(labels, loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay=weight_decay, is_training=is_training, reuse_weights=reuse_weights)
       self.labels = labels
       self.loss_mask = loss_mask
 
-    def build(self, labels, loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay=0.0, is_training=False, reuse):
+    def build(self, labels, loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay=0.0, is_training=False, reuse_weights=True):
       bn_params = {
         'decay': 0.999,
         'center': True,
@@ -237,7 +237,7 @@ class SequentialImageTemporalFCModelOnline:
             weights_regularizer=layers.l2_regularizer(weight_decay)):
             layer_num = 1
             for fully_connected_num in temporal_fully_connected_layers:
-                net = layers.fully_connected(net, fully_connected_num, scope='temporal_FC{}'.format(layer_num), reuse=reuse)
+                net = layers.fully_connected(net, fully_connected_num, scope='temporal_FC{}'.format(layer_num), reuse=reuse_weights)
                 layer_num += 1
 
       self.logits = layers.fully_connected(
@@ -246,7 +246,7 @@ class SequentialImageTemporalFCModelOnline:
         weights_regularizer=layers.l2_regularizer(weight_decay),
         biases_initializer=tf.zeros_initializer(),
         scope='logits',
-        reuse=reuse
+        reuse=reuse_weights
       )
 
       unreduced_xent_loss = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=self.logits, labels=labels)
