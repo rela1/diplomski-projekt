@@ -136,11 +136,11 @@ def evaluate(dataset_name, sess, sequence_length, fc_model_logits, fc_model_loss
 
     for t in range(sequence_length - 1):
       representation_t = convolutional_model.spatials_eval.forward(sess, t, batch_images[t])
-      logits = model.temporal_eval.forward(sess, representation_t, positive_batch_labels, batch_masks[t])
+      logits = convolutional_model.temporal_eval.forward(sess, representation_t, positive_batch_labels, batch_masks[t])
 
     for t in range(sequence_length - 1, batch_images.shape[0]):
-      representation_t = model.spatials_eval.forward(sess, t % sequence_length, batch_images[t])
-      logits = model.temporal_eval.forward(sess, representation_t, positive_batch_labels, batch_masks[t])
+      representation_t = convolutional_model.spatials_eval.forward(sess, t % sequence_length, batch_images[t])
+      logits = convolutional_model.temporal_eval.forward(sess, representation_t, positive_batch_labels, batch_masks[t])
       preds = np.argmax(logits)
       probs = softmax(logits)
       for i in range(dataset.batch_size):
