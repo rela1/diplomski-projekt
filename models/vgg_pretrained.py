@@ -190,7 +190,7 @@ class SequentialImageTemporalFCModelOnline:
 
 
     def forward(self, sess, index, images):
-      handle = sess.partial_run_setup([self.partial_run_setup_objs], [self.final_gradient])
+      handle = sess.partial_run_setup([self.partial_run_setup_objs], [self.final_gradient, self.inputs])
       self.handles[index] = handle
       representation = sess.partial_run(self.handles[index], self.representation, feed_dict={self.inputs: images})
       return representation
