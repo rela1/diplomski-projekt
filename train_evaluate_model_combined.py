@@ -154,10 +154,12 @@ def evaluate(dataset_name, sess, sequence_length, fc_model_logits, fc_model_loss
     if not step % 10:
       print('\tstep {}, {} examples/sec'.format(step + 1, (dataset.batch_size * (batch_images.shape[0] - sequence_length + 1)) / duration))
 
+    step += 1
+
     if new_epoch:
       break
 
-  num_batches = num_batches = int(math.ceil(num_negative_examples / self.batch_size))
+  num_batches = num_batches = int(math.ceil(num_negative_examples / dataset.batch_size))
 
   print('Negative examples evaluation...')
   for i in range(num_batches):
