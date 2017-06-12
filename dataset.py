@@ -111,13 +111,14 @@ class CombinedImageSequenceDataset(Dataset):
     def __init__(self, dataset_root, batch_size, input_shape, is_training=True):
         super().__init__(parse_sequence_example, 'sequential', dataset_root, batch_size, input_shape, is_training=is_training)
         train_tfrecords_dirs = [os.path.join(self.train_dir, directory) for directory in self.train_tfrecords_dirs]
-        self.positive_sequences_dirs_train = self.get_positive_sequences_dirs([os.path.join(train_tfrecords_dir, 'positives') for train_tfrecords_dir in train_tfrecords_dirs])
+        self.positive_sequences_dirs_train = self.get_positive_sequences_dirs(train_tfrecords_dirs)
         valid_tfrecords_dirs = [os.path.join(self.valid_dir, directory) for directory in self.valid_tfrecords_dirs]
-        self.positive_sequences_dirs_valid = self.get_positive_sequences_dirs([os.path.join(valid_tfrecords_dir, 'positives') for valid_tfrecords_dir in valid_tfrecords_dirs])
+        self.positive_sequences_dirs_valid = self.get_positive_sequences_dirs(valid_tfrecords_dirs)
         test_tfrecords_dirs = [os.path.join(self.test_dir, directory) for directory in self.test_tfrecords_dirs]
-        self.positive_sequences_dirs_test = self.get_positive_sequences_dirs([os.path.join(test_tfrecords_dir, 'positives') for test_tfrecords_dir in test_tfrecords_dirs])
+        self.positive_sequences_dirs_test = self.get_positive_sequences_dirs(test_tfrecords_dirs)
 
     def get_positive_sequences_dirs(self, tfrecords_dirs):
+        positives_dir = [os.path.join(tfrecords_dir, 'positives') for tfrecords_dir in tfrecords_dirs]
         positives_sequences_dirs = []
         for positives_dir in positives_dirs:
             positives_dir_sequences = os.listdir(positives_dir)
