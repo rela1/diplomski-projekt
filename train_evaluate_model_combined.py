@@ -73,20 +73,24 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
       start_time = time.time()
 
       batch_images, batch_masks, new_epoch, batch_handle = dataset.next_positive_batch(mean_channels, dataset.positive_sequences_dirs_train, batch_handle, dataset.batch_size)
+      print('Batch images shape', batch_images.shape)
 
       num_positive_examples = batch_images.shape[0] - sequence_length + 1
 
       for t in range(sequence_length - 1):
         representation_t = convolutional_model.spatials_train.forward(sess, t, batch_images[t])
         logits = convolutional_model.temporal_train.forward(sess, representation_t, positive_batch_labels, batch_masks[t])
+        print('Warmup step {}/{}'.format(t+1, sequence_length - 1))
 
       for t in range(sequence_length - 1, batch_images.shape[0]):
         representation_t = convolutional_model.spatials_train.forward(sess, t % sequence_length, batch_images[t])
         temporal_data = convolutional_model.temporal_train.forward_backward(sess, representation_t, positive_batch_labels, batch_masks[t])
         loss, cumulated_representation_gradient = temporal_data[0], temporal_data[2]
         convolutional_model.spatials_train.backward(sess, cumulated_representation_gradient[0], t % sequence_length - sequence_length + 1)
+        print('Full step {}/{}'.format(t+1, batch_images.shape[0]))
 
       for i in range(num_positive_examples):
+        print('Negative phase step {}/{}'.format(i + 1, num_positive_examples))
         _, fc_loss = sess.run([train_op, fc_model.train_loss])
       
       step += 1
