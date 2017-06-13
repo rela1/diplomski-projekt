@@ -69,7 +69,7 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
     epoch_start_time = time.time()
 
     step = 0
-    for j in range((dataset.num_train_examples / 2)  / dataset.batch_size):
+    for j in range(int(math.ceil((num_negative_examples / 2) / dataset.batch_size))):
       start_time = time.time()
       """
       batch_images, batch_masks, new_epoch, batch_handle = dataset.next_positive_batch(mean_channels, dataset.positive_sequences_dirs_train, batch_handle, dataset.batch_size)
