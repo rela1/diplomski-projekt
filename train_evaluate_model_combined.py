@@ -36,12 +36,14 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
 
   global_step = tf.get_variable('global_step', [], dtype=tf.int64, initializer=tf.constant_initializer(0), trainable=False)
 
+  """
   opt = tf.train.AdamOptimizer(learning_rate)
   grads = opt.compute_gradients(fc_model.train_loss)
   apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
 
   with tf.control_dependencies([apply_gradient_op]):
     train_op = tf.no_op(name='train_op')
+  """
 
   init_op, init_feed = fc_model.vgg_init
 
@@ -87,7 +89,15 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
         convolutional_model.spatials_train.backward(sess, cumulated_representation_gradient[0], t % sequence_length - sequence_length + 1)
 
       for i in range(num_positive_examples):
-        _, fc_loss = sess.run([train_op, fc_model.train_loss])
+        images = sess.run([dataset.train_images])
+        for t in range(sequence_length - 1):
+          representation_t = convolutional_model.spatials_train.forward(sess, t, batch_images[t])
+          logits = convolutional_model.temporal_train.forward(sess, representation_t, positive_batch_labels, batch_masks[t])
+          
+        representation_t = convolutional_model.spatials_train.forward(sess, t % sequence_length, batch_images[t])
+        temporal_data = convolutional_model.temporal_train.forward_backward(sess, representation_t, positive_batch_labels, batch_masks[t])
+        loss, cumulated_representation_gradient = temporal_data[0], temporal_data[2]
+        convolutional_model.spatials_train.backward(sess, cumulated_representation_gradient[0], t % sequence_length - sequence_length + 1)
       
       step += 1
       duration = time.time() - start_time
