@@ -275,15 +275,15 @@ class SequentialImageTemporalFCModelOnline:
         self.spatials_train = self.SpatialsPart(self.inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay, True, reuse_weights)
         self.temporal_train = self.TemporalPart(self.labels, self.loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay, True, reuse_weights)
       with tf.variable_scope('model', reuse=True) as scope:
-        self.spatials_eval = self.SpatialsPart(self.inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay, False)
-        self.temporal_eval = self.TemporalPart(self.labels, self.loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay, False)
+        self.spatials_eval = self.SpatialsPart(self.inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay, False, reuse_weights)
+        self.temporal_eval = self.TemporalPart(self.labels, self.loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay, False, reuse_weights)
     else:
       with tf.variable_scope('model') as scope:
         self.spatials_train = self.SpatialsPart(self.inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay, False, reuse_weights)
         self.temporal_train = self.TemporalPart(self.labels, self.loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay, False, reuse_weights)
       with tf.variable_scope('model', reuse=True) as scope:
-        self.spatials_eval = self.SpatialsPart(self.inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay, False)
-        self.temporal_eval = self.TemporalPart(self.labels, self.loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay, False)
+        self.spatials_eval = self.SpatialsPart(self.inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay, False, reuse_weights)
+        self.temporal_eval = self.TemporalPart(self.labels, self.loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, weight_decay, False, reuse_weights)
 
 
 class SequentialImageTemporalFCModel:
