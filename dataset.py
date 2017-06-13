@@ -118,7 +118,7 @@ class CombinedImageSequenceDataset(Dataset):
         self.positive_sequences_dirs_test = self.get_positive_sequences_dirs(test_tfrecords_dirs)
 
     def get_positive_sequences_dirs(self, tfrecords_dirs):
-        positives_dirs = [os.path.join(tfrecords_dir, 'positives') for tfrecords_dir in tfrecords_dirs][0:10]
+        positives_dirs = [os.path.join(tfrecords_dir, 'positives') for tfrecords_dir in tfrecords_dirs]
         positives_sequences_dirs = []
         for positives_dir in positives_dirs:
             positives_dir_sequences = os.listdir(positives_dir)
@@ -133,7 +133,7 @@ class CombinedImageSequenceDataset(Dataset):
         print('Image shape', image_shape)
         mean_channels = np.zeros((3))
         print('Normalizing negative examples...')
-        for i in range(10):
+        for i in range(num_batches):
             print('Normalization step {}/{}'.format(i + 1, num_batches))
             image_vals = sess.run(self.train_images)
             mean_image_vals = np.mean(image_vals, axis=(0, 1))

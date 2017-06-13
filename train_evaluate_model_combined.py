@@ -69,9 +69,9 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
     epoch_start_time = time.time()
 
     step = 0
-    for j in range(int(math.ceil((dataset.num_train_examples / 2) / dataset.batch_size))):
+    while True:
       start_time = time.time()
-      """
+
       batch_images, batch_masks, new_epoch, batch_handle = dataset.next_positive_batch(mean_channels, dataset.positive_sequences_dirs_train, batch_handle, dataset.batch_size)
 
       num_positive_examples = batch_images.shape[0] - sequence_length + 1
@@ -83,22 +83,22 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
       for t in range(sequence_length - 1, batch_images.shape[0]):
         representation_t = convolutional_model.spatials_train.forward(sess, t % sequence_length, batch_images[t])
         temporal_data = convolutional_model.temporal_train.forward_backward(sess, representation_t, positive_batch_labels, batch_masks[t])
-        conv_loss, cumulated_representation_gradient = temporal_data[0], temporal_data[2]
+        loss, cumulated_representation_gradient = temporal_data[0], temporal_data[2]
         convolutional_model.spatials_train.backward(sess, cumulated_representation_gradient[0], t % sequence_length - sequence_length + 1)
-      
-      """
-      _, fc_loss = sess.run([train_op, fc_model.train_loss])
+
+      for i in range(num_positive_examples):
+        _, fc_loss = sess.run([train_op, fc_model.train_loss])
       
       step += 1
       duration = time.time() - start_time
 
-      loss = fc_loss#(conv_loss + fc_loss) / 2
-
       assert not np.isnan(loss), 'Model diverged with loss = NaN'    
 
       if not step % INFO_STEP:
-        print('\tEpoch: {}/{}, step loss: {}, {} examples/sec, learning rate: {}'.format(i+1, num_epochs, loss, (batch_size * num_positive_examples * 2) / duration, learning_rate))
+        print('\tEpoch: {}/{}, step loss: {}, {} examples/sec, learning rate: {}'.format(i+1, num_epochs, (loss + fc_loss) / 2, (batch_size * num_positive_examples * 2) / duration, learning_rate))
 
+      if new_epoch:
+        break
 
     epoch_duration = time.time() - epoch_start_time
     print('Done with epoch {}/{}, time needed: {}'.format(i + 1, num_epochs, epoch_duration))
