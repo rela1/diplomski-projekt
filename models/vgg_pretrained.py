@@ -122,6 +122,8 @@ class SequentialImageTemporalFCModelOnline:
 
   class SpatialsPart:
 
+    handles = [None] * sequence_length
+
     def __init__(self, inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay=0.0, is_training=False, reuse_weights=True):
       self.build(inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay, is_training, reuse_weights)
       self.inputs = inputs
@@ -142,7 +144,6 @@ class SequentialImageTemporalFCModelOnline:
       inputs = tf.slice(inputs, begin=[0, vertical_slice_size, 0, 0], size=[-1, -1, horizontal_slice_size * 2, -1])
 
       self.final_gradient = tf.placeholder(tf.float32, shape=(sequence_length, spatial_fully_connected_size), name='x___final_gradient_ph')
-      self.handles = [None] * sequence_length
 
       with tf.contrib.framework.arg_scope([layers.convolution2d],
         kernel_size=3, stride=1, padding='SAME', rate=1, activation_fn=tf.nn.relu,
@@ -191,12 +192,12 @@ class SequentialImageTemporalFCModelOnline:
 
     def forward(self, sess, index, images):
       handle = sess.partial_run_setup([self.partial_run_setup_objs], [self.final_gradient, self.inputs])
-      self.handles[index] = handle
-      representation = sess.partial_run(self.handles[index], self.representation, feed_dict={self.inputs: images})
+      SpatialsPart.handles[index] = handle
+      representation = sess.partial_run(SpatialsPart.handles[index], self.representation, feed_dict={self.inputs: images})
       return representation
 
     def backward(self, sess, final_gradient, index):
-      loss, _ = sess.partial_run(self.handles[index], [self.loss, self.with_train_op], feed_dict={self.final_gradient: final_gradient})
+      loss, _ = sess.partial_run(SpatialsPart.handles[index], [self.loss, self.with_train_op], feed_dict={self.final_gradient: final_gradient})
       return loss
 
 
