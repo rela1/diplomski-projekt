@@ -122,7 +122,7 @@ class SequentialImageTemporalFCModelOnline:
 
   class SpatialsPart:
 
-    handles = [None] * sequence_length
+    handles = [None] * 25
 
     def __init__(self, inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay=0.0, is_training=False, reuse_weights=True):
       self.build(inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay, is_training, reuse_weights)
