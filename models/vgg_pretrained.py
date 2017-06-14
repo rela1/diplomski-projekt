@@ -183,12 +183,11 @@ class SequentialImageTemporalFCModelOnline:
       self.loss = tf.matmul(self.representation, tf.transpose(self.final_gradient), name='x___spatial_loss')
 
       self.partial_run_setup_objs = [self.representation, self.loss]
-      if is_training:
-        self.trainer = tf.train.AdamOptimizer(learning_rate)
-        self.train_op = self.trainer.minimize(self.loss)
-        with tf.control_dependencies([self.train_op]):
-          self.with_train_op = self.loss
-        self.partial_run_setup_objs.append(self.train_op)
+      self.trainer = tf.train.AdamOptimizer(learning_rate)
+      self.train_op = self.trainer.minimize(self.loss)
+      with tf.control_dependencies([self.train_op]):
+        self.with_train_op = self.loss
+      self.partial_run_setup_objs.append(self.train_op)
 
 
     def forward(self, sess, index, images, is_training):
