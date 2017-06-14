@@ -272,9 +272,9 @@ class SequentialImageTemporalFCModelOnline:
       self.labels = tf.placeholder(tf.int32, shape=(batch_size, ), name='x___labels')
       self.loss_mask = tf.placeholder(tf.float32, shape=(batch_size, ), name='x___loss_mask')
       self.is_training = tf.placeholder(tf.bool, shape=())
-      with tf.variable_scope('model') as scope:
-        self.spatials = self.SpatialsPart(self.inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, self.is_training, weight_decay, reuse_weights)
-        self.temporal = self.TemporalPart(self.labels, self.loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, self.is_training, weight_decay, reuse_weights)
+    with tf.variable_scope('model') as scope:
+      self.spatials = self.SpatialsPart(self.inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, self.is_training, weight_decay, reuse_weights)
+      self.temporal = self.TemporalPart(self.labels, self.loss_mask, batch_size, sequence_length, spatial_fully_connected_size, temporal_fully_connected_layers, learning_rate, self.is_training, weight_decay, reuse_weights)
 
 
 class SequentialImageTemporalFCModel:
