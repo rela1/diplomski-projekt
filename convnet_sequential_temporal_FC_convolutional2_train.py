@@ -1,7 +1,7 @@
 import sys
 
 from dataset import ConvolutionalImageSequenceDataset
-from models.vgg_pretrained import SequentialImageTemporalFCModelOnline
+from models.vgg_pretrained_convolutional import SequentialImageTemporalFCModelOnline
 from train_evaluate_model_convolutional import train_model
 
 
