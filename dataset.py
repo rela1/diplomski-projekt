@@ -106,6 +106,15 @@ class ImageSequenceDataset(Dataset):
         return mean_channels
 
 
+class ConvolutionalImageSequenceDataset(Dataset):
+
+    def __init__(self, dataset_root, input_shape):
+        super().__init__(parse_single_example, 'convolutional', dataset_root, 1, input_shape, False)
+        self.num_positive_train_examples = number_of_examples(self.train_tfrecords_dirs, self.train_dir, examples_file_name='positive_examples.txt')
+        self.num_positive_valid_examples = number_of_examples(self.valid_tfrecords_dirs, self.valid_dir, examples_file_name='positive_examples.txt')
+        self.num_positive_test_examples = number_of_examples(self.test_tfrecords_dirs, self.test_dir, examples_file_name='positive_examples.txt')
+
+
 class CombinedImageSequenceDataset(Dataset):
 
     def __init__(self, dataset_root, batch_size, input_shape, is_training=True):
