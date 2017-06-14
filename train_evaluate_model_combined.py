@@ -77,14 +77,14 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
       num_positive_examples = batch_images.shape[0] - sequence_length + 1
 
       for t in range(sequence_length - 1):
-        representation_t = convolutional_model.spatials_train.forward(sess, t, batch_images[t], True)
-        logits = convolutional_model.temporal_train.forward(sess, representation_t, positive_batch_labels, batch_masks[t], True)
+        representation_t = convolutional_model.spatials.forward(sess, t, batch_images[t], True)
+        logits = convolutional_model.temporal.forward(sess, representation_t, positive_batch_labels, batch_masks[t], True)
 
       for t in range(sequence_length - 1, batch_images.shape[0]):
-        representation_t = convolutional_model.spatials_train.forward(sess, t % sequence_length, batch_images[t], True)
-        temporal_data = convolutional_model.temporal_train.forward_backward(sess, representation_t, positive_batch_labels, batch_masks[t], True)
+        representation_t = convolutional_model.spatials.forward(sess, t % sequence_length, batch_images[t], True)
+        temporal_data = convolutional_model.temporal.forward_backward(sess, representation_t, positive_batch_labels, batch_masks[t], True)
         loss, cumulated_representation_gradient = temporal_data[0], temporal_data[2]
-        convolutional_model.spatials_train.backward(sess, cumulated_representation_gradient[0], t % sequence_length - sequence_length + 1, True)
+        convolutional_model.spatials.backward(sess, cumulated_representation_gradient[0], t % sequence_length - sequence_length + 1, True)
 
       for i in range(num_positive_examples):
         _, fc_loss = sess.run([train_op, fc_model.train_loss])
@@ -135,12 +135,12 @@ def evaluate(dataset_name, sess, sequence_length, fc_model_logits, fc_model_loss
     batch_images, batch_masks, new_epoch, batch_handle = dataset.next_positive_batch(mean_channels, positives_sequences_dirs, batch_handle, dataset.batch_size)
 
     for t in range(sequence_length - 1):
-      representation_t = convolutional_model.spatials_eval.forward(sess, t, batch_images[t], False)
-      logits = convolutional_model.temporal_eval.forward(sess, representation_t, positive_batch_labels, batch_masks[t], False)
+      representation_t = convolutional_model.spatials.forward(sess, t, batch_images[t], False)
+      logits = convolutional_model.temporal.forward(sess, representation_t, positive_batch_labels, batch_masks[t], False)
 
     for t in range(sequence_length - 1, batch_images.shape[0]):
-      representation_t = convolutional_model.spatials_eval.forward(sess, t % sequence_length, batch_images[t], False)
-      logits = convolutional_model.temporal_eval.forward(sess, representation_t, positive_batch_labels, batch_masks[t], False)
+      representation_t = convolutional_model.spatials.forward(sess, t % sequence_length, batch_images[t], False)
+      logits = convolutional_model.temporal.forward(sess, representation_t, positive_batch_labels, batch_masks[t], False)
       preds = np.argmax(logits, axis=1)
       probs = softmax(logits)
       for i in range(dataset.batch_size):
