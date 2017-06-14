@@ -73,6 +73,7 @@ class SequentialImageTemporalFCModelOnline:
 
       self.partial_run_setup_objs = [self.representation, self.loss]
       if is_training:
+        vgg_layers, vgg_layer_names = read_vgg_init(vgg_init_dir)
         init_op, init_feed, pretrained_vars = create_init_op(vgg_layers)
         self.vgg_init = (init_op, init_feed)
         self.trainer = tf.train.AdamOptimizer(learning_rate)
