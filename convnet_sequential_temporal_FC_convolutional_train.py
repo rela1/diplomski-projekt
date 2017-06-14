@@ -23,6 +23,6 @@ if __name__ == '__main__':
   dataset = CombinedImageSequenceDataset(dataset_root, BATCH_SIZE, INPUT_SHAPE, is_training=True)
 
   fc_model = SequentialImageTemporalFCModel(SPATIAL_FULLY_CONNECTED, TEMPORAL_FULLY_CONNECTED, dataset, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=True)
-  convolutional_model = SequentialImageTemporalFCModelOnline(SEQUENCE_LENGTH, BATCH_SIZE, INPUT_SHAPE[1:], SPATIAL_FULLY_CONNECTED, TEMPORAL_FULLY_CONNECTED, LEARNING_RATE, weight_decay=WEIGHT_DECAY, reuse_weights=True)
+  convolutional_model = SequentialImageTemporalFCModelOnline(SEQUENCE_LENGTH, BATCH_SIZE, INPUT_SHAPE[1:], SPATIAL_FULLY_CONNECTED, TEMPORAL_FULLY_CONNECTED, LEARNING_RATE, weight_decay=WEIGHT_DECAY, is_training=True, reuse_weights=True)
 
   train_model(fc_model, convolutional_model, dataset, SEQUENCE_LENGTH, EPOCHS, LEARNING_RATE, model_path)
