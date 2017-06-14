@@ -20,7 +20,7 @@ if __name__ == '__main__':
   dataset_root = sys.argv[2]
   model_path = sys.argv[3]
 
-  dataset = ConvolutionalImageSequenceDataset(dataset_root, BATCH_SIZE, INPUT_SHAPE, is_training=True)
+  dataset = ConvolutionalImageSequenceDataset(dataset_root, INPUT_SHAPE)
 
   convolutional_model = SequentialImageTemporalFCModelOnline(SEQUENCE_LENGTH, BATCH_SIZE, INPUT_SHAPE, SPATIAL_FULLY_CONNECTED, TEMPORAL_FULLY_CONNECTED, LEARNING_RATE, weight_decay=WEIGHT_DECAY, is_training=True)
 
