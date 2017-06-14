@@ -127,8 +127,8 @@ class SequentialImageTemporalFCModelOnline:
     def __init__(self, inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay=0.0, is_training=False, reuse_weights=True):
       self.build(inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay, is_training, reuse_weights)
       self.inputs = inputs
-      if handles is None:
-        handles = [None] * sequence_length
+      if self.__class__.handles is None:
+        self.__class__.handles = [None] * sequence_length
 
     def build(self, inputs, batch_size, sequence_length, spatial_fully_connected_size, learning_rate, weight_decay, is_training, reuse_weights):
       bn_params = {
