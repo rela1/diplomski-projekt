@@ -585,7 +585,7 @@ class SingleImageModel:
       net = layers.convolution2d(net, 512, scope='conv5_1')
       net = layers.convolution2d(net, 512, scope='conv5_2')
       net = layers.convolution2d(net, 512, scope='conv5_3')
-      net = layers.max_pool2d(net, 2, 2, scope='pool5')
+      net = layers.max_pool2d(net, 2, 2, scope='pool5', normalizer_fn=layers.batch_norm, normalizer_params=bn_params)
 
     if is_training:
       init_op, init_feed, pretrained_vars = create_init_op(vgg_layers)
