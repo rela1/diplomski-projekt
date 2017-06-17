@@ -315,7 +315,7 @@ def extract_positive_examples(video_name, positive_images_ranges, frames_resolut
 
 def get_geolocation_for_frame(frame, frames_per_second, points, times, time_offset):
     time_seconds = frame / frames_per_second
-    if rounded_time_seconds < time_offset:
+    if time_seconds < time_offset:
         return (0.0, 0.0)
     else:
         try:
