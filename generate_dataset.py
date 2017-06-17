@@ -315,7 +315,7 @@ def get_geolocation_for_frame(frame, frames_per_second, points, times, time_offs
             return (0.0, 0.0)
 
 
-def extract_positive_examples(video_name, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames, points, times, time_offset):
+def extract_positive_examples(video_name, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames, frames_per_second, points, times, time_offset):
     positive_examples = 0
     treshold = SAME_TRESHOLD * frames_resolution
     for positive_images_range in positive_images_ranges:
@@ -388,7 +388,7 @@ def process_video(video_name, intersection_lines, max_distance_to_intersection):
 
             sequential_tf_records_writer, single_tf_records_writer = create_tf_records_writers(video_name)
             log_file.write('Created writers...\n')
-            number_of_positive_examples = extract_positive_examples(video_name, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames, points, times, time_offset)
+            number_of_positive_examples = extract_positive_examples(video_name, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames, frames_per_second, points, times, time_offset)
             log_file.write('Extracted positive examples...\n')
             extract_negative_examples(video_name, number_of_positive_examples, speeds, times, time_offset, points, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames, frames_per_second)
             log_file.write('Extracted negative examples...\n')
