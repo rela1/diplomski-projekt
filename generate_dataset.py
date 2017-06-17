@@ -295,25 +295,6 @@ def create_tf_records_writers(video_name):
     return sequential_tf_records_writer, single_tf_records_writer
 
 
-def extract_positive_examples(video_name, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames, points, times, time_offset):
-    positive_examples = 0
-    treshold = SAME_TRESHOLD * frames_resolution
-    for positive_images_range in positive_images_ranges:
-        prev_img = None
-        for positive_image in range(positive_images_range[0], positive_images_range[1] + 1):
-            if positive_image >= 0 and positive_image <= number_of_frames:
-                img = imread(os.path.join(video_name, 'frames', str(positive_image).zfill(zero_pad_number) + '.png'))
-                if prev_img is not None:
-                    diff = np.sum(np.abs(img - prev_img))
-                    if diff < treshold:
-                        continue
-                prev_img = img
-                geolocation = get_geolocation_for_frame(positive_image, frames_per_second, points, times, time_offset)
-                if write_sequenced_and_single_example(positive_image, , video_name, 1, SEQUENCE_HALF_LENGTH * 2, 0, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
-                    positive_examples += 1
-    return positive_examples
-
-
 def get_geolocation_for_frame(frame, frames_per_second, points, times, time_offset):
     time_seconds = frame / frames_per_second
     if time_seconds < time_offset:
@@ -332,6 +313,25 @@ def get_geolocation_for_frame(frame, frames_per_second, points, times, time_offs
             return geolocation
         except:
             return (0.0, 0.0)
+
+
+def extract_positive_examples(video_name, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames, points, times, time_offset):
+    positive_examples = 0
+    treshold = SAME_TRESHOLD * frames_resolution
+    for positive_images_range in positive_images_ranges:
+        prev_img = None
+        for positive_image in range(positive_images_range[0], positive_images_range[1] + 1):
+            if positive_image >= 0 and positive_image <= number_of_frames:
+                img = imread(os.path.join(video_name, 'frames', str(positive_image).zfill(zero_pad_number) + '.png'))
+                if prev_img is not None:
+                    diff = np.sum(np.abs(img - prev_img))
+                    if diff < treshold:
+                        continue
+                prev_img = img
+                geolocation = get_geolocation_for_frame(positive_image, frames_per_second, points, times, time_offset)
+                if write_sequenced_and_single_example(positive_image, , video_name, 1, SEQUENCE_HALF_LENGTH * 2, 0, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
+                    positive_examples += 1
+    return positive_examples
 
 
 def extract_negative_examples(video_name, number_of_positive_examples, speeds, times, time_offset, points, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames, frames_per_second):
