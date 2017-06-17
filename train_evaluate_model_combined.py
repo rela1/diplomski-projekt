@@ -70,7 +70,6 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
 
     epoch_start_time = time.time()
 
-    step = 0
     while True:
       start_time = time.time()
 
@@ -91,24 +90,22 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
       for i in range(num_positive_examples):
         _, fc_loss = sess.run([train_op, fc_model.train_loss])
       
-      step += 1
       duration = time.time() - start_time
 
       assert not np.isnan(loss), 'Model diverged with loss = NaN'    
 
-      if not step % INFO_STEP:
-        print('\tEpoch: {}/{}, step loss: {}, {} examples/sec, learning rate: {}'.format(i+1, num_epochs, (loss + fc_loss) / 2, (dataset.batch_size * num_positive_examples * 2) / duration, learning_rate))
+      print('\tEpoch: {}/{}, step loss: {}, {} examples/sec, learning rate: {}'.format(i+1, num_epochs, (loss + fc_loss) / 2, (dataset.batch_size * num_positive_examples * 2) / duration, learning_rate))
 
       if new_epoch:
         break
 
     epoch_duration = time.time() - epoch_start_time
-    print('Done with epoch {}/{}, time needed: {}'.format(i + 1, num_epochs, epoch_duration))
+    print('\tDone with epoch {}/{}, time needed: {}'.format(i + 1, num_epochs, epoch_duration))
 
     metrics, y_true, y_pred, y_prob = evaluate('Validation', sess, sequence_length, fc_model.valid_logits, fc_model.valid_loss, convolutional_model, dataset, dataset.num_valid_examples / 2, dataset.positive_sequences_dirs_valid, mean_channels)
     if metrics['accuracy_score'] > best_valid_accuracy:
       best_valid_accuracy = metrics['accuracy_score']
-      print('\tNew best validation accuracy', best_valid_accuracy)
+      print('\tNew best validation accuracy', best_valid_accuracy, '\n')
       saver.save(sess, model_path)
 
   print('Done training -- epoch limit reached')

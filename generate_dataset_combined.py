@@ -8,7 +8,7 @@ from skimage.exposure import equalize_adapthist
 from matplotlib.image import imread, imsave
 import numpy as np
 
-from generate_dataset import write_example_sequence, get_images_sequence_and_single_image, load_intersection_lines, get_not_processed_video_names, download_video_geoinformation, index_video_geoinformation, download_video, get_video_info, get_positive_images_ranges, extract_video_frames, get_frames_resolution, create_tf_records_writer, write_processed_video_names, clear_redundant_data
+from generate_dataset import write_example_sequence, get_images_sequence_and_single_image, load_intersection_lines, get_not_processed_video_names, download_video_geoinformation, index_video_geoinformation, download_video, get_video_info, get_positive_images_ranges, extract_video_frames, get_frames_resolution, create_tf_records_writer, write_processed_video_names, clear_redundant_data, get_geolocation_for_frame, get_geolocation_for_fram
 
 SEQUENCE_HALF_LENGTH = 12
 MIN_DISTANCE_TO_POSITIVE = 200 #meters
@@ -25,10 +25,12 @@ def extract_positive_examples(video_name, positive_images_ranges, frames_resolut
     positive_examples = 0
     sequence_number = 1
     treshold = SAME_TRESHOLD * frames_resolution
+    sequence_to_geo = {}
     for positive_images_range in positive_images_ranges:
         prev_img = None
         sequence_dir = os.path.join(video_name, 'positives', str(sequence_number))
         os.mkdir(sequence_dir)
+        sequence_to_geo[sequence_dir] = str(positive_images_range[2:])
         image_number = 1
         image_zero_pad_number = len(str(positive_images_range[1] - positive_images_range[0] + 1))
         warmedup_sequence = False
@@ -38,7 +40,8 @@ def extract_positive_examples(video_name, positive_images_ranges, frames_resolut
                 if single_img is None:
                     continue
                 for img_eq in img_sequence_eq:
-                    imsave(os.path.join(sequence_dir, str(image_number).zfill(image_zero_pad_number) + '.png'), img_eq)
+                    img_path = str(image_number).zfill(image_zero_pad_number) + '.png'
+                    imsave(os.path.join(sequence_dir, img_path), img_eq)
                     image_number += 1
                 prev_img = single_img
                 warmedup_sequence = True
@@ -56,10 +59,13 @@ def extract_positive_examples(video_name, positive_images_ranges, frames_resolut
                     positive_examples += 1
                     image_number += 1
         sequence_number += 1
+    with open(os.path.join(video_name, 'geo.txt'), 'w') as geo_file:
+        for sequence in sequence_to_geo:
+            geo_file.write('{} -> {}\n'.format(sequence, sequence_to_geo[sequence]))
     return positive_examples
 
 
-def extract_negative_examples(video_name, number_of_positive_examples, speeds, positive_images_ranges, frames_resolution, sequential_tf_records_writer, zero_pad_number, number_of_frames, frames_per_second):
+def extract_negative_examples(video_name, number_of_positive_examples, speeds, times, time_offset, points, positive_images_ranges, frames_resolution, sequential_tf_records_writer, zero_pad_number, number_of_frames, frames_per_second):
     treshold = SAME_TRESHOLD * frames_resolution
     average_speed = np.mean(speeds)
     min_frame_diff_to_positive = (MIN_DISTANCE_TO_POSITIVE / average_speed) * frames_per_second + 2 * SEQUENCE_HALF_LENGTH
@@ -72,9 +78,9 @@ def extract_negative_examples(video_name, number_of_positive_examples, speeds, p
             for positive_images_range in positive_images_ranges]):
                 continue
         single_img, single_img_eq, images_sequence_eq = get_images_sequence_and_single_image(image, video_name, SEQUENCE_HALF_LENGTH * 2, 0, zero_pad_number, treshold, number_of_frames)
-
+        geolocation = get_geolocation_for_frame(image, frames_per_second, points, times, time_offset)
         if single_img is not None:
-            write_example_sequence(images_sequence_eq, 0, sequential_tf_records_writer)
+            write_example_sequence(images_sequence_eq, 0, geolocation, sequential_tf_records_writer)
             selected_single_images.add(image)
 
 
@@ -104,7 +110,7 @@ def process_video(video_name, intersection_lines, max_distance_to_intersection):
             log_file.write('Created negatives sequential writer...\n')
             number_of_positive_examples = extract_positive_examples(video_name, positive_images_ranges, frames_resolution, zero_pad_number, number_of_frames)
             log_file.write('Extracted positive examples...\n')
-            extract_negative_examples(video_name, number_of_positive_examples, speeds, positive_images_ranges, frames_resolution, sequential_tf_records_writer, zero_pad_number, number_of_frames, frames_per_second)
+            extract_negative_examples(video_name, number_of_positive_examples, speeds, times, time_offset, points, positive_images_ranges, frames_resolution, sequential_tf_records_writer, zero_pad_number, number_of_frames, frames_per_second)
             log_file.write('Extracted negative examples...\n')
             sequential_tf_records_writer.close()
             log_file.write('Closed writer...\n')

@@ -51,7 +51,7 @@ class TFImageResizer:
 IMG_RESIZER = TFImageResizer()
 
 
-def write_single_example(img, label, tf_records_writer):
+def write_single_example(img, label, geolocation, tf_records_writer):
     img_raw = img.tostring()
 
     image_example = tf.train.Example(
@@ -61,14 +61,15 @@ def write_single_example(img, label, tf_records_writer):
                 'width': _int64_feature(img.shape[1]),
                 'depth': _int64_feature(img.shape[2]),
                 'label': _int64_feature(label),
-                'image_raw': _bytes_feature(img_raw)
+                'image_raw': _bytes_feature(img_raw),
+                'geo' : _bytes_feature(np.array(geolocation, dtype=np.float32).tostring())
             }
         )
     )
     tf_records_writer.write(image_example.SerializeToString())
 
 
-def write_example_sequence(img_sequence, label, tf_records_writer):
+def write_example_sequence(img_sequence, label, geolocation, tf_records_writer):
     img_sequence_raw = img_sequence.tostring()
 
     sequence_example = tf.train.Example(
@@ -79,7 +80,8 @@ def write_example_sequence(img_sequence, label, tf_records_writer):
                 'depth': _int64_feature(img_sequence.shape[3]),
                 'label': _int64_feature(label),
                 'sequence_length': _int64_feature(img_sequence.shape[0]),
-                'images_raw': _bytes_feature(img_sequence_raw)
+                'images_raw': _bytes_feature(img_sequence_raw),
+                'geo' : _bytes_feature(np.array(geolocation, dtype=np.float32).tostring())
             }
         )
     )
@@ -132,16 +134,16 @@ def get_images_sequence_and_single_image(single_image_frame, video_name, images_
     return single_img, single_img_eq, images_sequence
 
 
-def write_sequenced_and_single_example(single_image_frame, video_name, label, images_before_single, images_after_single, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
+def write_sequenced_and_single_example(single_image_frame, geolocation, video_name, label, images_before_single, images_after_single, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
     single_img, single_img_eq, images_sequence = get_images_sequence_and_single_image(single_image_frame, video_name, images_before_single, images_after_single, zero_pad_number, treshold, number_of_frames)
 
     if single_img is None:
         return False
 
     images_sequence_resized = IMG_RESIZER.resize_images(images_sequence)
-    write_example_sequence(images_sequence_resized, label, sequential_tf_records_writer)
+    write_example_sequence(images_sequence_resized, label, geolocation, sequential_tf_records_writer)
 
-    write_single_example(single_img_eq, label, single_tf_records_writer)
+    write_single_example(single_img_eq, label, geolocation, single_tf_records_writer)
 
     return True
 
@@ -256,9 +258,9 @@ def get_positive_images_ranges(intersection_lines, frames_per_second, tree, poin
         end_time_frame = get_frame_closest_to(intersection_end, frames_per_second, tree, points, time_offset, times, speeds, max_distance_to_intersection, log_file)
         if start_time_frame is not None and end_time_frame is not None:
             if start_time_frame[0] < end_time_frame[0]:
-                positive_images_ranges.append((start_time_frame[1], end_time_frame[1]))
+                positive_images_ranges.append((start_time_frame[1], end_time_frame[1], intersection_start))
             else:
-                positive_images_ranges.append((end_time_frame[1], start_time_frame[1]))
+                positive_images_ranges.append((end_time_frame[1], start_time_frame[1], intersection_end))
     return sorted(positive_images_ranges)
 
 
@@ -306,12 +308,31 @@ def extract_positive_examples(video_name, positive_images_ranges, frames_resolut
                     if diff < treshold:
                         continue
                 prev_img = img
-                if write_sequenced_and_single_example(positive_image, video_name, 1, SEQUENCE_HALF_LENGTH * 2, 0, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
+                if write_sequenced_and_single_example(positive_image, positive_images_range[2:], video_name, 1, SEQUENCE_HALF_LENGTH * 2, 0, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
                     positive_examples += 1   
     return positive_examples
 
 
-def extract_negative_examples(video_name, number_of_positive_examples, speeds, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames, frames_per_second):
+def get_geolocation_for_frame(frame, frames_per_second, points, times, time_offset):
+    time_seconds = frame / frames_per_second
+    if rounded_time_seconds < time_offset:
+        return (0.0, 0.0)
+    else:
+        try:
+            time_diff = times[1] - times[0]
+            index = (time_seconds - time_offset) / time_diff
+            index_rounded = round(index)
+            if index_rounded < index:
+                lambd = index - index_rounded
+                geolocation = (points[index_rounded][0] * (1 - lambd) + points[index_rounded + 1][0] * lambd, points[index_rounded][1] * (1 - lambd) + points[index_rounded + 1][1] * lambd)
+            else:
+                lambd = index_rounded - index
+                geolocation = (points[index_rounded][0] * (1 - lambd) + points[index_rounded - 1][0] * lambd, points[index_rounded][1] * (1 - lambd) + points[index_rounded - 1][1] * lambd)
+        except:
+            return (0.0, 0.0)
+
+
+def extract_negative_examples(video_name, number_of_positive_examples, speeds, times, time_offset, points, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames, frames_per_second):
     treshold = SAME_TRESHOLD * frames_resolution
     average_speed = np.mean(speeds)
     min_frame_diff_to_positive = (MIN_DISTANCE_TO_POSITIVE / average_speed) * frames_per_second + 2 * SEQUENCE_HALF_LENGTH
@@ -323,7 +344,8 @@ def extract_negative_examples(video_name, number_of_positive_examples, speeds, p
         if any([abs(image - positive_images_range[0]) < min_frame_diff_to_positive or abs(image - positive_images_range[1]) < min_frame_diff_to_positive or (image >= positive_images_range[0] and image <= positive_images_range[1])
             for positive_images_range in positive_images_ranges]):
                 continue
-        if write_sequenced_and_single_example(image, video_name, 0, SEQUENCE_HALF_LENGTH * 2, 0, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
+        geolocation = get_geolocation_for_frame(image, frames_per_second, points, times, time_offset)
+        if write_sequenced_and_single_example(image, geolocation, video_name, 0, SEQUENCE_HALF_LENGTH * 2, 0, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
             selected_single_images.add(image)
 
 
@@ -366,7 +388,7 @@ def process_video(video_name, intersection_lines, max_distance_to_intersection):
             log_file.write('Created writers...\n')
             number_of_positive_examples = extract_positive_examples(video_name, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames)
             log_file.write('Extracted positive examples...\n')
-            extract_negative_examples(video_name, number_of_positive_examples, speeds, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames, frames_per_second)
+            extract_negative_examples(video_name, number_of_positive_examples, speeds, times, time_offset, points, positive_images_ranges, frames_resolution, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, number_of_frames, frames_per_second)
             log_file.write('Extracted negative examples...\n')
             sequential_tf_records_writer.close()
             single_tf_records_writer.close()
