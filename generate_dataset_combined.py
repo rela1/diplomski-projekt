@@ -20,7 +20,7 @@ MAX_DISTANCE_TO_INTERSECTION = 15 #meters
 IMAGE_CHANNELS = 3
 
 
-def extract_positive_examples(video_name, positive_images_ranges, frames_resolution, zero_pad_number, number_of_frames):
+def extract_positive_examples(video_name, positive_images_ranges, frames_resolution, zero_pad_number, number_of_frames, frames_per_second, points, times, time_offset):
     os.mkdir(os.path.join(video_name, 'positives'))
     positive_examples = 0
     sequence_number = 1
@@ -30,18 +30,19 @@ def extract_positive_examples(video_name, positive_images_ranges, frames_resolut
         prev_img = None
         sequence_dir = os.path.join(video_name, 'positives', str(sequence_number))
         os.mkdir(sequence_dir)
-        sequence_to_geo[sequence_dir] = str(positive_images_range[2:])
         image_number = 1
         image_zero_pad_number = len(str(positive_images_range[1] - positive_images_range[0] + 1))
         warmedup_sequence = False
         for positive_image in range(positive_images_range[0], positive_images_range[1] + 1):
+            geolocation = get_geolocation_for_frame(positive_image, frames_per_second, points, times, time_offset)
             if not warmedup_sequence:
                 single_img, single_img_eq, img_sequence_eq = get_images_sequence_and_single_image(positive_image, video_name, SEQUENCE_HALF_LENGTH * 2, 0, zero_pad_number, treshold, number_of_frames)
                 if single_img is None:
                     continue
                 for img_eq in img_sequence_eq:
-                    img_path = str(image_number).zfill(image_zero_pad_number) + '.png'
-                    imsave(os.path.join(sequence_dir, img_path), img_eq)
+                    img_path = os.path.join(sequence_dir, str(image_number).zfill(image_zero_pad_number) + '.png')
+                    sequence_to_geo[img_path] = str(geolocation)
+                    imsave(img_path, img_eq)
                     image_number += 1
                 prev_img = single_img
                 warmedup_sequence = True
@@ -108,7 +109,7 @@ def process_video(video_name, intersection_lines, max_distance_to_intersection):
 
             sequential_tf_records_writer = create_tf_records_writer(os.path.join(video_name, video_name + '_sequential.tfrecords'))
             log_file.write('Created negatives sequential writer...\n')
-            number_of_positive_examples = extract_positive_examples(video_name, positive_images_ranges, frames_resolution, zero_pad_number, number_of_frames)
+            number_of_positive_examples = extract_positive_examples(video_name, positive_images_ranges, frames_resolution, zero_pad_number, number_of_frames, frames_per_second, points, times, time_offset)
             log_file.write('Extracted positive examples...\n')
             extract_negative_examples(video_name, number_of_positive_examples, speeds, times, time_offset, points, positive_images_ranges, frames_resolution, sequential_tf_records_writer, zero_pad_number, number_of_frames, frames_per_second)
             log_file.write('Extracted negative examples...\n')
