@@ -70,14 +70,14 @@ def fine_tune_train_model(model, dataset, learning_rate, num_epochs, model_path)
   saver = tf.train.Saver(get_saver_variables())
   saver.restore(sess, model_path)
 
-  train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op, saver, best_valid_evaluate=True, decay_learning_rate=False)
+  train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op, saver, best_valid_evaluate=True)
 
 
 def train_model(model, dataset, learning_rate, num_epochs, model_path, sess, global_step, train_op, saver, best_valid_evaluate=False, decay_learning_rate=True):
 
   num_batches = int(math.ceil(dataset.num_train_examples / dataset.batch_size))
   if decay_learning_rate:
-    learning_rate = tf.train.exponential_decay(learning_rate, global_step, num_batches, 0.96, staircase=True)
+    learning_rate = tf.train.exponential_decay(learning_rate, global_step, num_batches, 0.96)
   print('\nNumber of steps per epoch: {}'.format(num_batches))
 
   writer = tf.summary.FileWriter(os.path.join(model_path, 'tensorboard'), sess.graph)
