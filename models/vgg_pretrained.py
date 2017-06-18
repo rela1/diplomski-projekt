@@ -584,7 +584,7 @@ class SingleImageModel:
       net = layers.max_pool2d(net, 2, 2, scope='pool4')
       net = layers.convolution2d(net, 512, scope='conv5_1')
       net = layers.convolution2d(net, 512, scope='conv5_2')
-      net = layers.convolution2d(net, 512, scope='conv5_3', normalizer_fn=layers.batch_norm, normalizer_params=bn_params)
+      net = layers.convolution2d(net, 512, scope='conv5_3')
       net = layers.max_pool2d(net, 2, 2, scope='pool5')
 
     if is_training:
