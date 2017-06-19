@@ -36,15 +36,6 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
   config.gpu_options.allow_growth = True
   sess = tf.Session(config = config)
 
-  global_step = tf.get_variable('global_step', [], dtype=tf.int64, initializer=tf.constant_initializer(0), trainable=False)
-
-  opt = tf.train.AdamOptimizer(learning_rate)
-  grads = opt.compute_gradients(fc_model.train_loss)
-  apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
-
-  with tf.control_dependencies([apply_gradient_op]):
-    train_op = tf.no_op(name='train_op')
-
   init_op, init_feed = fc_model.vgg_init
 
   sess.run(tf.global_variables_initializer())
@@ -65,6 +56,8 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
   best_valid_accuracy = 0.0
 
   positive_batch_labels = np.ones((dataset.batch_size, ), dtype=np.int32)
+  negative_batch_labels = np.zeros((dataset.batch_size, ), dtype=np.int32)
+  negative_batch_masks = np.ones((batch_size, ), dtype=np.float32)
   batch_handle = 0
   for i in range(num_epochs):
 
@@ -88,7 +81,14 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
         convolutional_model.spatials_train.backward(sess, cumulated_representation_gradient[0], t % sequence_length - sequence_length + 1)
 
       for i in range(num_positive_examples):
-        _, fc_loss = sess.run([train_op, fc_model.train_loss])
+        images = sess.run(dataset.train_images)
+        for t in range(sequence_length - 1):
+          representation_t = convolutional_model.spatials_train.forward(sess, t, images[:, t])
+          logits = convolutional_model.temporal_train.forward(sess, representation_t, negative_batch_labels, negative_batch_masks)
+        representation_t = convolutional_model.spatials_train.forward(sess, t, images[:, sequence_length - 1])
+        temporal_data = convolutional_model.temporal_train.forward_backward(sess, representation_t, negative_batch_labels, negative_batch_masks)
+        loss, cumulated_representation_gradient = temporal_data[0], temporal_data[2]
+        convolutional_model.spatials_train.backward(sess, cumulated_representation_gradient[0], 0)
       
       duration = time.time() - start_time
 
@@ -117,13 +117,14 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
   sess.close()
 
 
-def evaluate(dataset_name, sess, sequence_length, fc_model_logits, fc_model_loss, convolutional_model, dataset, num_negative_examples, positives_sequences_dirs, mean_channels):
+def evaluate(dataset_name, sess, sequence_length, convolutional_model, dataset, num_negative_examples, eval_images, positives_sequences_dirs, mean_channels):
   print("\nRunning evaluation: ", dataset_name)
   y_true = []
   y_pred = []
   y_prob = []
   positive_batch_labels = np.ones((dataset.batch_size, ), dtype=np.int32)
   negative_batch_labels = np.zeros((dataset.batch_size, ), dtype=np.int32)
+  negative_batch_masks = np.ones((batch_size, ), dtype=np.float32)
   batch_handle = 0
   step = 0
   print('Positive examples evaluation...')
@@ -163,9 +164,14 @@ def evaluate(dataset_name, sess, sequence_length, fc_model_logits, fc_model_loss
   print('Negative examples evaluation...')
   for i in range(num_batches):
     start_time = time.time()
-    logits_val, loss_val = sess.run([fc_model_logits, fc_model_loss])
-    probs_val = softmax(logits_val)
-    preds_val = np.argmax(logits_val, axis=1)
+    images = sess.run(eval_images)
+    for t in range(sequence_length - 1):
+      representation_t = convolutional_model.spatials_train.forward(sess, t, images[:, t])
+      logits = convolutional_model.temporal_train.forward(sess, representation_t, negative_batch_labels, negative_batch_masks)
+    representation_t = convolutional_model.spatials_train.forward(sess, t, images[:, sequence_length - 1])
+    logits = convolutional_model.temporal_eval.forward(sess, representation_t, negative_batch_labels, negative_batch_masks)
+    probs_val = softmax(logits)
+    preds_val = np.argmax(logits, axis=1)
     y_pred.extend(preds_val)
     y_true.extend(negative_batch_labels)
     y_prob.extend(probs_val)
