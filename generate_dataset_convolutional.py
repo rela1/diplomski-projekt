@@ -70,7 +70,7 @@ def extract_positive_examples(video_name, positive_images_ranges, frames_resolut
     return positive_examples
 
 
-def extract_negative_examples(video_name, number_of_positive_examples, speeds, times, time_offset, points, positive_images_ranges, frames_resolution, sequential_tf_records_writer, zero_pad_number, number_of_frames, frames_per_second):
+def extract_negative_examples(video_name, number_of_positive_examples, speeds, times, time_offset, points, positive_images_ranges, frames_resolution, zero_pad_number, number_of_frames, frames_per_second):
     os.mkdir(os.path.join(video_name, 'negatives'))
     negative_examples = 0
     sequence_number = 1
@@ -128,14 +128,10 @@ def process_video(video_name, intersection_lines, max_distance_to_intersection):
             frames_dir, number_of_frames, zero_pad_number = extract_video_frames(video_name, video_full_path, video_duration_seconds, frames_per_second, IMAGE_WIDTH, IMAGE_HEIGHT)
             frames_resolution = get_frames_resolution(frames_dir, zero_pad_number)
 
-            sequential_tf_records_writer = create_tf_records_writer(os.path.join(video_name, video_name + '_sequential.tfrecords'))
-            log_file.write('Created negatives sequential writer...\n')
             number_of_positive_examples = extract_positive_examples(video_name, positive_images_ranges, frames_resolution, zero_pad_number, number_of_frames, frames_per_second, points, times, time_offset)
             log_file.write('Extracted positive examples...\n')
-            extract_negative_examples(video_name, number_of_positive_examples, speeds, times, time_offset, points, positive_images_ranges, frames_resolution, sequential_tf_records_writer, zero_pad_number, number_of_frames, frames_per_second)
+            extract_negative_examples(video_name, number_of_positive_examples, speeds, times, time_offset, points, positive_images_ranges, frames_resolution, zero_pad_number, number_of_frames, frames_per_second)
             log_file.write('Extracted negative examples...\n')
-            sequential_tf_records_writer.close()
-            log_file.write('Closed writer...\n')
 
             log_file.write('Number of positive examples: {}, number of negative examples: {}\n'.format(number_of_positive_examples, number_of_positive_examples))
 
