@@ -8,7 +8,7 @@ from skimage.exposure import equalize_adapthist
 from matplotlib.image import imread, imsave
 import numpy as np
 
-from generate_dataset import write_example_sequence, get_images_sequence_and_single_image, load_intersection_lines, get_not_processed_video_names, download_video_geoinformation, index_video_geoinformation, download_video, get_video_info, get_positive_images_ranges, extract_video_frames, get_frames_resolution, create_tf_records_writer, write_processed_video_names, clear_redundant_data, get_geolocation_for_frame, get_geolocation_for_fram
+from generate_dataset import write_example_sequence, get_images_sequence_and_single_image, load_intersection_lines, get_not_processed_video_names, download_video_geoinformation, index_video_geoinformation, download_video, get_video_info, get_positive_images_ranges, extract_video_frames, get_frames_resolution, create_tf_records_writer, write_processed_video_names, clear_redundant_data, get_geolocation_for_frame
 
 SEQUENCE_HALF_LENGTH = 12
 MIN_DISTANCE_TO_POSITIVE = 200 #meters
