@@ -87,22 +87,21 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
           logits = convolutional_model.temporal_train.forward(sess, representation_t, negative_batch_labels, negative_batch_masks)
         representation_t = convolutional_model.spatials_train.forward(sess, t, images[:, sequence_length - 1])
         temporal_data = convolutional_model.temporal_train.forward_backward(sess, representation_t, negative_batch_labels, negative_batch_masks)
-        loss, cumulated_representation_gradient = temporal_data[0], temporal_data[2]
+        loss_n, cumulated_representation_gradient = temporal_data[0], temporal_data[2]
         convolutional_model.spatials_train.backward(sess, cumulated_representation_gradient[0], 0)
       
       duration = time.time() - start_time
 
       assert not np.isnan(loss), 'Model diverged with loss = NaN'    
 
-      print('\tEpoch: {}/{}, step loss: {}, {} examples/sec, learning rate: {}'.format(i+1, num_epochs, (loss + fc_loss) / 2, (dataset.batch_size * num_positive_examples * 2) / duration, learning_rate))
+      print('\tEpoch: {}/{}, step loss: {}, {} examples/sec, learning rate: {}'.format(i+1, num_epochs, (loss + loss_n) / 2, (dataset.batch_size * num_positive_examples * 2) / duration, learning_rate))
 
       if new_epoch:
         break
 
     epoch_duration = time.time() - epoch_start_time
     print('\tDone with epoch {}/{}, time needed: {}'.format(i + 1, num_epochs, epoch_duration))
-
-    metrics, y_true, y_pred, y_prob = evaluate('Validation', sess, sequence_length, fc_model.valid_logits, fc_model.valid_loss, convolutional_model, dataset, dataset.num_valid_examples / 2, dataset.positive_sequences_dirs_valid, mean_channels)
+    metrics, y_true, y_pred, y_prob = evaluate('Validation', sess, sequence_length, convolutional_model, dataset, dataset.num_valid_examples / 2, dataset.valid_images, dataset.positive_sequences_dirs_valid, mean_channels)
     if metrics['accuracy_score'] > best_valid_accuracy:
       best_valid_accuracy = metrics['accuracy_score']
       print('\tNew best validation accuracy', best_valid_accuracy, '\n')
