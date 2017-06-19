@@ -39,12 +39,11 @@ def extract_positive_examples(video_name, positive_images_ranges, frames_resolut
                 single_img, single_img_eq, img_sequence_eq = get_images_sequence_and_single_image(positive_image, video_name, SEQUENCE_HALF_LENGTH * 2, 0, zero_pad_number, treshold, number_of_frames)
                 if single_img is None:
                     continue
+                img_path = None
                 for img_eq in img_sequence_eq:
                     img_path = os.path.join(sequence_dir, str(image_number).zfill(image_zero_pad_number) + '.png')
                     imsave(img_path, img_eq)
                     image_number += 1
-                img_path = os.path.join(sequence_dir, str(image_number).zfill(image_zero_pad_number) + '.png')
-                imsave(img_path, single_img_eq)
                 sequence_to_geo[img_path] = str(geolocation)
                 prev_img = single_img
                 warmedup_sequence = True
@@ -93,12 +92,11 @@ def extract_negative_examples(video_name, number_of_positive_examples, speeds, t
             os.mkdir(sequence_dir)
             geolocation = get_geolocation_for_frame(image, frames_per_second, points, times, time_offset)
             image_number = 1
+            img_path = None
             for img_eq in images_sequence_eq:
                 img_path = os.path.join(sequence_dir, str(image_number).zfill(image_zero_pad_number) + '.png')
                 imsave(img_path, img_eq)
                 image_number += 1
-            img_path = os.path.join(sequence_dir, str(image_number).zfill(image_zero_pad_number) + '.png')
-            imsave(img_path, single_img_eq)
             sequence_to_geo[img_path] = str(geolocation)
             selected_single_images.add(image)
             sequence_number += 1
