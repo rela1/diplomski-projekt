@@ -329,7 +329,7 @@ def extract_positive_examples(video_name, positive_images_ranges, frames_resolut
                         continue
                 prev_img = img
                 geolocation = get_geolocation_for_frame(positive_image, frames_per_second, points, times, time_offset)
-                if write_sequenced_and_single_example(positive_image, geolocation, video_name, 1, SEQUENCE_HALF_LENGTH * 2, 0, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
+                if write_sequenced_and_single_example(positive_image, geolocation, video_name, 1, 0, SEQUENCE_HALF_LENGTH * 2, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
                     positive_examples += 1
     return positive_examples
 
@@ -347,7 +347,7 @@ def extract_negative_examples(video_name, number_of_positive_examples, speeds, t
             for positive_images_range in positive_images_ranges]):
                 continue
         geolocation = get_geolocation_for_frame(image, frames_per_second, points, times, time_offset)
-        if write_sequenced_and_single_example(image, geolocation, video_name, 0, SEQUENCE_HALF_LENGTH * 2, 0, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
+        if write_sequenced_and_single_example(image, geolocation, video_name, 0, 0, SEQUENCE_HALF_LENGTH * 2, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
             selected_single_images.add(image)
 
 
