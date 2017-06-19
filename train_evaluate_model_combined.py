@@ -57,7 +57,7 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
 
   positive_batch_labels = np.ones((dataset.batch_size, ), dtype=np.int32)
   negative_batch_labels = np.zeros((dataset.batch_size, ), dtype=np.int32)
-  negative_batch_masks = np.ones((batch_size, ), dtype=np.float32)
+  negative_batch_masks = np.ones((dataset.batch_size, ), dtype=np.float32)
   batch_handle = 0
   for i in range(num_epochs):
 
@@ -124,7 +124,7 @@ def evaluate(dataset_name, sess, sequence_length, convolutional_model, dataset, 
   y_prob = []
   positive_batch_labels = np.ones((dataset.batch_size, ), dtype=np.int32)
   negative_batch_labels = np.zeros((dataset.batch_size, ), dtype=np.int32)
-  negative_batch_masks = np.ones((batch_size, ), dtype=np.float32)
+  negative_batch_masks = np.ones((dataset.batch_size, ), dtype=np.float32)
   batch_handle = 0
   step = 0
   print('Positive examples evaluation...')
