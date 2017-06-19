@@ -5,7 +5,7 @@ from models.vgg_pretrained import SequentialImageLSTMModel
 from train_evaluate_model import freezed_pretrained_train_model
 
 
-WEIGHT_DECAY = 5e-3
+WEIGHT_DECAY = 5e-4
 LEARNING_RATE = 5e-4
 LSTM_STATE_SIZES = [128, 64, 32]
 EPOCHS = 10

@@ -91,7 +91,6 @@ def extract_negative_examples(video_name, number_of_positive_examples, speeds, t
         if single_img is not None:
             sequence_dir = os.path.join(video_name, 'negatives', str(sequence_number))
             geolocation = get_geolocation_for_frame(image, frames_per_second, points, times, time_offset)
-            sequence_to_geo[img_path] = str(geolocation)
             image_number = 1
             for img_eq in images_sequence_eq:
                 img_path = os.path.join(sequence_dir, str(image_number).zfill(image_zero_pad_number) + '.png')
@@ -99,6 +98,7 @@ def extract_negative_examples(video_name, number_of_positive_examples, speeds, t
                 image_number += 1
             img_path = os.path.join(sequence_dir, str(image_number).zfill(image_zero_pad_number) + '.png')
             imsave(img_path, single_img_eq)
+            sequence_to_geo[img_path] = str(geolocation)
             selected_single_images.add(image)
             sequence_number += 1
     with open(os.path.join(video_name, 'geo_negatives.txt'), 'w') as geo_file:

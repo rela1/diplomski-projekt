@@ -5,7 +5,7 @@ from models.vgg_pretrained import SequentialImageTemporalFCModelOnline, Sequenti
 from train_evaluate_model_combined import train_model
 
 
-WEIGHT_DECAY = 5e-3
+WEIGHT_DECAY = 5e-4
 LEARNING_RATE = 5e-4
 SPATIAL_FULLY_CONNECTED = 64
 TEMPORAL_FULLY_CONNECTED = [64]

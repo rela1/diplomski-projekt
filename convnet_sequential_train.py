@@ -5,7 +5,7 @@ from models.vgg_pretrained import SequentialImagePoolingModel
 from train_evaluate_model import train_model
 
 
-WEIGHT_DECAY = 1e-3
+WEIGHT_DECAY = 5e-4
 LEARNING_RATE = 1e-4
 FULLY_CONNECTED = [200]
 EPOCHS = 50

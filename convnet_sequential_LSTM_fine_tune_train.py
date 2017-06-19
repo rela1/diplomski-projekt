@@ -5,7 +5,7 @@ from models.vgg_pretrained import SequentialImageLSTMModel
 from train_evaluate_model import fine_tune_train_model
 
 
-WEIGHT_DECAY = 5e-3
+WEIGHT_DECAY = 5e-4
 LEARNING_RATE = 1e-5
 LSTM_STATE_SIZES = [128, 64, 32]
 EPOCHS = 40
