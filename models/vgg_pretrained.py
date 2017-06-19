@@ -353,7 +353,7 @@ class SequentialImageTemporalFCModel:
         net = layers.max_pool2d(net, 2, 2, scope='pool4')
         net = layers.convolution2d(net, 512, scope='conv5_1', reuse=reuse)
         net = layers.convolution2d(net, 512, scope='conv5_2', reuse=reuse)
-        net = layers.convolution2d(net, 512, scope='conv5_3', reuse=reuse, normalizer_fn=layers.batch_norm, normalizer_params=bn_params)
+        net = layers.convolution2d(net, 512, scope='conv5_3', reuse=reuse)
         net = layers.max_pool2d(net, 2, 2, scope='pool5')
 
       net_shape = net.get_shape()
@@ -470,13 +470,6 @@ class SequentialImagePoolingModel:
         net = layers.convolution2d(net, 512, scope='conv5_2', reuse=reuse)
         net = layers.convolution2d(net, 512, scope='conv5_3', reuse=reuse)
         net = layers.max_pool2d(net, 2, 2, scope='pool5')
-
-        """
-        net = layers.batch_norm(net, decay=bn_params['decay'], center=bn_params['center'], 
-                scale=bn_params['scale'], epsilon=bn_params['epsilon'], 
-                updates_collections=bn_params['updates_collections'], is_training=bn_params['is_training'],
-                scope='batch_norm', reuse=reuse)
-        """
 
       if concated is None:
         concated = tf.expand_dims(net, axis=1)

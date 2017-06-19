@@ -41,9 +41,11 @@ def extract_positive_examples(video_name, positive_images_ranges, frames_resolut
                     continue
                 for img_eq in img_sequence_eq:
                     img_path = os.path.join(sequence_dir, str(image_number).zfill(image_zero_pad_number) + '.png')
-                    sequence_to_geo[img_path] = str(geolocation)
                     imsave(img_path, img_eq)
                     image_number += 1
+                img_path = os.path.join(sequence_dir, str(image_number).zfill(image_zero_pad_number) + '.png')
+                imsave(img_path, single_img_eq)
+                sequence_to_geo[img_path] = str(geolocation)
                 prev_img = single_img
                 warmedup_sequence = True
                 positive_examples += 1
@@ -55,22 +57,29 @@ def extract_positive_examples(video_name, positive_images_ranges, frames_resolut
                         if diff < treshold:
                             continue
                     img_eq = equalize_adapthist(img, clip_limit=0.03)
-                    imsave(os.path.join(sequence_dir, str(image_number).zfill(image_zero_pad_number) + '.png'), img_eq)
+                    img_path = os.path.join(sequence_dir, str(image_number).zfill(image_zero_pad_number) + '.png')
+                    imsave(img_path, img_eq)
+                    sequence_to_geo[img_path] = str(geolocation)
                     prev_img = img
                     positive_examples += 1
                     image_number += 1
         sequence_number += 1
-    with open(os.path.join(video_name, 'geo.txt'), 'w') as geo_file:
+    with open(os.path.join(video_name, 'geo_positives.txt'), 'w') as geo_file:
         for sequence in sequence_to_geo:
             geo_file.write('{} -> {}\n'.format(sequence, sequence_to_geo[sequence]))
     return positive_examples
 
 
 def extract_negative_examples(video_name, number_of_positive_examples, speeds, times, time_offset, points, positive_images_ranges, frames_resolution, sequential_tf_records_writer, zero_pad_number, number_of_frames, frames_per_second):
+    os.mkdir(os.path.join(video_name, 'negatives'))
+    negative_examples = 0
+    sequence_number = 1
     treshold = SAME_TRESHOLD * frames_resolution
     average_speed = np.mean(speeds)
     min_frame_diff_to_positive = (MIN_DISTANCE_TO_POSITIVE / average_speed) * frames_per_second + 2 * SEQUENCE_HALF_LENGTH
     selected_single_images = set()
+    sequence_to_geo = {}
+    image_zero_pad_number = len(str(SEQUENCE_HALF_LENGTH * 2 + 1))
     while len(selected_single_images) < number_of_positive_examples:
         image = random.randint(1, number_of_frames)
         if image in selected_single_images:
@@ -79,10 +88,22 @@ def extract_negative_examples(video_name, number_of_positive_examples, speeds, t
             for positive_images_range in positive_images_ranges]):
                 continue
         single_img, single_img_eq, images_sequence_eq = get_images_sequence_and_single_image(image, video_name, SEQUENCE_HALF_LENGTH * 2, 0, zero_pad_number, treshold, number_of_frames)
-        geolocation = get_geolocation_for_frame(image, frames_per_second, points, times, time_offset)
         if single_img is not None:
-            write_example_sequence(images_sequence_eq, 0, geolocation, sequential_tf_records_writer)
+            sequence_dir = os.path.join(video_name, 'negatives', str(sequence_number))
+            geolocation = get_geolocation_for_frame(image, frames_per_second, points, times, time_offset)
+            sequence_to_geo[img_path] = str(geolocation)
+            image_number = 1
+            for img_eq in images_sequence_eq:
+                img_path = os.path.join(sequence_dir, str(image_number).zfill(image_zero_pad_number) + '.png')
+                imsave(img_path, img_eq)
+                image_number += 1
+            img_path = os.path.join(sequence_dir, str(image_number).zfill(image_zero_pad_number) + '.png')
+            imsave(img_path, single_img_eq)
             selected_single_images.add(image)
+            sequence_number += 1
+    with open(os.path.join(video_name, 'geo_negatives.txt'), 'w') as geo_file:
+        for sequence in sequence_to_geo:
+            geo_file.write('{} -> {}\n'.format(sequence, sequence_to_geo[sequence]))
 
 
 def process_video(video_name, intersection_lines, max_distance_to_intersection):
