@@ -90,6 +90,7 @@ def extract_negative_examples(video_name, number_of_positive_examples, speeds, t
         single_img, single_img_eq, images_sequence_eq = get_images_sequence_and_single_image(image, video_name, SEQUENCE_HALF_LENGTH * 2, 0, zero_pad_number, treshold, number_of_frames)
         if single_img is not None:
             sequence_dir = os.path.join(video_name, 'negatives', str(sequence_number))
+            os.mkdir(sequence_dir)
             geolocation = get_geolocation_for_frame(image, frames_per_second, points, times, time_offset)
             image_number = 1
             for img_eq in images_sequence_eq:
