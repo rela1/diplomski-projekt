@@ -9,7 +9,7 @@ WEIGHT_DECAY = 5e-4
 LEARNING_RATE = 1e-4
 FULLY_CONNECTED = [200]
 EPOCHS = 40
-INPUT_SHAPE = [25, 40, 100, 3]
+INPUT_SHAPE = [25, 140, 350, 3]
 
 
 if __name__ == '__main__':
