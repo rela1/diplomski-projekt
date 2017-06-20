@@ -153,7 +153,7 @@ if __name__ == '__main__':
 
     not_processed_video_names, processed_video_names = get_not_processed_video_names(video_urls_path, downloaded_video_names_path)
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=12) as executor:
         future_results = []
         for i in range(video_count):
             future_result = executor.submit(process_video, not_processed_video_names[i], intersection_lines, MAX_DISTANCE_TO_INTERSECTION)
