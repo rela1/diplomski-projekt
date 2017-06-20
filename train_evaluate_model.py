@@ -23,7 +23,7 @@ def get_saver_variables():
   return filtered_vars_map
 
 
- def get_session():
+def get_session():
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
     sess = tf.Session(config=config)
