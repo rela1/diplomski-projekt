@@ -24,10 +24,10 @@ def get_saver_variables():
 
 
  def get_session():
- 	config = tf.ConfigProto()
-	config.gpu_options.allow_growth = True
-	sess = tf.Session(config=config)
-	return sess
+    config = tf.ConfigProto()
+    config.gpu_options.allow_growth = True
+    sess = tf.Session(config=config)
+    return sess
 
 
 def freezed_pretrained_train_model(model, dataset, learning_rate, num_epochs, model_path):
