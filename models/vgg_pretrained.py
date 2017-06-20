@@ -85,6 +85,8 @@ class SequentialImageLSTMModel:
       else:
         concated = tf.concat([concated, tf.expand_dims(net, axis=0)], axis=0)
 
+      reuse = True
+
     output_weights = tf.get_variable(
       'lstm_output_weights', 
       shape=[lstm_state_sizes[-1], 2], 
