@@ -23,9 +23,16 @@ def get_saver_variables():
   return filtered_vars_map
 
 
+ def get_session():
+ 	config = tf.ConfigProto()
+	config.gpu_options.allow_growth = True
+	sess = tf.Session(config=config)
+	return sess
+
+
 def freezed_pretrained_train_model(model, dataset, learning_rate, num_epochs, model_path):
 
-  sess = tf.Session()
+  sess = get_session()
 
   trainable_variables = tf.trainable_variables()
   pretrained_variables = set(model.pretrained_vars)
@@ -53,7 +60,7 @@ def freezed_pretrained_train_model(model, dataset, learning_rate, num_epochs, mo
 
 def fine_tune_train_model(model, dataset, learning_rate, num_epochs, model_path):
 
-  sess = tf.Session()
+  sess = get_session()
 
   global_step = tf.get_variable('global_step', [], dtype=tf.int64, initializer=tf.constant_initializer(0), trainable=False)
 
@@ -137,7 +144,7 @@ def train_model(model, dataset, learning_rate, num_epochs, model_path, sess, glo
 
 def evaluate_model(model, dataset, model_path):
 
-  sess = tf.Session()
+  sess = get_session()
 
   sess.run(tf.global_variables_initializer())
   sess.run(tf.local_variables_initializer())
@@ -161,7 +168,7 @@ def evaluate_model(model, dataset, model_path):
 
 def plot_wrong_classifications(model, dataset, model_path, save_path=None):
 
-  sess = tf.Session()
+  sess = get_session()
 
   sess.run(tf.global_variables_initializer())
   sess.run(tf.local_variables_initializer())
