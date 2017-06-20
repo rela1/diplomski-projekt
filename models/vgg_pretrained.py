@@ -471,6 +471,10 @@ class SequentialImagePoolingModel:
         net = layers.convolution2d(net, 512, scope='conv5_3', reuse=reuse)
         net = layers.max_pool2d(net, 2, 2, scope='pool5')
 
+      net_shape = net.get_shape()
+      batch_size = tf.shape(inputs)[0]
+      net = tf.reshape(net, [batch_size, int(net_shape[1]) * int(net_shape[2]) * int(net_shape[3])])
+
       if concated is None:
         concated = tf.expand_dims(net, axis=1)
       else:
@@ -487,7 +491,7 @@ class SequentialImagePoolingModel:
     net_shape = net.get_shape()
     batch_size = tf.shape(inputs)[0]
 
-    net = tf.reshape(net, [batch_size, int(net_shape[1]), int(net_shape[2]) * int(net_shape[3]), int(net_shape[4])])
+    net = tf.reshape(net, [batch_size, int(net_shape[1]), int(net_shape[2]), 1])
     net = layers.max_pool2d(net, kernel_size=2, stride=2, scope='pool5')
 
     net_shape = net.get_shape()
