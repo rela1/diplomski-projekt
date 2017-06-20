@@ -445,6 +445,8 @@ class SequentialImagePoolingModel:
     vertical_slice_size = int(round(int(inputs_shape[2]) / 3))
     inputs = tf.slice(inputs, begin=[0, 0, vertical_slice_size, 0, 0], size=[-1, -1, -1, horizontal_slice_size * 2, -1])
 
+    concated = None
+
     reuse = None
     for sequence_image in range(int(inputs_shape[1])):
       with tf.contrib.framework.arg_scope([layers.convolution2d],
