@@ -1,0 +1,121 @@
+\begin{thebibliography}{18}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[url({\natexlab{a}})]{url:ftts_irap}
+\url{https://he.ftts-irap.org}, {\natexlab{a}}.
+\newblock [pristupano 14. lipnja 2017.].
+
+\bibitem[url({\natexlab{b}})]{url:google_maps}
+\url{https://www.google.hr/maps?source=tldsi&hl=en}, {\natexlab{b}}.
+\newblock [pristupano 16. lipnja 2017.
+
+\bibitem[man(2014)]{man:ftts_irap_coding_manual}
+{iRAP Star Rating and Investment Plan Coding Manual}.
+\newblock
+  \url{http://downloads.irap.org/docs/RAP-SR-2-2_Star_Rating_coding_manual.pdf},
+  2014.
+\newblock [pristupano 14. lipnja 2017.].
+
+\bibitem[man(2015)]{man:ftts_irap_attributes}
+{iRAP Methodology Fact Sheet \#3 Road attributes}.
+\newblock
+  \url{http://www.irap.org/en/about-irap-3/methodology?download=132:irap-methodology-fact-sheet-3-road-attributes},
+  2015.
+\newblock [pristupano 14. lipnja 2017.].
+
+\bibitem[Deng et~al.(2009)Deng, Dong, Socher, Li, Li, i
+  Fei-Fei]{dataset:imagenet}
+J.~Deng, W.~Dong, R.~Socher, L.-J. Li, K.~Li, i L.~Fei-Fei.
+\newblock {ImageNet: A Large-Scale Hierarchical Image Database}.
+\newblock U \emph{CVPR09}, 2009.
+
+\bibitem[El~Khiyari i Wechsler(2016)]{article:vgg_architecture}
+H.~El~Khiyari i H.~Wechsler.
+\newblock {Face Recognition across Time Lapse Using Convolutional Neural
+  Networks}.
+\newblock \emph{Journal of Information Security}, 7\penalty0 (3):\penalty0
+  141--151, 2016.
+
+\bibitem[Goodfellow et~al.(2016)Goodfellow, Bengio, i
+  Courville]{book:deeplearningbook}
+Ian Goodfellow, Yoshua Bengio, i Aaron Courville.
+\newblock \emph{Deep Learning}.
+\newblock MIT Press, 2016.
+\newblock \url{http://www.deeplearningbook.org}.
+
+\bibitem[He et~al.(2015)He, Zhang, Ren, i
+  Sun]{article:delving_deep_into_rectifiers}
+Kaiming He, Xiangyu Zhang, Shaoqing Ren, i Jian Sun.
+\newblock Delving deep into rectifiers: Surpassing human-level performance on
+  imagenet classification.
+\newblock \emph{CoRR}, abs/1502.01852, 2015.
+\newblock URL \url{http://arxiv.org/abs/1502.01852}.
+
+\bibitem[Ioffe i Szegedy()]{article:bn_paper}
+Sergey Ioffe i Christian Szegedy.
+\newblock {Batch Normalization: Accelerating Deep Network Training by Reducing
+  Internal Covariate Shift}.
+
+\bibitem[Kingma i Ba(2014)]{article:adam}
+Diederik~P. Kingma i Jimmy Ba.
+\newblock Adam: {A} method for stochastic optimization.
+\newblock \emph{CoRR}, abs/1412.6980, 2014.
+\newblock URL \url{http://arxiv.org/abs/1412.6980}.
+
+\bibitem[Ng et~al.(2015)Ng, Hausknecht, Vijayanarasimhan, Vinyals, Monga, i
+  Toderici]{article:sequential_architectures}
+Joe~Yue{-}Hei Ng, Matthew~J. Hausknecht, Sudheendra Vijayanarasimhan, Oriol
+  Vinyals, Rajat Monga, i George Toderici.
+\newblock Beyond short snippets: Deep networks for video classification.
+\newblock \emph{CoRR}, abs/1503.08909, 2015.
+\newblock URL \url{http://arxiv.org/abs/1503.08909}.
+
+\bibitem[Relić(2016)]{seminar:rela}
+Ivan Relić.
+\newblock {Klasifikacija slika dubokim konvolucijskim mrežama}, 2016.
+\newblock seminarski rad.
+
+\bibitem[Russakovsky et~al.(2015)Russakovsky, Deng, Su, Krause, Satheesh, Ma,
+  Huang, Karpathy, Khosla, Bernstein, Berg, i Fei-Fei]{article:ilsvrc2015}
+Olga Russakovsky, Jia Deng, Hao Su, Jonathan Krause, Sanjeev Satheesh, Sean Ma,
+  Zhiheng Huang, Andrej Karpathy, Aditya Khosla, Michael Bernstein,
+  Alexander~C. Berg, i Li~Fei-Fei.
+\newblock {ImageNet Large Scale Visual Recognition Challenge}.
+\newblock \emph{International Journal of Computer Vision (IJCV)}, 115\penalty0
+  (3):\penalty0 211--252, 2015.
+\newblock \doi{10.1007/s11263-015-0816-y}.
+
+\bibitem[Scherer et~al.(2010)Scherer, Muller, i
+  Behnke]{article:maxpooling_article}
+Dominik Scherer, Andreas Muller, i Sven Behnke.
+\newblock {Evaluation of Pooling Operations in Convolutional Architectures for
+  Object Recognition}.
+\newblock 2010.
+
+\bibitem[Simonyan i Zisserman(2014)]{article:vgg}
+Karen Simonyan i Andrew Zisserman.
+\newblock {Very Deep Convolutional Networks for Large-Scale Image Recognition}.
+\newblock \emph{CoRR}, abs/1409.1556, 2014.
+\newblock URL \url{http://arxiv.org/abs/1409.1556}.
+
+\bibitem[Vukotić(2014)]{masters:vukotic_ms}
+Vedran Vukotić.
+\newblock {Raspoznavanje objekata dubokim neuronskim mrežama}, 2014.
+
+\bibitem[Zaremba et~al.(2014)Zaremba, Sutskever, i Vinyals]{article:lstm}
+Wojciech Zaremba, Ilya Sutskever, i Oriol Vinyals.
+\newblock Recurrent neural network regularization.
+\newblock \emph{CoRR}, abs/1409.2329, 2014.
+\newblock URL \url{http://arxiv.org/abs/1409.2329}.
+
+\bibitem[Šegvić(2016)]{pdf:duboko_0}
+Siniša Šegvić.
+\newblock {Uvodno predavanje}.
+\newblock \url{http://www.zemris.fer.hr/~ssegvic/du/du0intro.pdf}, 2016.
+\newblock [pristupano 17. lipnja 2017.].
+
+\end{thebibliography}

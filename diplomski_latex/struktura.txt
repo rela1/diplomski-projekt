@@ -1,0 +1,22 @@
+Skup podataka (5 str?)
+-iRAP - o organizaciji, djelovanje
+-ljudsko označavanje (problemi?)
+-želja za automatiziranjem (benefiti?)
+-koncentracija samo na jedan atribut - pripajanje
+-ručno označavanje - nije u skladu s iRAP konvencijom
+-nužno učenje nad videom, odnosno sekvencama slika zbog nedovoljno informacija kod konzistentnog označavanja (pokazati slike)
+-opisati metodu dobivanja podataka iz georeferenci, irap videa i lokacija pripajanja
+-pokazati pozitive, negative
+-istaknuti da je skup podataka "prljav" zbog faktora ljudske pogreške
+
+
+Metode i algoritmi (10 str?)
+-duboko učenje (gradijentni spust - poboljšane varijante)
+-duboki modeli u računalnom vidu 
+	-slojevi (FC, konvolucijski, max pooling, batchnormalization)
+	-regularizacija (L2, dropout)
+	-VGG pretrained
+-arhitekture za učenje na sekvencama slika (LSTM, pooling, temporal FC)
+
+Eksperimenti i rezultati
+-

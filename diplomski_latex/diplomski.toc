@@ -1,0 +1,31 @@
+\select@language {croatian}
+\contentsline {chapter}{\numberline {1}Uvod}{1}
+\contentsline {chapter}{\numberline {2}Skupovi podataka i njihovo kori\IeC {\v s}tenje}{3}
+\contentsline {section}{\numberline {2.1}Video snimke projekta FTTS iRAP}{3}
+\contentsline {section}{\numberline {2.2}Ru\IeC {\v c}no ozna\IeC {\v c}en skup podataka}{4}
+\contentsline {section}{\numberline {2.3}Skup podataka ozna\IeC {\v c}en konzistentno s projektom FTTS iRAP}{6}
+\contentsline {chapter}{\numberline {3}Kori\IeC {\v s}tene metode, modeli i postupci prilikom oblikovanja sustava}{8}
+\contentsline {section}{\numberline {3.1}Unakrsna entropija kao funkcija gubitka}{9}
+\contentsline {section}{\numberline {3.2}Gradijentni spust}{10}
+\contentsline {subsection}{\numberline {3.2.1}Adam optimizator}{10}
+\contentsline {subsection}{\numberline {3.2.2}Prenau\IeC {\v c}enost modela}{12}
+\contentsline {section}{\numberline {3.3}Tipi\IeC {\v c}ni slojevi dubokih modela za primjenu u ra\IeC {\v c}unalnom vidu}{13}
+\contentsline {subsection}{\numberline {3.3.1}Potpuno povezani sloj}{13}
+\contentsline {subsubsection}{Aktivacijska funkcija identiteta}{13}
+\contentsline {subsubsection}{Sigmoidalna aktivacijska funkcija}{14}
+\contentsline {subsubsection}{Po dijelovima linearna aktivacijska funkcija}{15}
+\contentsline {subsubsection}{Normaliziraju\IeC {\'c}a eksponencijalna aktivacijska funkcija}{16}
+\contentsline {subsection}{\numberline {3.3.2}Konvolucijski sloj}{16}
+\contentsline {subsection}{\numberline {3.3.3}Sloj sa\IeC {\v z}imanja}{18}
+\contentsline {subsection}{\numberline {3.3.4}Sloj grupne normalizacije (engl.~\emph {batch normalization})}{19}
+\contentsline {section}{\numberline {3.4}Arhitekture kori\IeC {\v s}tene u eksperimentima}{20}
+\contentsline {subsection}{\numberline {3.4.1}Arhitektura VGG-16 modela}{20}
+\contentsline {subsection}{\numberline {3.4.2}Arhitektura za klasifikaciju pojedina\IeC {\v c}nih slika}{22}
+\contentsline {subsection}{\numberline {3.4.3}Arhitekture za klasifikaciju sekvenci slika}{22}
+\contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem vremensko-prostornog sa\IeC {\v z}imanja}{22}
+\contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem povratnih LSTM \IeC {\'c}elija (engl.~\emph {Long Short Term Memory})}{23}
+\contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem vremenskog potpuno povezanog sloja}{25}
+\contentsline {section}{\numberline {3.5}Postupak pripreme skupova podataka}{26}
+\contentsline {chapter}{\numberline {4}Eksperimenti i rezultati}{27}
+\contentsline {chapter}{\numberline {5}Zaklju\IeC {\v c}ak}{28}
+\contentsline {chapter}{Literatura}{29}
