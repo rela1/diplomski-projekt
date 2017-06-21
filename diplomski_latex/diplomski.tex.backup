@@ -603,6 +603,7 @@ Dobivena dvodimenzionalna zatim se obrađuje kroz nekoliko slojeva kako slijedi:
  \begin{itemize}
   \item operacija efektivno provodi vremensko-prostorno sažimanje značajki koje su bliske vremenski i prostorno
  \end{itemize}
+ \item pretvaranje dobivene dvodimenzionalne strukture u jednodimenzionalnu
  \item potpuno povezani sloj dimenzionalnosti 200
  \begin{itemize}
   \item po dijelovima linearna \engl{ReLU} aktivacijska funkcija
@@ -617,20 +618,6 @@ Dobivena dvodimenzionalna zatim se obrađuje kroz nekoliko slojeva kako slijedi:
 \end{itemize}
 
 \subsubsection{Klasifikacija sekvenci slika korištenjem povratnih LSTM ćelija \engl{Long Short Term Memory}}
-Model koji koristi LSTM blokove prostorne značajke svake slike pretvori u jednodimenzionalni vektor dimenzija $H$ x $W$ x $512$.
-Dobiveni jednodimenzionalni vektori se zatim redom obrađuju kako slijedi:
-\begin{itemize}
- \item LSTM sloj sa stanjem dimenzionalnosti 128
- \item LSTM sloj sa stanjem dimenzionalnosti 64
- \item LSTM sloj sa stanjem dimenzionalnosti 32
-  \item potpuno povezani sloj dimenzionalnosti 2 za binarnu klasifikaciju -- određivanje je li atribut prisutan na slici ili nije
- \begin{itemize}
-  \item normalizirajuća eksponencijalna \engl{softmax} aktivacijska funkcija
-  \item L2 regularizacija
- \end{itemize}
-\end{itemize}
-
-
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.6]{images/lstm.png}
@@ -658,9 +645,57 @@ Izlaz LSTM ćelije i novi sadržaj memorijske ćelije računaju se sljedećim iz
 \end{align}
 gdje je $\tanh$ aktivacijska funkcija tangens hiperbolni, $\sigma$ je sigmoidalna aktivacijska funkcija, $\odot$ je operator množenja koji djeluje po elementima, a $[\mathbf{x}, \mathbf{y}]$ je operacija spajanja vektora $\mathbf{x}$ dimenzija $n_1$ i vektora $\mathbf{y}$ dimenzija $n_2$ u vektor dimenzija $n_1 + n_2$.
 
+Model koji koristi LSTM ćelije prostorne značajke svake slike pretvori u jednodimenzionalni vektor dimenzija $H$ x $W$ x $512$.
+Dobiveni jednodimenzionalni vektori se zatim redom obrađuju kako slijedi:
+\begin{itemize}
+ \item LSTM sloj sa stanjem dimenzionalnosti 128
+ \item LSTM sloj sa stanjem dimenzionalnosti 64
+ \item LSTM sloj sa stanjem dimenzionalnosti 32
+  \item potpuno povezani sloj dimenzionalnosti 2 za binarnu klasifikaciju -- određivanje je li atribut prisutan na slici ili nije
+ \begin{itemize}
+  \item ulaz u ovaj potpuno povezani sloj jest posljednji izlaz dobiven iz LSTM ćelije prethodnog sloja koja je obradila cijelu sekvencu podataka (vektor dimenzionalnosti 32)
+  \item normalizirajuća eksponencijalna \engl{softmax} aktivacijska funkcija
+  \item L2 regularizacija
+ \end{itemize}
+\end{itemize}
+
+
 \subsubsection{Klasifikacija sekvenci slika korištenjem vremenskog potpuno povezanog sloja}
+Model koji koristi vremenski potpuno povezani sloj prostorne značajke pretvori u jednodimenzionalni vektor dimenzija $H$ x $W$ x $512$.
+Svaki dobiveni jednodimenzionalni vektor prostornih značajki se zatim obrađuje kako slijedi:
+\begin{itemize}
+  \item potpuno povezani sloj dimenzionalnosti 64
+ \begin{itemize}
+  \item po dijelovima linearna \engl{ReLU} aktivacijska funkcija
+  \item grupna normalizacija \engl{batch normalization}
+  \item L2 regularizacija
+  \item ovaj potpuno povezani sloj služi za predstavljanje prostornih značajki vektorom manjih dimenzija
+ \end{itemize}
+\end{itemize}
+Jednodimenzionalni vektori dobiveni nakon potpuno povezanog sloja se zatim oblikuju u dvodimenzionalnu strukturu dimenzija $N$ x ($H$ x $W$ x $512$), gdje je $N$ duljina sekvence slika.
+Dobivena dvodimenzionalna zatim se obrađuje kroz nekoliko slojeva kako slijedi:
+\begin{itemize}
+ \item pretvaranje dobivene dvodimenzionalne strukture u jednodimenzionalnu
+ \item potpuno povezani sloj dimenzionalnosti 64
+ \begin{itemize}
+  \item po dijelovima linearna \engl{ReLU} aktivacijska funkcija
+  \item grupna normalizacija \engl{batch normalization}
+  \item L2 regularizacija
+  \item ovaj potpuno povezani sloj služi za povezivanje dobivenih prostornih značajki po dimenziji vremena
+ \end{itemize}
+ \item potpuno povezani sloj dimenzionalnosti 2 za binarnu klasifikaciju -- određivanje je li atribut prisutan na slici ili nije
+ \begin{itemize}
+  \item normalizirajuća eksponencijalna \engl{softmax} aktivacijska funkcija
+  \item L2 regularizacija
+ \end{itemize}
+\end{itemize}
 
 \section{Postupak pripreme skupova podataka}
+Poglavlje \ref{chapter:skupovi_podataka} opisuje dva tipa skupova podataka korištenih u ovom radu.
+U nastavku je opisan postupak pretprocesiranja slika dobivenih iz videa sa stranice \citep{url:ftts_irap} te postupak kreiranja slika označenih konzistentno s projektom FTTS iRAP.
+
+\subsection{Pretprocesiranje slika}
+
 
 \chapter{Eksperimenti i rezultati}
 

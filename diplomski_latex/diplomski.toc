@@ -26,6 +26,8 @@
 \contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem povratnih LSTM \IeC {\'c}elija (engl.~\emph {Long Short Term Memory})}{23}
 \contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem vremenskog potpuno povezanog sloja}{25}
 \contentsline {section}{\numberline {3.5}Postupak pripreme skupova podataka}{26}
-\contentsline {chapter}{\numberline {4}Eksperimenti i rezultati}{27}
-\contentsline {chapter}{\numberline {5}Zaklju\IeC {\v c}ak}{28}
-\contentsline {chapter}{Literatura}{29}
+\contentsline {subsection}{\numberline {3.5.1}Pretprocesiranje slika}{26}
+\contentsline {subsection}{\numberline {3.5.2}Postupak kreiranja slika ozna\IeC {\v c}enih konzistentno s projektom FTTS iRAP}{27}
+\contentsline {chapter}{\numberline {4}Eksperimenti i rezultati}{28}
+\contentsline {chapter}{\numberline {5}Zaklju\IeC {\v c}ak}{29}
+\contentsline {chapter}{Literatura}{30}

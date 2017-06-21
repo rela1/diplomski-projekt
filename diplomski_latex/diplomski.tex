@@ -109,7 +109,7 @@ Dodjeljivanje oznaka prisutnosti atributa pripajanja prometnoj sceni iz tog se r
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.15]{images/hand_labeled_positive.png}
-\caption{Prikaz ručno označene scene na kojoj je atribut pripajanja prisutan, preuzeto sa \citep{url:ftts_irap}}
+\caption{Prikaz ručno označene scene na kojoj je atribut pripajanja prisutan, preuzeto s \citep{url:ftts_irap}}
 \label{img:hand_labeled_positive}
 \end{figure}
 
@@ -119,7 +119,7 @@ Na slici su vidljive karakteristične bijele trake u uzorku koji bi potencijalno
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.15]{images/hand_labeled_negative.png}
-\caption{Prikaz ručno označene scene na kojoj atribut pripajanja nije prisutan, preuzeto sa \citep{url:ftts_irap}}
+\caption{Prikaz ručno označene scene na kojoj atribut pripajanja nije prisutan, preuzeto s \citep{url:ftts_irap}}
 \label{img:hand_labeled_negative}
 \end{figure}
 
@@ -146,7 +146,7 @@ Također, moguće je i otvoriti video snimku koja prikazuje trenutak kada započ
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.35]{images/sattelite_merge_lane_irap.png}
-\caption{Prikaz satelitske snimke s označenim segmentom atributa pripajanja, preuzeto sa \citep{url:google_maps}}
+\caption{Prikaz satelitske snimke s označenim segmentom atributa pripajanja, preuzeto s \citep{url:google_maps}}
 \label{img:sattelite_merge_lane_irap}
 \end{figure}
 
@@ -156,7 +156,7 @@ Već sa satelitske snimke je vidljivo kako bi moglo biti problema prilikom učen
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.5]{images/video_merge_lane_irap.png}
-\caption{Prikaz video snimke s označenim segmentom atributa pripajanja, preuzeto sa \citep{url:ftts_irap}}
+\caption{Prikaz video snimke s označenim segmentom atributa pripajanja, preuzeto s \citep{url:ftts_irap}}
 \label{img:video_merge_lane_irap}
 \end{figure}
 
@@ -691,8 +691,43 @@ Dobivena dvodimenzionalna zatim se obrađuje kroz nekoliko slojeva kako slijedi:
 \end{itemize}
 
 \section{Postupak pripreme skupova podataka}
-Poglavlje \ref{chapter:skupovi_podataka} opisuje dva tipa skupova podataka korištenih u ovom radu. 
+Poglavlje \ref{chapter:skupovi_podataka} opisuje dva tipa skupova podataka korištenih u ovom radu.
+U nastavku je opisan postupak pretprocesiranja slika dobivenih iz videa sa stranice \citep{url:ftts_irap} te postupak kreiranja slika označenih konzistentno s projektom FTTS iRAP.
 
+\subsection{Pretprocesiranje slika}
+Slike korištene za kreiranje skupova podataka dobivene su iz video snimaka snimljenih automobilom koji se kretao engleskim autocestama.
+Zbog kretnje automobila uzorkovane slike bit će snimljene iz različitog kuta u odnosu na Sunce.
+Takva situacija za posljedicu ima da su neke slike mnogo svjetlije, a neke mnogo tamnije od drugih.
+
+Metoda kojom se može ublažiti velika varijacija kontrasta između slika jest metoda adaptivnog izjednačavanja histograma \citep{article:adapt_hist}.
+Izjednačavanje histograma za cilj ima izjednačiti razdiobu intenziteta svih kanala slike (crvenog, zelenog i plavog) na način da oni budu uniformno distribuirani.
+Metoda adaptivnog izjednačavanja histograma za računanje histograma ne uzima u obzir cijelu sliku nego prozore određene veličine čime se dobiva na lokalnosti izjednačavanja.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.2]{images/original.png}
+\caption{Originalna slika, preuzeto s \citep{url:ftts_irap}}
+\label{img:original}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.2]{images/hist.png}
+\caption{Slika s izjednačenim histogramom, preuzeto s \citep{url:ftts_irap}}
+\label{img:hist}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.2]{images/adapt_hist.png}
+\caption{Slika s adaptivno izjednačenim histogramom, preuzeto s \citep{url:ftts_irap}}
+\label{img:adapt_hist}
+\end{figure}
+
+Iz slika \ref{img:original}, \ref{img:hist} i \ref{img:adapt_hist} vidljivo je kako su, u odnosu na originalnu sliku, na slici s adaptivno izjednačenim histogramom najbolje naglašeni detalji zbog najbolje ublažene varijacije kontrasta.
+Metoda adaptivnog izjednačavanja histograma se iz tog razloga koristi kao korak pretprocesiranja za svaku sliku korištenu prilikom kreiranja skupova podataka.
+
+\subsection{Postupak kreiranja slika označenih konzistentno s projektom FTTS iRAP}
 
 \chapter{Eksperimenti i rezultati}
 

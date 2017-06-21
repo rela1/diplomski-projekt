@@ -1,4 +1,4 @@
-\begin{thebibliography}{18}
+\begin{thebibliography}{19}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -26,6 +26,12 @@
   \url{http://www.irap.org/en/about-irap-3/methodology?download=132:irap-methodology-fact-sheet-3-road-attributes},
   2015.
 \newblock [pristupano 14. lipnja 2017.].
+
+\bibitem[Ciresan et~al.(2012)Ciresan, Meier, i Schmidhuber]{article:adapt_hist}
+Dan~C. Ciresan, Ueli Meier, i J{\"{u}}rgen Schmidhuber.
+\newblock Multi-column deep neural networks for image classification.
+\newblock \emph{CoRR}, abs/1202.2745, 2012.
+\newblock URL \url{http://arxiv.org/abs/1202.2745}.
 
 \bibitem[Deng et~al.(2009)Deng, Dong, Socher, Li, Li, i
   Fei-Fei]{dataset:imagenet}
@@ -105,6 +111,7 @@ Karen Simonyan i Andrew Zisserman.
 \bibitem[Vukotić(2014)]{masters:vukotic_ms}
 Vedran Vukotić.
 \newblock {Raspoznavanje objekata dubokim neuronskim mrežama}, 2014.
+\newblock diplomski rad.
 
 \bibitem[Zaremba et~al.(2014)Zaremba, Sutskever, i Vinyals]{article:lstm}
 Wojciech Zaremba, Ilya Sutskever, i Oriol Vinyals.
