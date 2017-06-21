@@ -99,7 +99,7 @@ class SequentialImageLSTMModel:
       initializer=tf.zeros_initializer()
     )
 
-    lstms = [tf.contrib.rnn.BasicLSTMCell(lstm_state_size) for lstm_state_size in lstm_state_sizes]
+    lstms = [tf.contrib.rnn.BasicLSTMCell(lstm_state_size, scope='lstm{}'.format(index)) for index, lstm_state_size in enumerate(lstm_state_sizes)]
     
     multi_layered_lstms = tf.contrib.rnn.MultiRNNCell(lstms)
 
