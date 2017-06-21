@@ -102,7 +102,8 @@ class SequentialImageLSTMModel:
     lstms = []
     for index, lstm_state_size in enumerate(lstm_state_sizes):
       with tf.variable_scope('lstm{}'.format(index)):
-        lstms.append(tf.contrib.rnn.BasicLSTMCell(lstm_state_size))
+        lstm_reuse = tf.get_variable_scope().reuse
+        lstms.append(tf.contrib.rnn.BasicLSTMCell(lstm_state_size, reuse=lstm_reuse))
     
     multi_layered_lstms = tf.contrib.rnn.MultiRNNCell(lstms)
 
