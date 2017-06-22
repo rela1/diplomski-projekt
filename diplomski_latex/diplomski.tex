@@ -3,6 +3,17 @@
 \usepackage{url}
 \usepackage{amsmath}
 \usepackage{float}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+
+\renewcommand{\algorithmicfor}{\textbf{Za}}
+\renewcommand{\algorithmicendfor}{\textbf{Kraj}}
+\renewcommand{\algorithmicdo}{\textbf{Ponavljaj}}
+\renewcommand{\algorithmicwhile}{\textbf{Sve dok}}
+\renewcommand{\algorithmicendwhile}{\textbf{Kraj}}
+\makeatletter
+\renewcommand{\ALG@name}{Algoritam}
+\makeatother
 
 \allowdisplaybreaks
 
@@ -42,7 +53,7 @@ Upravo zbog vrlo dobrih rezultata koje duboki modeli ostvaruju, sve više zadata
 Dobri rezultati dubokih modela na području računalnog vida svakako otvaraju mnoge primjene računala u praktičnim problemima. 
 Jedan takav problem, kojim se ovaj rad bavi, jest inspekcija kvaliteta cesta. 
 Organizacija iRAP \engl{International Road Assessment Programe} ima za cilj upravo inspekciju kvaliteta ceste pridruživanjem različitih sigurnosnih atributa dijelovima prometnica.
-Zadatak se obavlja tako da se na temelju video sekvenci prometnica uz GPS lokacije pridružene video sekvencama određuje prisutnost sigurnosnog atributa na tom dijelu prometnice.
+Zadatak se obavlja tako da se na temelju video sekvenci prometnica uz geolokacije pridružene video sekvencama određuje prisutnost sigurnosnog atributa na tom dijelu prometnice.
 Na temelju prisutnih atributa moguće je procijeniti sigurnost promatranog dijela prometnice što je vrlo korisno.
 
 Trenutno, pridruživanje atributa dijelovima prometnica obavljaju ljudi. 
@@ -79,7 +90,7 @@ Video snimke snimljene su automobilom koji se kretao po engleskim autocestama.
 
 Stranica \citep{url:ftts_irap} nudi sučelje u kojem je moguće segmentima prometnica pridruživati ranije spomenute sigurnosne atribute. 
 Standard organizacije iRAP propisuje 78 atributa \citep{man:ftts_irap_attributes} koje je moguće pridružiti segmentima prometnica.
-Pojedine video snimke je moguće preuzeti uz pripadajuće informacije o geo-lokaciji scena.
+Pojedine video snimke je moguće preuzeti uz pripadajuće informacije o geolokaciji scena.
 
 Sustav koji ovaj rad opisuje koristi video snimke s navedene stranice za učenje. Konkretno, kako je riječ o binarnoj klasifikaciji, potrebni su nam označeni podaci. 
 Atribut koji sustav prepoznaje jest pripajanje \engl{merge lane}. Kako je riječ o video sekvencama s engleskih cesta, pripajanja koja se prepoznaju bit će s lijeve strane.
@@ -728,6 +739,22 @@ Iz slika \ref{img:original}, \ref{img:hist} i \ref{img:adapt_hist} vidljivo je k
 Metoda adaptivnog izjednačavanja histograma se iz tog razloga koristi kao korak pretprocesiranja za svaku sliku korištenu prilikom kreiranja skupova podataka.
 
 \subsection{Postupak kreiranja slika označenih konzistentno s projektom FTTS iRAP}
+Za postupak kreiranja slika prometnih scena označenih konzistentno s projektom FTTS iRAP kreiran je automatizirani postupak.
+Ulazni podaci za automatizirani postupak su sljedeći:
+\begin{itemize}
+ \item geolokacije na kojima je prisutan atribut pripajanja
+ \item popis poveznica na sve video snimke u sustavu \citep{url:ftts_irap}
+ \item broj video snimaka koji će se obraditi
+\end{itemize}
+Postupak će iz ulaznih podataka kreirati sljedeće:
+\begin{itemize}
+ \item slika s oznakom prisutnosti atributa pripajanja na njoj te sekvenca slika koja joj prethodi (kao što je objašnjeno u poglavlju \ref{chapter:skupovi_podataka})
+ \item slika s oznakom prisutnosti atributa pripajanja bez sekvence koja joj prethodi
+ \item geolokacije označenih slika i sekvenci slika
+\end{itemize}
+Nastavak opisuje automatizirani postupak kroz sažeti pseudokod:
+
+
 
 \chapter{Eksperimenti i rezultati}
 
