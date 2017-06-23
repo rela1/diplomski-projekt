@@ -83,6 +83,6 @@ def evaluate(name, sess, batch_logits, batch_loss, batch_true_labels, num_exampl
   metrics = evaluate_default_metric_functions(y_true, y_pred)
   print_metrics(metrics)
   print('\taverage loss={}\n'.format(np.mean(losses)))
-  cm = sklearn.metrics.confusion_matrix(y_true, y_pred, labels=[0, 1])
+  cm = metrics.confusion_matrix(y_true, y_pred, labels=[0, 1])
   print('\tconfusion matrix=\n{}\n'.format(cm))
   return metrics, y_true, y_pred, y_prob

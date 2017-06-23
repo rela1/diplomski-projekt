@@ -1020,7 +1020,7 @@ Iz tog razloga se za eksperimente nad video sekvencama (zbog veće memorijske za
 
 \section{Klasifikacija pojedinačnih slika označenih konzistentno s projektom FTTS iRAP na originalnoj rezoluciji}
 Za razliku od prethodnih eksperimenata, ovaj eksperiment je proveden na skupu podataka označenom konzistentno sa sustavom FTTS iRAP.
-Eksperiment je proveden na pojedinačnim slikama kako bi se moglo usporediti poboljšava li rezultat uvođenje dodatnih informacija uvođenjem sekvence slika koja prethodi slici za koju je određena oznaka prisutnosti atributa pripajanja.
+Eksperiment je proveden na pojedinačnim slikama kako bi se u daljnjim eksperimentima moglo usporediti poboljšava li se rezultat uvođenjem dodatnih informacija sa sekvencom slika koje prethode slici za koju je određena oznaka prisutnosti atributa pripajanja.
 
 Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $700$x$280$ su sljedeći:
 \begin{table}[H]
@@ -1066,48 +1066,6 @@ Tablica \ref{score:single_irap_700x280_tpfptnfn} prikazuje odnos predikcija mode
 \noindent Na slici \ref{img:single_irap_700x280_acc_ap} vidljivo je kretanje točnosti, preciznosti i odziva po epohama na podskupu za učenje i na podskupu za validaciju.
 
 \section{Klasifikacija sekvenci slika označenih konzistentno s projektom FTTS iRAP koristeći vremensko-prostorno sažimanje}
-Konačni rezultati dobiveni za eksperiment sa sekvencom ulaznih podataka rezolucije $350$x$140$ su sljedeći:
-\begin{table}[H]
-\centering
-\caption{Statistički rezultati na rezoluciji $350$x$140$}
-\label{score:sequence_pooling_irap}
-\begin{tabular}{|c|c|l|l|}
-\hline
-podskup podataka      & točnost & preciznost & odziv \\ \hline
-podskup za učenje     & 0.5     & 0.8        & 1.1   \\ \hline
-podskup za validaciju & 0.6     & 0.9        & 1.2   \\ \hline
-podskup za testiranje & 0.7     & 1          & 1.3   \\ \hline
-\end{tabular}
-\end{table}
-\begin{table}[H]
-\centering
-\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $350$x$140$}
-\label{score:sequence_pooling_irap_tpfptnfn}
-\begin{tabular}{|c|c|l|}
-\hline
-\diagbox{predikcija modela}{stvarna oznaka} & 0  & 1  \\ \hline
-0                                & TN & FP \\ \hline
-1                                & FN & TP \\ \hline
-\end{tabular}
-\end{table}
-\noindent Tablica \ref{score:sequence_pooling_irap} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
-Tablica \ref{score:sequence_pooling_irap_tpfptnfn} prikazuje odnos predikcija modela i stvarnih oznaka kroz matricu zabune.
-
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.35]{images/sequence_pooling_irap_loss.png}
-\caption{Kretanje prosječnog gubitka na skupu za učenje i validaciju po epohama}
-\label{img:sequence_pooling_irap_loss}
-\end{figure}
-\noindent Na slici \ref{img:sequence_pooling_irap_loss} vidljivo je kretanje prosječnog gubitka po epohama na podskupu za učenje i na podskupu za validaciju.
-
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.35]{images/sequence_pooling_irap_acc_ap.png}
-\caption{Kretanje točnosti, preciznosti i odziva po epohama}
-\label{img:sequence_pooling_irap_acc_ap}
-\end{figure}
-\noindent Na slici \ref{img:sequence_pooling_irap_acc_ap} vidljivo je kretanje točnosti, preciznosti i odziva po epohama na podskupu za učenje i na podskupu za validaciju.
 
 \section{Klasifikacija sekvenci slika označenih konzistentno s projektom FTTS iRAP koristeći povratne LSTM ćelije}
 
