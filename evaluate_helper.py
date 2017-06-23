@@ -80,9 +80,9 @@ def evaluate(name, sess, batch_logits, batch_loss, batch_true_labels, num_exampl
     losses.append(loss_val)
     if not i % 10:
       print('\tstep {}/{}, {} examples/sec, {} sec/batch'.format(i+1, num_batches, batch_size / duration, duration))
-  metrics = evaluate_default_metric_functions(y_true, y_pred)
-  print_metrics(metrics)
+  metrics_dict = evaluate_default_metric_functions(y_true, y_pred)
+  print_metrics(metrics_dict)
   print('\taverage loss={}\n'.format(np.mean(losses)))
   cm = metrics.confusion_matrix(y_true, y_pred, labels=[0, 1])
   print('\tconfusion matrix=\n{}\n'.format(cm))
-  return metrics, y_true, y_pred, y_prob
+  return metrics_dict, y_true, y_pred, y_prob
