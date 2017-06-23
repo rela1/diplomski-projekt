@@ -8,7 +8,7 @@ from train_evaluate_model import evaluate_model
 
 
 FULLY_CONNECTED = [200]
-BATCH_SIZE = 10
+BATCH_SIZE = 2
 INPUT_SHAPE = [280, 700, 3]
 
 
