@@ -3,6 +3,19 @@
 \usepackage{url}
 \usepackage{amsmath}
 \usepackage{float}
+\usepackage[]{algorithmic}
+\usepackage[]{algorithm}
+\usepackage{diagbox}
+
+\renewcommand{\algorithmicfor}{\textbf{Za}}
+\renewcommand{\algorithmicendfor}{\textbf{Kraj}}
+\renewcommand{\algorithmicdo}{\textbf{Ponavljaj}}
+\renewcommand{\algorithmicwhile}{\textbf{Sve dok}}
+\renewcommand{\algorithmicendwhile}{\textbf{Kraj}}
+
+\makeatletter
+\renewcommand{\ALG@name}{Algoritam}
+\makeatother
 
 \allowdisplaybreaks
 
@@ -79,7 +92,7 @@ Video snimke snimljene su automobilom koji se kretao po engleskim autocestama.
 
 Stranica \citep{url:ftts_irap} nudi sučelje u kojem je moguće segmentima prometnica pridruživati ranije spomenute sigurnosne atribute. 
 Standard organizacije iRAP propisuje 78 atributa \citep{man:ftts_irap_attributes} koje je moguće pridružiti segmentima prometnica.
-Pojedine video snimke je moguće preuzeti uz pripadajuće informacije o geo-lokaciji scena.
+Pojedine video snimke je moguće preuzeti uz pripadajuće informacije o geolokaciji scena.
 
 Sustav koji ovaj rad opisuje koristi video snimke s navedene stranice za učenje. Konkretno, kako je riječ o binarnoj klasifikaciji, potrebni su nam označeni podaci. 
 Atribut koji sustav prepoznaje jest pripajanje \engl{merge lane}. Kako je riječ o video sekvencama s engleskih cesta, pripajanja koja se prepoznaju bit će s lijeve strane.
@@ -277,12 +290,14 @@ Parametar $\alpha$ određuje jačinu momenta, odnosno utjecaj prethodne korekcij
 Osim ubrzanja učenja, momentum pospješuje i otpornost na zaglavljivanje u lokalnim optimumima jer je moguće ``preskočiti'' lokalni optimum u koji bismo inače zaglavili slijepo prateći samo iznos gradijenta \citep{book:deeplearningbook} \citep{seminar:rela}.
 
 Metoda adaptivnog pomaka pretpostavlja da je stabilnost gradijenta ovisna o svakoj komponenti parametara koji se optimiraju pa je smisleno koristiti zasebne stope učenja za svaku od njih i automatski ih adaptirati kroz postupak učenja.
-Konačan efekt jest da će se komponente parametara čije su parcijalne derivacije funkcije gubitka vrlo visokih vrijednosti korigirati sa značajno manjim stopama učenja, a komponente parametara čije su parcijalne derivacije funkcije gubitka relativno niskih vrijednosti, korigirat će se većim stopama učenja \citep{book:deeplearningbook} \citep{seminar:rela}.
+Konačan efekt jest da će se komponente parametara čije su parcijalne derivacije po funkciji gubitka vrlo visokih vrijednosti korigirati sa značajno manjim stopama učenja, a komponente parametara čije su parcijalne derivacije po funkciji gubitka relativno niskih vrijednosti, korigirat će se većim stopama učenja \citep{book:deeplearningbook} \citep{seminar:rela}.
 
 Adam optimizator kombinira ove dvije metode i optimiranje parametara definira se na sljedeći način:
 \begin{align}
+ \text{inicijalne vrijednosti}&: \\
  \mathbf{m}_0 &= \vec{0} \nonumber \\
  \mathbf{v}_0 &= \vec{0} \nonumber  \\
+ \text{osvježavanje parametara}&: \\
  \mathbf{g}_t &= \cfrac{\partial C}{\partial \boldsymbol{\phi}_t}  \nonumber \\
  \mathbf{m}_t &= \beta_1 \mathbf{m}_{t-1} + (1 - \beta_1) \mathbf{g}_t \nonumber \\
  \mathbf{v}_t &= \beta_2 \mathbf{v}_{t-1} + (1 - \beta_2) \mathbf{g}_t^2 \nonumber \\
@@ -292,7 +307,7 @@ Adam optimizator kombinira ove dvije metode i optimiranje parametara definira se
 \end{align}
 gdje je $t$ vremenski korak koji se inkrementira sa svakom korekcijom parametara, $\eta$ je stopa učenja, $\beta_1$ i $\beta_2$ su faktori korišteni za
 eksponencijalni pomični prosjek \engl{exponential moving average}. Preporučene vrijednosti su $\beta_1=0.9$ i $\beta_2=0.999$ \citep{article:adam}.
-Parametar $\epsilon$ služi za izbjegavanje dijeljenja s nulom i postavlja se na vrlo malu vrijednost (npr. $10^-8$).
+Parametar $\epsilon$ služi za izbjegavanje dijeljenja s nulom i postavlja se na vrlo malu vrijednost (npr. $10^{-8}$).
 
 
 \subsection{Prenaučenost modela}
@@ -301,18 +316,18 @@ Slojevi u dubokim modelima često imaju vrlo velik broj parametara što može do
 Vrlo česta regularizacijska metoda koja nastoji spriječiti prenaučenost jest regularizacija metodom smanjenja težina \engl{weight decay}.
 Regularizacija metodom smanjenja težina mijenja funkciju gubitka koja se optimira tako da uvodi član ovisan o normi parametara, i to na sljedeći način:
 \begin{equation}
- C^* = C + \lambda p(\mathbf{W}),
+ C^* = C + \lambda p(\boldsymbol{\phi}),
 \end{equation}
-gdje je $C^*$ nova funkcija gubitka koju optimiramo, $C$ je originalna funkcija gubitka, $p(\mathbf{W})$ predstavlja funkciju norme nad parametrima $\mathbf{W}$, a $\lambda$ je regularizacijski faktor.
+gdje je $C^*$ nova funkcija gubitka koju optimiramo, $C$ je originalna funkcija gubitka, $p(\boldsymbol{\phi})$ predstavlja funkciju norme nad parametrima $\boldsymbol{\phi}$, a $\lambda$ je regularizacijski faktor.
 Faktor $\lambda$ određuje utjecaj regularizacije -- što je on veći, regularizacija je jača i dobivamo jednostavnije modele koji nisu skloni prenaučenosti.
 
 Motivacija za korištenje regularizacije metodom smanjenja težina leži u tome da će funkcije neuronskih mreža koje imaju niže vrijednosti težina biti zaglađenije, odnosno imat će nižu varijancu što je poželjno za bolju generalizaciju.
 Obično se prilikom regularizacije parametri koji modeliraju pomak ne regulariziraju jer je na njih dovedena konstantna vrijednost ulaza pa samim time utječu samo na pomak unutar prostora \citep{seminar:rela}.
 
-Često korištene funkcije norme $p(\mathbf{W})$ jesu:
+Često korištene funkcije norme $p(\boldsymbol{\phi})$ za vektor slobodnih parametara dimenzionalnosti $n$ jesu:
 \begin{description}
- \item [L1 norma] $p(\mathbf{W})=\sum_{i=1}^n \left| w_i \right|$ --- L1 \engl{Lasso} regularizacija
- \item [L2 norma] $p(\mathbf{W})=\sqrt{\sum_{i=1}^n  w_i^2 }$ --- L2 \engl{Ridge} regularizacija
+ \item [L1 norma] $p(\boldsymbol{\phi})=\sum_{i=1}^n \left| \boldsymbol{\phi}_i \right|$ --- L1 \engl{Lasso} regularizacija
+ \item [L2 norma] $p(\boldsymbol{\phi})=\sqrt{\sum_{i=1}^n  \boldsymbol{\phi}_i^2 }$ --- L2 \engl{Ridge} regularizacija
  
 \end{description}
 
@@ -329,21 +344,12 @@ Operacija koju obavlja potpuno povezani sloj definirana je na sljedeći način:
 
 \noindent gdje je $\mathbf{x}$ vektor ulaznih podataka, $g$ je aktivacijska funkcija, a  $\mathbf{y}$ je vektor izlaznih podataka. 
 Vektor ulaznih podataka obično se proširuje na oblik $\mathbf{x} = \begin{bmatrix} 1 & x_1 & x_2 & ... & x_n \end{bmatrix}^T$.
-Vrijednost $x_0$ se fiksno postavlja na vrijednost $1$ iz razloga što želimo dozvoliti da model modelira pomak parametrima prvog stupca matrice $\mathbf{W}$.
+Vrijednost $\mathbf{x}_1$ se fiksno postavlja na vrijednost $1$ iz razloga što želimo dozvoliti da model modelira pomak parametrima prvog stupca matrice $\mathbf{W}$.
 Primjetimo kako će upravo dimenzionalnost matrice $\mathbf{W}$ određivati dimenzionalnost vektora izlaznih podataka.
 
 Aktivacijska funkcija $g$ djeluje po elementima vektora dobivenog operacijom matričnog množenja matrice $\mathbf{W}$ i vektora ulaznih podataka $\mathbf{x}$.
 Tipično se koriste nelinearne aktivacijske funkcije kako bismo dobili veću ekspresivnost dubokog modela.
 Postoje različite aktivacijske funkcije koje se u praksi koriste. U nastavku su opisane neke od njih.
-
-\subsubsection{Aktivacijska funkcija identiteta}
-Aktivacijska funkcija identiteta i njena derivacija definirane su kao: 
-\begin{align}
- g^{(i)}(\mathbf{x})&=\mathbf{x}, \\
- \frac{dg^{(i)}(\mathbf{x})}{d\mathbf{x}}&=1
-\end{align}
-Aktivacijska funkcija identiteta propušta ulaz na izlaz bez promjene i pogodna je za korištenje u izlaznim slojevima regresijskih modela gdje nam je važan raspon vrijednosti. 
-U praksi se ne koriste mreže kojima su svi slojevi s aktivacijskom funkcijom identiteta jer time i dalje imamo linearni model koji je manje ekspresivne moći od nelinearnog modela \citep{seminar:rela}.
 
 \subsubsection{Sigmoidalna aktivacijska funkcija}
 Sigmoidalna aktivacijska funkcija i njena derivacija definirane su kao: 
@@ -361,7 +367,7 @@ Sigmoidalna aktivacijska funkcija i njena derivacija definirane su kao:
 
 \noindent Sigmoidalna aktivacijska funkcija preslikava ulaznu vrijednost na vrijednost iz intervala $\left< 0, 1\right>$. Sigmoidalna aktivacijska funkcija je derivabilna na cijeloj domeni i njenim korištenjem dobivamo nelinearne modele. 
 Slika \ref{img:sigmoid_graph} prikazuje graf sigmoidalne aktivacijske funkcije. 
-Iz njega je vidljivo kako će gradijent za većinu vrijednosti sigmoidalne funkcije biti vrlo niska zbog toga što je vrijednost sigmoidalne funkcije gotovo na cijeloj domeni u zasićenju (engl. saturating function) — asimptotski se približava vrijednosti 0 ili 1.
+Iz njega je vidljivo kako će gradijent za većinu vrijednosti sigmoidalne funkcije biti vrlo niska zbog toga što je vrijednost sigmoidalne funkcije gotovo na cijeloj domeni u zasićenju \engl{saturating function} — asimptotski se približava vrijednosti 0 ili 1.
 Kako je ranije navedeno, učenje modela obavljamo koristeći gradijentni spust funkcije gubitka po parametrima modela. 
 Uglavnom nizak iznos gradijenta utječe na to da će već u zadnjem, izlaznom sloju korekcije parametara mreže biti vrlo male. 
 Kako izračun korekcija propagiramo unatrag, slojevi koji su sve dalje od završnog sloja imat će sve manje iznose korekcija što će uvelike utjecati na brzinu i kvalitetu učenja koje će se drastično smanjiti.
@@ -391,7 +397,7 @@ Po dijelovima linearna aktivacijska funkcija, ReLU \engl{Rectified Linear Unit} 
 \label{img:relu_graph}
 \end{figure}
 
-\noindent Po dijelovima linearna aktivacijska funkcija predstavlja funkciju praga na vrijednosti $0$ ispod koje izlazne vrijednosti neurona nisu propuštene.
+\noindent Po dijelovima linearna aktivacijska funkcija predstavlja funkciju praga na vrijednosti $0$ ispod koje izlazne vrijednosti nisu propuštene.
 Po dijelovima linearna aktivacijska funkcija je često korištena u dubokim modelima zbog zanimljivih svojstava koja pokazuje prilikom učenja takvih struktura.
 Vrijednost gradijenta je kod po dijelovima linearne aktivacijske funkcije konstantna za polovicu cijele njene domene. 
 U drugoj polovici iznosi $0$, što ponekad također može biti problem jer može dovesti do mrtvih dijelova slojeva kojima se parametri nikako ne korigiraju.
@@ -439,7 +445,7 @@ Za svaku od mapa značajki s kojom je povezana postoji po jedna jezgra koja se k
 Primjerice, jedna mapa značajki ulaznog sloja može biti povezana s 3 mapa značajki - crvenom, plavom i zelenom komponentom slike u boji.
 Za svaku od komponenti boja će mapa značajki tada imati drukčiju jezgru.
 
-Nadalje, izračun vrijednosti mapa značajki se često generalizira kao i kod standardnog neurona pa se dodaje dodatan parametar kao vrijednost praga te se koriste aktivacijske funkcije.
+Nadalje, izračun vrijednosti mapa značajki se često generalizira kao i kod potpuno povezanog sloja pa se dodaje dodatan parametar kao vrijednost praga te se koriste aktivacijske funkcije.
 Generalizirani izraz za izračun vrijednosti jednog elementa mape značajki u sloju $n$ dobivene konvolucijom odgovarajućih jezgri sa svakom od mapa značajki iz sloja $n-1$ s kojima je povezana definiramo kao:
 \begin{equation}
  x^l_{k',i,j}=\sigma\left(\sum_{k\in F^{l-1}}\sum_{m,n=0}^{m=K_w^k,n=K_h^k}x^{l-1}_{k, i \cdot s_w +m, j \cdot s_h +n} w^l_{k, m, n} + b^l\right), \label{eq:generalized_convolution}
@@ -457,7 +463,7 @@ Zbog svojih svojstava, konvolucijski slojevi mogu uvelike poboljšati učinkovit
 Konvolucijski slojevi su tipično rijetko povezani --- nije nužno da su sve mape značajki sloja $l-1$ povezane sa svakom od mapa značajki iz sloja $l$ \citep{book:deeplearningbook}, što uz jezgre koje su tipično mnogo manjih veličina od ulaza nad kojima djeluju u velikoj mjeri smanjuje broj parametara i povećava efikasnost učenja i računanja.
 Potpuno povezani slojevi koriste matrično množenje i svaki parametar je iskorišten samo jednom za opisivanje veze između ulaza i izlaza, dok se konvolucijom isti parametri koriste za više lokacija ulaza i predstavljaju svojevrsne značajke koje jezgra izlučuje na slici.
 Konvolucijske arhitekture korištenjem jezgara s dijeljenim parametrima uče skup parametara koji je otporan na translacije jer će za iste ulazne vrijednosti jezgra dati iste izlazne vrijednosti, bez obzira gdje na slici se one pojave. 
-Naučeni dijeljeni skup parametara predstavlja jednu funkciju koju jezgra obavlja (primjerice, detekcija rubova) --- učenjem se skup parametara prilagođava cijeloj slici i uči se tako da obavlja apstraktne funkcije neovisne o lokaciji slike, a koje će pripomoći u samoj klasifikaciji.
+Naučeni dijeljeni skup parametara predstavlja jednu funkciju koju jezgra obavlja (primjerice, detekcija rubova) -- učenjem se skup parametara prilagođava cijeloj slici i uči se tako da obavlja apstraktne funkcije neovisne o lokaciji slike, a koje će pripomoći u samoj klasifikaciji.
 Nabrojana svojstva konvolucijske arhitekture donose svojevrsnu ugrađenu regularizaciju što povlači bolju generalizaciju uz veću efikasnost \citep{book:deeplearningbook} \citep{masters:vukotic_ms} \citep{seminar:rela}.
 
 \subsection{Sloj sažimanja}
@@ -482,7 +488,7 @@ Konstantna promjena distribucije ulaza slojeva predstavlja problem jer je potreb
 Opisani problem nazivamo interni kovarijacijski pomak \engl{internal covariate shift}. 
 Metoda grupne normalizacije \engl{Batch Normalization} uklanja taj problem i uvelike ubrzava učenje dubokih modela.
 
-Uklanjanje problema internog kovarijacijskog pomaka rješavamo normalizacijom ulaza svakog sloja -- linearno ga transformiramo tako da mu je srednja vrijednost jednaka $0$, a varijanca mu je jednaka $1$.
+Uklanjanje problema internog kovarijacijskog pomaka rješavamo normalizacijom ulaza svakog sloja -- linearno ga transformiramo tako da mu je srednja vrijednost jednaka 0, a varijanca mu je jednaka 1.
 Direktna normalizacija ulaza i izlaza nekog sloja ovisi o statistici svih ulaza tog sloja nad kompletnim skupom podataka nad kojim učimo mrežu.
 Zbog izrazite računske složenosti koja bi bila potrebna za to, uvode se neka pojednostavljenja.
 
@@ -493,7 +499,7 @@ Normalizacija $k$-te komponente ulaznog vektora $\mathbf{x}$ nekog sloja definir
 \end{equation}
 gdje su očekivanje i varijanca izračunati nad skupom podataka za učenje.
 Normalizacija svakog ulaza nekog sloja može promijeniti njegovu ekspresivnu snagu pa iz tog razloga uvodimo transformaciju normaliziranog ulaza kojom osiguravamo da je iz normaliziranih ulaznih podataka moguće dobiti originalne vrijednosti.
-Transformacija $k$-te komponente prethodno normaliziranog ulaznog vektora $\hat{x}$ nekog sloja definirana je na sljedeći način:
+Transformacija $k$-te komponente prethodno normaliziranog ulaznog vektora $\hat{\mathbf{x}}$ nekog sloja definirana je na sljedeći način:
 \begin{equation}
  \mathbf{y}^{(k)} = \boldsymbol{\gamma}^{(k)} \hat{\mathbf{x}}^{(k)} + \boldsymbol{\beta}^{(k)}, \label{eq:bn_transformation}
 \end{equation}
@@ -503,9 +509,9 @@ Druga pretpostavka za pojednostavljenje složenosti jest da normalizaciju umjest
 Grupna normalizacija nad statistikom malog podskupa skupa podataka za učenje u nekom sloju tada je definirana kao normalizacija i linearna transformacija ulaza, definirane u izrazima \ref{eq:bn_normalization} i \ref{eq:bn_transformation}.
 
 Transformacija grupne normalizacije najčešće se koristi nad izračunatim težinskim sumama slojeva, prije djelovanja aktivacijske funkcije.
-Normalizirane vrijednosti $\hat{\mathbf{x}}^{(k)}$ možemo promatrati kao ulaze u pod-sloj kojem je funkcija linearna, i to je upravo funkcija transformacije definirana u izrazu \ref{eq:bn_transformation}.
-Na izlaz pod-sloja tada djeluje procesiranje originalnog sloja. 
-Takvom arhitekturom ostvarili smo da svi pod-slojevi na ulaze dobivaju podatke s fiksnom distribucijom (s očekivanjem $0$ i varijancom $1$), što ubrzava učenje pod-slojeva, a time posljedično i samih slojeva i kompletne mreže \citep{article:bn_paper} \citep{seminar:rela}.
+Normalizirane vrijednosti $\hat{\mathbf{x}}^{(k)}$ možemo promatrati kao ulaze u podsloj kojem je funkcija linearna, i to je upravo funkcija transformacije definirana u izrazu \ref{eq:bn_transformation}.
+Na izlaz podsloja tada djeluje procesiranje originalnog sloja. 
+Takvom arhitekturom ostvarili smo da svi podslojevi na ulaze dobivaju podatke s fiksnom distribucijom (s očekivanjem 0 i varijancom 1), što ubrzava učenje podslojeva, a time posljedično i samih slojeva i kompletne mreže \citep{article:bn_paper} \citep{seminar:rela}.
 
 \section{Arhitekture korištene u eksperimentima}
 U poglavlju \ref{chapter:skupovi_podataka} opisana su dva tipa skupova podataka korištenih za eksperimente -- skup podataka sa statičnim slikama i skup podataka sa sekvencama slika.
@@ -741,9 +747,272 @@ Postupak će iz ulaznih podataka kreirati sljedeće:
  \item slika s oznakom prisutnosti atributa pripajanja bez sekvence koja joj prethodi
  \item geolokacije označenih slika i sekvenci slika
 \end{itemize}
+\noindent Postupak kreira označene slike sa i bez sekvence koja joj prethodi kako bi se eksperimentima ustanovilo dobiva li se na točnosti postupka uvodeći više informacija kroz sekvencu slika.
 
+Geolokacije video sekvence uzorkovane su rijetko -- najčešće svakih $0.5s$. 
+Iz tog razloga se za točnu geolokaciju konkretne sličice video sekvence vrši linearna interpolacija između dvije uzorkovane geolokacije koje su vremenski najbliže konkretnoj sličici.
+Geolokacija konkretnih sličica korisna je informacija iz razloga što je prilikom testiranja modela za svaki ulazni podatak kojem model dodijeli krivu oznaku moguće u sustavu FTTS iRAP provjeriti je li osoba koja je dodijelila vrijednost atributa tom segmentu to napravila točno ili je riječ o mogućoj pogrešci. 
+Takvim postupkom moguće je na brži način validirati ispravnost dodijeljenih oznaka u sustavu.
+
+Nastavak opisuje sažeti pseudokod automatiziranog postupka:
+\begin{algorithm}[H]
+\caption{Automatizirano kreiranje slika označenih konzistentno s projektom FTTS iRAP}
+\label{alg:dataset_creator}
+\begin{algorithmic}
+\WHILE{nije obrađen željen broj video sekvenci}
+\STATE v=preuzmi\_video()
+\STATE geolok,vrem=preuzmi\_geolokacije\_i\_vremena(v)
+\STATE sl=kreiraj\_sličice(v)
+\STATE ind\_geolok,brz\_aut=indeksiraj\_geolokacije\_i\_izračunaj\_brzine\_automobila(geolok,vrem)
+\STATE ras\_poz=izračunaj\_raspone\_pozitiva(geolok\_pripajanja,ind\_geolok,brz\_aut)
+\STATE poz\_slič,geolok\_slič=kreiraj\_pozitivne\_sličice\_s\_geolokacijama(ras\_poz,sl)
+\STATE pohrani\_sličice(poz\_slič,geolok\_slič)
+\STATE neg\_slič,geolok\_slič=kreiraj\_negativne\_sličice\_s\_geolokacijama(ras\_poz,sl)
+\STATE pohrani\_sličice(neg\_slič,geolok\_slič)
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+\noindent Izračunavanje raspona sličica na kojima je prisutan atribut pripajanja (pozitivne sličice) radi se na sljedeći način:
+\begin{itemize}
+ \item za svako pripajanje i njegovu geolokaciju pronađu se dvije najbliže geolokacije video sekvence
+ \item ukoliko je bliža geolokacija video sekvence unutar praga udaljenosti pripajanju, uzima se da je pripajanje prisutno na tom dijelu video sekvence
+ \item na temelju udaljenosti geolokacija video sekvence od geolokacije pripajanja i brzina kretanja automobila izračuna se točan raspon vremena video sekvence na kojem se nalazi segment atributa pripajanja
+ \item iz dobivenog raspona vremena vremena izračuna se raspon sličica video sekvence na kojem se nalazi segment atributa pripajanja
+\end{itemize}
 
 \chapter{Eksperimenti i rezultati}
+Za potrebe ovog rada provedeno je nekoliko eksperimenata. 
+Postupak učenja i testiranja u svakom eksperimentu je jednak, razlikuju se samo u vrsti ulaznih podataka (statične slike ili sekvence slika) te u korištenoj arhitekturi.
+
+\section{Način učenja i testiranja u eksperimentima}
+Početni korak prilikom učenja jest normalizacija skupa podataka.
+Kako su podaci slike u boji, na podacima za treniranje se izračunava srednja vrijednost intenziteta piksela za svaki od kanala -- crveni, zeleni i plavi.
+Dobivene srednje vrijednosti se zatim po kanalima oduzimaju svim podacima -- podacima za treniranje, podacima za validaciju i podacima za testiranje.
+
+Kako su sve arhitekture korištene za potrebe ovog rada zasnovane na naučenom prednjem dijelu arhitekture VGG-16, učenje se obavlja kroz 50 epoha i to na sljedeći način:
+\begin{itemize}
+ \item 10 epoha učenja s početnom stopom učenja iznosa $5\cdot10^{-4}$ uz optimiranje samo novo nadodanih parametara -- svi parametri naučenog prednjeg dijela arhitekture VGG-16 ne mijenjaju se tijekom ove faze
+ \item 40 epoha učenja s početnom stopom učenja iznosa $1\cdot10^{-5}$ uz optimiranje kompletnog skupa parametara (uključujući i parametre naučenog prednjeg dijela arhitekture VGG-16)
+ \item korak učenja koristi gradijente izračunate nad mini-grupama veličina 5 ili 10, ovisno o memorijskoj zahtjevnosti modela
+ \item optimizator korišten za učenje jest Adam optimizator
+ \item stopa učenja se svakim korakom učenja eksponencijalno smanjuje:
+ \begin{align}
+  \eta_{t}=\eta_0 \cdot 0.96^{\cfrac{t}{k}},
+ \end{align}
+gdje je $t$ indeks koraka učenja, a $k$ je broj koraka učenja u jednoj epohi
+ \item slobodni parametri regularizirani su L2 regularizacijom s faktorom regularizacije iznosa $5\cdot10^{-4}$
+ \item podskup za validaciju korišten je za odabir slobodnih parametara modela
+ \begin{itemize}
+  \item na kraju svake epohe mjeri se performansa modela na podskupu za validaciju
+  \item za testiranje se odabire onaj skup parametara koji postiže najbolju performansu na podskupu za validaciju -- ovime se efektivno obavlja regularizacija jer odabiremo onaj skup parametara koji najbolje generalizira
+ \end{itemize}
+\end{itemize}
+
+Kako je zadatak ovog rada definiran kao binarna klasifikacija, možemo iskoristiti 4 definirana tipa predikcija modela: 
+\begin{itemize}
+ \item TP \engl{true positive} -- slika koja je označena kao pozitivna (atribut pripajanja je prisutan) i za koju je predikcija modela također takva 
+ \item TN \engl{true negative} -- slika koja je označena kao negativna (atribut pripajanja nije prisutan) i za koju je predikcija modela također takva
+ \item FP \engl{false positive} -- slika koja je označena kao negativna, a predikcija modela je pozitivna
+ \item FN \engl{false negative} -- slika koja je označena kao pozitivna, a predikcija modela je negativna
+\end{itemize}
+Mjere koje su uzimane u obzir prilikom testiranja jesu točnost \engl{accuracy}, preciznost \engl{precision} i odziv \engl{recall}. 
+Točnost jest definirana na sljedeći način:
+\begin{align}
+ \text{točnost} = \cfrac{\text{TP} + \text{TN}}{\text{TP} + \text{TN} + \text{FP} + \text{FN}}
+\end{align}
+Odziv jest definirana na sljedeći način:
+\begin{align}
+ \text{odziv} = \cfrac{\text{TP}}{\text{TP} + \text{FN}}
+\end{align}
+Preciznost jest definirana na sljedeći način:
+\begin{align}
+ \text{preciznost} = \cfrac{\text{TP}}{\text{TP} + \text{FP}}
+\end{align}
+
+\section{Klasifikacija ručno označenih slika na različitim rezolucijama}
+Eksperimenti na ručno označenim slikama provedeni su koristeći arhitekturu za klasifikaciju pojedinačnih slika. 
+Kako su eksperimenti nad sekvencama slika memorijski mnogo zahtjevniji od eksperimenata na pojedinačnim slikama, svrha ovog eksperimenta bila je utvrditi
+na kojoj rezoluciji ulaznih slika model gubi ekspresivnu moć i ne uspijeva dati zadovoljavajuću performansu.
+
+Za početnu, originalnu rezoluciju pojedinačnih slika odabrana je rezolucija $700$x$280$. Eksperiment je proveden redom na sljedećim rezolucijama:
+$700$x$280$, $525$x$210$, $350$x$140$ i $175$x$70$. Rezultati su dani u nastavku.
+
+\subsection{Rezultati na rezoluciji 700x280}
+Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $700$x$280$ su sljedeći:
+\begin{table}[H]
+\centering
+\caption{Statistički rezultati na rezoluciji $700$x$280$}
+\label{score:single_hand_700x280}
+\begin{tabular}{|c|c|l|l|}
+\hline
+podskup podataka      & točnost & preciznost & odziv \\ \hline
+podskup za učenje     & 0.5     & 0.8        & 1.1   \\ \hline
+podskup za validaciju & 0.6     & 0.9        & 1.2   \\ \hline
+podskup za testiranje & 0.7     & 1          & 1.3   \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $700$x$280$}
+\label{score:single_hand_700x280_tpfptnfn}
+\begin{tabular}{|c|c|l|}
+\hline
+\diagbox{predikcija modela}{stvarna oznaka} & 0  & 1  \\ \hline
+0                                & TN & FP \\ \hline
+1                                & FN & TP \\ \hline
+\end{tabular}
+\end{table}
+\noindent Tablica \ref{score:single_hand_700x280} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
+Tablica \ref{score:single_hand_700x280_tpfptnfn} prikazuje odnos predikcija modela i stvarnih oznaka kroz matricu zabune.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/single_hand_scale1_loss.png}
+\caption{Kretanje prosječnog gubitka na skupu za učenje i validaciju po epohama}
+\label{img:single_hand_scale1_loss}
+\end{figure}
+\noindent Na slici \ref{img:single_hand_scale1_loss} vidljivo je kretanje prosječnog gubitka po epohama na podskupu za učenje i na podskupu za validaciju.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/single_hand_scale1_acc_ap.png}
+\caption{Kretanje točnosti, preciznosti i odziva po epohama}
+\label{img:single_hand_scale1_acc_ap}
+\end{figure}
+\noindent Na slici \ref{img:single_hand_scale1_acc_ap} vidljivo je kretanje točnosti, preciznosti, odziva po epohama na podskupu za učenje i na podskupu za validaciju.
+
+\subsection{Rezultati na rezoluciji 525x210}
+Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $525$x$210$ su sljedeći:
+\begin{table}[H]
+\centering
+\caption{Statistički rezultati na rezoluciji $525$x$210$}
+\label{score:single_hand_525x210}
+\begin{tabular}{|c|c|l|l|}
+\hline
+podskup podataka      & točnost & preciznost & odziv \\ \hline
+podskup za učenje     & 0.5     & 0.8        & 1.1   \\ \hline
+podskup za validaciju & 0.6     & 0.9        & 1.2   \\ \hline
+podskup za testiranje & 0.7     & 1          & 1.3   \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $525$x$210$}
+\label{score:single_hand_525x210_tpfptnfn}
+\begin{tabular}{|c|c|l|}
+\hline
+\diagbox{predikcija modela}{stvarna oznaka} & 0  & 1  \\ \hline
+0                                & TN & FP \\ \hline
+1                                & FN & TP \\ \hline
+\end{tabular}
+\end{table}
+\noindent Tablica \ref{score:single_hand_525x210} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
+Tablica \ref{score:single_hand_525x210_tpfptnfn} prikazuje odnos predikcija modela i stvarnih oznaka kroz matricu zabune.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/single_hand_scale075_loss.png}
+\caption{Kretanje prosječnog gubitka na skupu za učenje i validaciju po epohama}
+\label{img:single_hand_scale075_loss}
+\end{figure}
+\noindent Na slici \ref{img:single_hand_scale075_loss} vidljivo je kretanje prosječnog gubitka po epohama na podskupu za učenje i na podskupu za validaciju.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/single_hand_scale075_acc_ap.png}
+\caption{Kretanje točnosti, preciznosti i odziva po epohama}
+\label{img:single_hand_scale075_acc_ap}
+\end{figure}
+\noindent Na slici \ref{img:single_hand_scale075_acc_ap} vidljivo je kretanje točnosti, preciznosti, odziva po epohama na podskupu za učenje i na podskupu za validaciju.
+
+\subsection{Rezultati na rezoluciji 350x140}
+Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $350$x$140$ su sljedeći:
+\begin{table}[H]
+\centering
+\caption{Statistički rezultati na rezoluciji  $350$x$140$}
+\label{score:single_hand_350x140}
+\begin{tabular}{|c|c|l|l|}
+\hline
+podskup podataka      & točnost & preciznost & odziv \\ \hline
+podskup za učenje     & 0.5     & 0.8        & 1.1   \\ \hline
+podskup za validaciju & 0.6     & 0.9        & 1.2   \\ \hline
+podskup za testiranje & 0.7     & 1          & 1.3   \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji  $350$x$140$}
+\label{score:single_hand_350x140_tpfptnfn}
+\begin{tabular}{|c|c|l|}
+\hline
+\diagbox{predikcija modela}{stvarna oznaka} & 0  & 1  \\ \hline
+0                                & TN & FP \\ \hline
+1                                & FN & TP \\ \hline
+\end{tabular}
+\end{table}
+\noindent Tablica \ref{score:single_hand_350x140} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
+Tablica \ref{score:single_hand_350x140_tpfptnfn} prikazuje odnos predikcija modela i stvarnih oznaka kroz matricu zabune.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/single_hand_scale050_loss.png}
+\caption{Kretanje prosječnog gubitka na skupu za učenje i validaciju po epohama}
+\label{img:single_hand_scale050_loss}
+\end{figure}
+\noindent Na slici \ref{img:single_hand_scale050_loss} vidljivo je kretanje prosječnog gubitka po epohama na podskupu za učenje i na podskupu za validaciju.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/single_hand_scale050_acc_ap.png}
+\caption{Kretanje točnosti, preciznosti i odziva po epohama}
+\label{img:single_hand_scale050_acc_ap}
+\end{figure}
+\noindent Na slici \ref{img:single_hand_scale050_acc_ap} vidljivo je kretanje točnosti, preciznosti, odziva po epohama na podskupu za učenje i na podskupu za validaciju.
+
+\subsection{Rezultati na rezoluciji 175x70}
+Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $175$x$70$ su sljedeći:
+\begin{table}[H]
+\centering
+\caption{Statistički rezultati na rezoluciji $175$x$70$}
+\label{score:single_hand_175x70}
+\begin{tabular}{|c|c|l|l|}
+\hline
+podskup podataka      & točnost & preciznost & odziv \\ \hline
+podskup za učenje     & 0.5     & 0.8        & 1.1   \\ \hline
+podskup za validaciju & 0.6     & 0.9        & 1.2   \\ \hline
+podskup za testiranje & 0.7     & 1          & 1.3   \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $175$x$70$}
+\label{score:single_hand_175x70_tpfptnfn}
+\begin{tabular}{|c|c|l|}
+\hline
+\diagbox{predikcija modela}{stvarna oznaka} & 0  & 1  \\ \hline
+0                                & TN & FP \\ \hline
+1                                & FN & TP \\ \hline
+\end{tabular}
+\end{table}
+\noindent Tablica \ref{score:single_hand_175x70} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
+Tablica \ref{score:single_hand_175x70_tpfptnfn} prikazuje odnos predikcija modela i stvarnih oznaka kroz matricu zabune.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/single_hand_scale025_loss.png}
+\caption{Kretanje prosječnog gubitka na skupu za učenje i validaciju po epohama}
+\label{img:single_hand_scale025_loss}
+\end{figure}
+\noindent Na slici \ref{img:single_hand_scale025_loss} vidljivo je kretanje prosječnog gubitka po epohama na podskupu za učenje i na podskupu za validaciju.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/single_hand_scale025_acc_ap.png}
+\caption{Kretanje točnosti, preciznosti i odziva po epohama}
+\label{img:single_hand_scale025_acc_ap}
+\end{figure}
+\noindent Na slici \ref{img:single_hand_scale025_acc_ap} vidljivo je kretanje točnosti, preciznosti, odziva po epohama na podskupu za učenje i na podskupu za validaciju.
 
 \chapter{Zaključak}
 Zaključak.
