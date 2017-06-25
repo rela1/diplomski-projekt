@@ -84,6 +84,7 @@ def evaluate(name, sess, batch_logits, batch_loss, batch_true_labels, num_exampl
     losses.append(loss_val)
     if not i % 10:
       print('\tstep {}/{}, {} examples/sec, {} sec/batch'.format(i+1, num_batches, batch_size / duration, duration))
+  y_prob = np.array(y_prob)
   metrics_dict = evaluate_default_metric_functions(y_true, y_pred, y_prob)
   print_metrics(metrics_dict)
   print('\taverage loss={}\n'.format(np.mean(losses)))
