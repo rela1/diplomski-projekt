@@ -6,7 +6,7 @@ from sklearn import metrics
 import tensorflow as tf
 
 METRIC_FUNCTIONS = (metrics.accuracy_score, metrics.precision_score, metrics.recall_score)
-PROBABILITY_METRIC_FUNCTIONS = (metrics.average_precision_score)
+PROBABILITY_METRIC_FUNCTIONS = (metrics.average_precision_score, )
 
 
 def print_metrics(metrics):
