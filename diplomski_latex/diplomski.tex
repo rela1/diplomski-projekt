@@ -838,6 +838,10 @@ Preciznost jest definirana na sljedeći način:
 \begin{align}
  \text{preciznost} = \cfrac{\text{TP}}{\text{TP} + \text{FP}}
 \end{align}
+Kako je izlaz modela vjerojatnost da je atribut pripajanja prisutan na slici, odnosno da atribut pripajanja nije prisutan na slici, definira se prag kao iznos vjerojatnosti iznad koje se smatra da je atribut prisutan.
+Za različite pragove dobivaju se različite vrijednosti preciznosti i odziva modela prilikom evaluacije. 
+Ucrtavanjem svih točaka koje povezuju vrijednost preciznosti i odziva za različite pragove dobivamo graf ovisnosti preciznosti i odziva.
+Prosječna preciznost jest definirana kao površina ispod tog grafa.
 
 \section{Klasifikacija ručno označenih slika na različitim rezolucijama}
 Eksperimenti na ručno označenim slikama provedeni su koristeći arhitekturu za klasifikaciju pojedinačnih slika. 
@@ -853,12 +857,12 @@ Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $700$x$
 \centering
 \caption{Statistički rezultati na rezoluciji $700$x$280$}
 \label{score:single_hand_700x280}
-\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|c|c|c|c|c|}
 \hline
-podskup podataka      & točnost & preciznost & odziv \\ \hline
-podskup za učenje     & 1.0     & 1.0        & 1.0   \\ \hline
-podskup za validaciju & 0.91     & 0.98        & 0.83   \\ \hline
-podskup za testiranje & 0.95     & 0.99          & 0.91   \\ \hline
+podskup podataka      & točnost & preciznost & odziv & prosječna preciznost \\ \hline
+podskup za učenje     & 1.0     & 1.0        & 1.0  & 1.0 \\ \hline
+podskup za validaciju & 0.91     & 0.98        & 0.83  & 0.99 \\ \hline
+podskup za testiranje & 0.95     & 0.99          & 0.91  & 0.99 \\ \hline
 \end{tabular}
 \end{table}
 \begin{table}[H]
@@ -919,12 +923,12 @@ Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $525$x$
 \centering
 \caption{Statistički rezultati na rezoluciji $525$x$210$}
 \label{score:single_hand_525x210}
-\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|c|c|c|c|c|}
 \hline
-podskup podataka      & točnost & preciznost & odziv \\ \hline
-podskup za učenje     & 1.0     & 1.0        & 1.0   \\ \hline
-podskup za validaciju & 0.92     & 0.99        & 0.85   \\ \hline
-podskup za testiranje & 0.98     & 0.99          & 0.96   \\ \hline
+podskup podataka      & točnost & preciznost & odziv & prosječna preciznost \\ \hline
+podskup za učenje     & 1.0     & 1.0        & 1.0   & 1.0\\ \hline
+podskup za validaciju & 0.92     & 0.99        & 0.85  & 0.99 \\ \hline
+podskup za testiranje & 0.98     & 0.99          & 0.96  & 0.99 \\ \hline
 \end{tabular}
 \end{table}
 \begin{table}[H]
@@ -985,12 +989,12 @@ Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $350$x$
 \centering
 \caption{Statistički rezultati na rezoluciji  $350$x$140$}
 \label{score:single_hand_350x140}
-\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|c|c|c|c|c|}
 \hline
-podskup podataka      & točnost & preciznost & odziv \\ \hline
-podskup za učenje     & 1.0     & 1.0        & 1.0   \\ \hline
-podskup za validaciju & 0.92     & 0.96        & 0.88   \\ \hline
-podskup za testiranje & 0.98     & 0.96          & 0.99   \\ \hline
+podskup podataka      & točnost & preciznost & odziv & prosječna preciznost \\ \hline
+podskup za učenje     & 1.0     & 1.0        & 1.0  & 1.0 \\ \hline
+podskup za validaciju & 0.92     & 0.96        & 0.88 &  0.99 \\ \hline
+podskup za testiranje & 0.98     & 0.96          & 0.99 &  0.99 \\ \hline
 \end{tabular}
 \end{table}
 \begin{table}[H]
@@ -1051,12 +1055,12 @@ Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $175$x$
 \centering
 \caption{Statistički rezultati na rezoluciji $175$x$70$}
 \label{score:single_hand_175x70}
-\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|c|c|c|c|c|}
 \hline
-podskup podataka      & točnost & preciznost & odziv \\ \hline
-podskup za učenje     & 1.0     & 1.0        & 1.0   \\ \hline
-podskup za validaciju & 0.81     & 0.98        & 0.63   \\ \hline
-podskup za testiranje & 0.71     & 0.96          & 0.43   \\ \hline
+podskup podataka      & točnost & preciznost & odziv & prosječna preciznost \\ \hline
+podskup za učenje     & 1.0     & 1.0        & 1.0  & 1.0  \\ \hline
+podskup za validaciju & 0.81     & 0.98        & 0.63  & 0.96 \\ \hline
+podskup za testiranje & 0.71     & 0.96          & 0.43 & 0.92 \\ \hline
 \end{tabular}
 \end{table}
 \begin{table}[H]

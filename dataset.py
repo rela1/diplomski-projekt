@@ -218,7 +218,7 @@ def parse_sequence_example(record_string):
                         'sequence_length' : tf.FixedLenFeature([], tf.int64)
                     }
   )
-  images = tf.decode_raw(features['images_raw'], tf.float32)
+  images = tf.decode_raw(features['images_raw'], tf.float64)
   width = tf.cast(features['width'], tf.int32)
   height = tf.cast(features['height'], tf.int32)
   depth = tf.cast(features['depth'], tf.int32)
