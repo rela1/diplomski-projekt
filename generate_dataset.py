@@ -131,7 +131,7 @@ def get_images_sequence_and_single_image(single_image_frame, video_name, images_
 
     images_sequence = np.array(images_sequence, dtype=np.float32)
 
-    return single_img, single_img_eq, images_sequence
+    return single_img.astype(np.float32), single_img_eq.astype(np.float32), images_sequence
 
 
 def write_sequenced_and_single_example(single_image_frame, geolocation, video_name, label, images_before_single, images_after_single, sequential_tf_records_writer, single_tf_records_writer, zero_pad_number, treshold, number_of_frames):
