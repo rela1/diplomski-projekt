@@ -294,10 +294,11 @@ Konačan efekt jest da će se komponente parametara čije su parcijalne derivaci
 
 Adam optimizator kombinira ove dvije metode i optimiranje parametara definira se na sljedeći način:
 \begin{align}
- \text{inicijalne vrijednosti}&: \\
+ \text{inicijalne vrijednosti}&: \nonumber \\
+ t_0 &= 0 \nonumber \\
  \mathbf{m}_0 &= \vec{0} \nonumber \\
  \mathbf{v}_0 &= \vec{0} \nonumber  \\
- \text{osvježavanje parametara}&: \\
+ \text{osvježavanje parametara}&: \nonumber \\
  \mathbf{g}_t &= \cfrac{\partial C}{\partial \boldsymbol{\phi}_t}  \nonumber \\
  \mathbf{m}_t &= \beta_1 \mathbf{m}_{t-1} + (1 - \beta_1) \mathbf{g}_t \nonumber \\
  \mathbf{v}_t &= \beta_2 \mathbf{v}_{t-1} + (1 - \beta_2) \mathbf{g}_t^2 \nonumber \\
@@ -801,6 +802,13 @@ Kako su sve arhitekture korištene za potrebe ovog rada zasnovane na naučenom p
   \eta_{t}=\eta_0 \cdot 0.96^{\cfrac{t}{k}},
  \end{align}
 gdje je $t$ indeks koraka učenja, a $k$ je broj koraka učenja u jednoj epohi
+ \item svi novo nadodani slobodni parametri (isključujući parametre naučenog prednjeg dijela VGG-16 arhitekture) inicijalizirani su na sljedeći način:
+ \begin{itemize}
+  \item parametri slojeva (isključujući parametre pomaka) s po dijelovima linearnom aktivacijskom funkcijom inicijalizirani su koristeći inicijalizator koji skalira varijancu prema \citep{article:delving_deep_into_rectifiers}
+  \item parametri slojeva (isključujući parametre pomaka) s normalizirajućom eksponencijalnom aktivacijskom funkcijom inicijalizirani su koristeći Xavier inicijalizaciju prema \citep{article:delving_deep_into_rectifiers}
+  \item parametri pomaka svih slojeva inicijalizirani su s vrijednostima 0
+ \end{itemize}
+
  \item slobodni parametri regularizirani su L2 regularizacijom s faktorom regularizacije iznosa $5\cdot10^{-4}$
  \item podskup za validaciju korišten je za odabir slobodnih parametara modela
  \begin{itemize}
@@ -808,9 +816,9 @@ gdje je $t$ indeks koraka učenja, a $k$ je broj koraka učenja u jednoj epohi
   \item za testiranje se odabire onaj skup parametara koji postiže najbolju performansu na podskupu za validaciju -- ovime se efektivno obavlja regularizacija jer odabiremo onaj skup parametara koji najbolje generalizira
  \end{itemize}
 \end{itemize}
-Svi eksperimenti provedeni su na nVidia grafičkim karticama GTX 1070 i GTX Titan.
+Svi eksperimenti provedeni su na nVIDIA grafičkim karticama GTX 1070 i GTX Titan.
 
-Zadatak ovog rada definiran kao binarna klasifikacija, pa možemo iskoristiti 4 definirana tipa predikcija modela: 
+Zadatak ovog rada definiran je kao binarna klasifikacija pa možemo iskoristiti 4 definirana tipa predikcija modela: 
 \begin{itemize}
  \item TP \engl{true positive} -- slika koja je označena kao pozitivna (atribut pripajanja je prisutan) i za koju je predikcija modela također takva 
  \item TN \engl{true negative} -- slika koja je označena kao negativna (atribut pripajanja nije prisutan) i za koju je predikcija modela također takva
@@ -845,32 +853,54 @@ Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $700$x$
 \centering
 \caption{Statistički rezultati na rezoluciji $700$x$280$}
 \label{score:single_hand_700x280}
-\begin{tabular}{|c|c|l|l|}
+\begin{tabular}{|c|c|c|c|}
 \hline
 podskup podataka      & točnost & preciznost & odziv \\ \hline
 podskup za učenje     & 1.0     & 1.0        & 1.0   \\ \hline
-podskup za validaciju & 0.6     & 0.9        & 1.2   \\ \hline
-podskup za testiranje & 0.7     & 1          & 1.3   \\ \hline
+podskup za validaciju & 0.91     & 0.98        & 0.83   \\ \hline
+podskup za testiranje & 0.95     & 0.99          & 0.91   \\ \hline
 \end{tabular}
 \end{table}
 \begin{table}[H]
 \centering
-\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $700$x$280$}
-\label{score:single_hand_700x280_tpfptnfn}
-\begin{tabular}{|c|c|l|}
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $700$x$280$ na podskupu za učenje}
+\label{score:single_hand_700x280_tpfptnfn_train}
+\begin{tabular}{|c|c|c|}
 \hline
-\diagbox{predikcija modela}{stvarna oznaka} & 0  & 1  \\ \hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
 0                                & 898 & 0 \\ \hline
 1                                & 0 & 902 \\ \hline
 \end{tabular}
 \end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $700$x$280$ na podskupu za validaciju}
+\label{score:single_hand_700x280_tpfptnfn_valid}
+\begin{tabular}{|c|c|c|}
+\hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 308 & 5 \\ \hline
+1                                & 54 & 259 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $700$x$280$ na podskupu za testiranje}
+\label{score:single_hand_700x280_tpfptnfn_test}
+\begin{tabular}{|c|c|c|}
+\hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 295 & 2 \\ \hline
+1                                & 26 & 271 \\ \hline
+\end{tabular}
+\end{table}
 \noindent Tablica \ref{score:single_hand_700x280} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
-Tablica \ref{score:single_hand_700x280_tpfptnfn} prikazuje odnos predikcija modela i stvarnih oznaka kroz matricu zabune.
+Tablice \ref{score:single_hand_700x280_tpfptnfn_train}, \ref{score:single_hand_700x280_tpfptnfn_valid} i \ref{score:single_hand_700x280_tpfptnfn_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matricu zabune.
 
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.35]{images/single_hand_scale1_loss.png}
-\caption{Kretanje prosječnog gubitka na skupu za učenje i validaciju po epohama}
+\caption{Kretanje prosječnog gubitka na podskupu za učenje i validaciju po epohama}
 \label{img:single_hand_scale1_loss}
 \end{figure}
 \noindent Na slici \ref{img:single_hand_scale1_loss} vidljivo je kretanje prosječnog gubitka po epohama na podskupu za učenje i na podskupu za validaciju.
@@ -878,10 +908,10 @@ Tablica \ref{score:single_hand_700x280_tpfptnfn} prikazuje odnos predikcija mode
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.35]{images/single_hand_scale1_acc_ap.png}
-\caption{Kretanje točnosti, preciznosti i odziva po epohama}
+\caption{Kretanje točnosti, preciznosti i odziva na podskupu za validaciju po epohama}
 \label{img:single_hand_scale1_acc_ap}
 \end{figure}
-\noindent Na slici \ref{img:single_hand_scale1_acc_ap} vidljivo je kretanje točnosti, preciznosti i odziva po epohama na podskupu za učenje i na podskupu za validaciju.
+\noindent Na slici \ref{img:single_hand_scale1_acc_ap} vidljivo je kretanje točnosti, preciznosti i odziva po epohama na podskupu za validaciju.
 
 \subsection{Rezultati na rezoluciji 525x210}
 Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $525$x$210$ su sljedeći:
@@ -889,32 +919,54 @@ Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $525$x$
 \centering
 \caption{Statistički rezultati na rezoluciji $525$x$210$}
 \label{score:single_hand_525x210}
-\begin{tabular}{|c|c|l|l|}
+\begin{tabular}{|c|c|c|c|}
 \hline
 podskup podataka      & točnost & preciznost & odziv \\ \hline
-podskup za učenje     & 0.5     & 0.8        & 1.1   \\ \hline
-podskup za validaciju & 0.6     & 0.9        & 1.2   \\ \hline
-podskup za testiranje & 0.7     & 1          & 1.3   \\ \hline
+podskup za učenje     & 1.0     & 1.0        & 1.0   \\ \hline
+podskup za validaciju & 0.92     & 0.99        & 0.85   \\ \hline
+podskup za testiranje & 0.98     & 0.99          & 0.96   \\ \hline
 \end{tabular}
 \end{table}
 \begin{table}[H]
 \centering
-\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $525$x$210$}
-\label{score:single_hand_525x210_tpfptnfn}
-\begin{tabular}{|c|c|l|}
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $525$x$210$ na podskupu za učenje}
+\label{score:single_hand_525x210_tpfptnfn_train}
+\begin{tabular}{|c|c|c|}
 \hline
-\diagbox{predikcija modela}{stvarna oznaka} & 0  & 1  \\ \hline
-0                                & TN & FP \\ \hline
-1                                & FN & TP \\ \hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 898 & 0 \\ \hline
+1                                & 0 & 898 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $525$x$210$ na podskupu za validaciju}
+\label{score:single_hand_525x210_tpfptnfn_valid}
+\begin{tabular}{|c|c|c|}
+\hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 310 & 3 \\ \hline
+1                                & 48 & 265 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $525$x$210$ na podskupu za testiranje}
+\label{score:single_hand_525x210_tpfptnfn_test}
+\begin{tabular}{|c|c|c|}
+\hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 295 & 2 \\ \hline
+1                                & 12 & 285 \\ \hline
 \end{tabular}
 \end{table}
 \noindent Tablica \ref{score:single_hand_525x210} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
-Tablica \ref{score:single_hand_525x210_tpfptnfn} prikazuje odnos predikcija modela i stvarnih oznaka kroz matricu zabune.
+Tablice \ref{score:single_hand_525x210_tpfptnfn_train}, \ref{score:single_hand_525x210_tpfptnfn_valid} i \ref{score:single_hand_525x210_tpfptnfn_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matricu zabune.
 
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.35]{images/single_hand_scale075_loss.png}
-\caption{Kretanje prosječnog gubitka na skupu za učenje i validaciju po epohama}
+\caption{Kretanje prosječnog gubitka na podskupu za učenje i validaciju po epohama}
 \label{img:single_hand_scale075_loss}
 \end{figure}
 \noindent Na slici \ref{img:single_hand_scale075_loss} vidljivo je kretanje prosječnog gubitka po epohama na podskupu za učenje i na podskupu za validaciju.
@@ -925,7 +977,7 @@ Tablica \ref{score:single_hand_525x210_tpfptnfn} prikazuje odnos predikcija mode
 \caption{Kretanje točnosti, preciznosti i odziva po epohama}
 \label{img:single_hand_scale075_acc_ap}
 \end{figure}
-\noindent Na slici \ref{img:single_hand_scale075_acc_ap} vidljivo je kretanje točnosti, preciznosti i odziva po epohama na podskupu za učenje i na podskupu za validaciju.
+\noindent Na slici \ref{img:single_hand_scale075_acc_ap} vidljivo je kretanje točnosti, preciznosti i odziva po epohama na podskupu za validaciju.
 
 \subsection{Rezultati na rezoluciji 350x140}
 Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $350$x$140$ su sljedeći:
@@ -933,32 +985,54 @@ Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $350$x$
 \centering
 \caption{Statistički rezultati na rezoluciji  $350$x$140$}
 \label{score:single_hand_350x140}
-\begin{tabular}{|c|c|l|l|}
+\begin{tabular}{|c|c|c|c|}
 \hline
 podskup podataka      & točnost & preciznost & odziv \\ \hline
-podskup za učenje     & 0.5     & 0.8        & 1.1   \\ \hline
-podskup za validaciju & 0.6     & 0.9        & 1.2   \\ \hline
-podskup za testiranje & 0.7     & 1          & 1.3   \\ \hline
+podskup za učenje     & 1.0     & 1.0        & 1.0   \\ \hline
+podskup za validaciju & 0.92     & 0.96        & 0.88   \\ \hline
+podskup za testiranje & 0.98     & 0.96          & 0.99   \\ \hline
 \end{tabular}
 \end{table}
 \begin{table}[H]
 \centering
-\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji  $350$x$140$}
-\label{score:single_hand_350x140_tpfptnfn}
-\begin{tabular}{|c|c|l|}
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji  $350$x$140$ na podskupu za treniranje}
+\label{score:single_hand_350x140_tpfptnfn_train}
+\begin{tabular}{|c|c|c|}
 \hline
-\diagbox{predikcija modela}{stvarna oznaka} & 0  & 1  \\ \hline
-0                                & TN & FP \\ \hline
-1                                & FN & TP \\ \hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 898 & 0 \\ \hline
+1                                & 0 & 898 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji  $350$x$140$ na podskupu za validaciju}
+\label{score:single_hand_350x140_tpfptnfn_valid}
+\begin{tabular}{|c|c|c|}
+\hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 303 & 10 \\ \hline
+1                                & 39 & 274 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji  $350$x$140$ na podskupu za testiranje}
+\label{score:single_hand_350x140_tpfptnfn_test}
+\begin{tabular}{|c|c|c|}
+\hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 286 & 11 \\ \hline
+1                                & 2 & 295 \\ \hline
 \end{tabular}
 \end{table}
 \noindent Tablica \ref{score:single_hand_350x140} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
-Tablica \ref{score:single_hand_350x140_tpfptnfn} prikazuje odnos predikcija modela i stvarnih oznaka kroz matricu zabune.
+Tablice \ref{score:single_hand_350x140_tpfptnfn_train}, \ref{score:single_hand_350x140_tpfptnfn_valid} i \ref{score:single_hand_350x140_tpfptnfn_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matricu zabune.
 
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.35]{images/single_hand_scale050_loss.png}
-\caption{Kretanje prosječnog gubitka na skupu za učenje i validaciju po epohama}
+\caption{Kretanje prosječnog gubitka na podskupu za učenje i validaciju po epohama}
 \label{img:single_hand_scale050_loss}
 \end{figure}
 \noindent Na slici \ref{img:single_hand_scale050_loss} vidljivo je kretanje prosječnog gubitka po epohama na podskupu za učenje i na podskupu za validaciju.
@@ -966,10 +1040,10 @@ Tablica \ref{score:single_hand_350x140_tpfptnfn} prikazuje odnos predikcija mode
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.35]{images/single_hand_scale050_acc_ap.png}
-\caption{Kretanje točnosti, preciznosti i odziva po epohama}
+\caption{Kretanje točnosti, preciznosti i odziva na podskupu za validaciju po epohama}
 \label{img:single_hand_scale050_acc_ap}
 \end{figure}
-\noindent Na slici \ref{img:single_hand_scale050_acc_ap} vidljivo je kretanje točnosti, preciznosti i odziva po epohama na podskupu za učenje i na podskupu za validaciju.
+\noindent Na slici \ref{img:single_hand_scale050_acc_ap} vidljivo je kretanje točnosti, preciznosti i odziva po epohama na podskupu za validaciju.
 
 \subsection{Rezultati na rezoluciji 175x70}
 Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $175$x$70$ su sljedeći:
@@ -977,27 +1051,49 @@ Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $175$x$
 \centering
 \caption{Statistički rezultati na rezoluciji $175$x$70$}
 \label{score:single_hand_175x70}
-\begin{tabular}{|c|c|l|l|}
+\begin{tabular}{|c|c|c|c|}
 \hline
 podskup podataka      & točnost & preciznost & odziv \\ \hline
-podskup za učenje     & 0.5     & 0.8        & 1.1   \\ \hline
-podskup za validaciju & 0.6     & 0.9        & 1.2   \\ \hline
-podskup za testiranje & 0.7     & 1          & 1.3   \\ \hline
+podskup za učenje     & 1.0     & 1.0        & 1.0   \\ \hline
+podskup za validaciju & 0.81     & 0.98        & 0.63   \\ \hline
+podskup za testiranje & 0.71     & 0.96          & 0.43   \\ \hline
 \end{tabular}
 \end{table}
 \begin{table}[H]
 \centering
-\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $175$x$70$}
-\label{score:single_hand_175x70_tpfptnfn}
-\begin{tabular}{|c|c|l|}
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $175$x$70$ na podskupu za učenje}
+\label{score:single_hand_175x70_tpfptnfn_train}
+\begin{tabular}{|c|c|c|}
 \hline
-\diagbox{predikcija modela}{stvarna oznaka} & 0  & 1  \\ \hline
-0                                & TN & FP \\ \hline
-1                                & FN & TP \\ \hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 898 & 0 \\ \hline
+1                                & 0 & 898 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $175$x$70$ na podskupu za validaciju}
+\label{score:single_hand_175x70_tpfptnfn_valid}
+\begin{tabular}{|c|c|c|}
+\hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 310 & 3 \\ \hline
+1                                & 117 & 196 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $175$x$70$ na podskupu za testiranje}
+\label{score:single_hand_175x70_tpfptnfn_test}
+\begin{tabular}{|c|c|c|}
+\hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 291 & 6 \\ \hline
+1                                & 169 & 128 \\ \hline
 \end{tabular}
 \end{table}
 \noindent Tablica \ref{score:single_hand_175x70} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
-Tablica \ref{score:single_hand_175x70_tpfptnfn} prikazuje odnos predikcija modela i stvarnih oznaka kroz matricu zabune.
+Tablice \ref{score:single_hand_175x70_tpfptnfn_train}, \ref{score:single_hand_175x70_tpfptnfn_valid} i \ref{score:single_hand_175x70_tpfptnfn_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matricu zabune.
 
 \begin{figure}[H]
 \centering
@@ -1013,57 +1109,14 @@ Tablica \ref{score:single_hand_175x70_tpfptnfn} prikazuje odnos predikcija model
 \caption{Kretanje točnosti, preciznosti i odziva po epohama}
 \label{img:single_hand_scale025_acc_ap}
 \end{figure}
-\noindent Na slici \ref{img:single_hand_scale025_acc_ap} vidljivo je kretanje točnosti, preciznosti i odziva po epohama na podskupu za učenje i na podskupu za validaciju.
+\noindent Na slici \ref{img:single_hand_scale025_acc_ap} vidljivo je kretanje točnosti, preciznosti i odziva po epohama na podskupu za validaciju.
 
 Vidljivo je kako se tek na rezoluciji $175$x$70$ pojavljuje značajniji pad performansi. 
-Iz tog razloga se za eksperimente nad video sekvencama (zbog veće memorijske zahtjevnosti) koriste rezolucije slika $350$x$140$.
+Iz tog razloga se za eksperimente nad sekvencama slika (zbog veće memorijske zahtjevnosti) koriste rezolucije pojedinih slika $350$x$140$.
 
 \section{Klasifikacija pojedinačnih slika označenih konzistentno s projektom FTTS iRAP na originalnoj rezoluciji}
 Za razliku od prethodnih eksperimenata, ovaj eksperiment je proveden na skupu podataka označenom konzistentno sa sustavom FTTS iRAP.
 Eksperiment je proveden na pojedinačnim slikama kako bi se u daljnjim eksperimentima moglo usporediti poboljšava li se rezultat uvođenjem dodatnih informacija sa sekvencom slika koje prethode slici za koju je određena oznaka prisutnosti atributa pripajanja.
-
-Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $700$x$280$ su sljedeći:
-\begin{table}[H]
-\centering
-\caption{Statistički rezultati na rezoluciji $700$x$280$}
-\label{score:single_irap_700x280}
-\begin{tabular}{|c|c|l|l|}
-\hline
-podskup podataka      & točnost & preciznost & odziv \\ \hline
-podskup za učenje     & 0.5     & 0.8        & 1.1   \\ \hline
-podskup za validaciju & 0.6     & 0.9        & 1.2   \\ \hline
-podskup za testiranje & 0.7     & 1          & 1.3   \\ \hline
-\end{tabular}
-\end{table}
-\begin{table}[H]
-\centering
-\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $700$x$280$}
-\label{score:single_irap_700x280_tpfptnfn}
-\begin{tabular}{|c|c|l|}
-\hline
-\diagbox{predikcija modela}{stvarna oznaka} & 0  & 1  \\ \hline
-0                                & TN & FP \\ \hline
-1                                & FN & TP \\ \hline
-\end{tabular}
-\end{table}
-\noindent Tablica \ref{score:single_irap_700x280} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
-Tablica \ref{score:single_irap_700x280_tpfptnfn} prikazuje odnos predikcija modela i stvarnih oznaka kroz matricu zabune.
-
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.35]{images/single_irap_700x280_loss.png}
-\caption{Kretanje prosječnog gubitka na skupu za učenje i validaciju po epohama -- promijeniti sliku}
-\label{img:single_irap_700x280_loss}
-\end{figure}
-\noindent Na slici \ref{img:single_irap_700x280_loss} vidljivo je kretanje prosječnog gubitka po epohama na podskupu za učenje i na podskupu za validaciju.
-
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.35]{images/single_irap_700x280_acc_ap.png}
-\caption{Kretanje točnosti, preciznosti i odziva po epohama -- promijeniti sliku}
-\label{img:single_irap_700x280_acc_ap}
-\end{figure}
-\noindent Na slici \ref{img:single_irap_700x280_acc_ap} vidljivo je kretanje točnosti, preciznosti i odziva po epohama na podskupu za učenje i na podskupu za validaciju.
 
 \section{Klasifikacija sekvenci slika označenih konzistentno s projektom FTTS iRAP koristeći vremensko-prostorno sažimanje}
 

@@ -5,7 +5,8 @@ import numpy as np
 from sklearn import metrics
 import tensorflow as tf
 
-METRIC_FUNCTIONS = (metrics.accuracy_score, metrics.precision_score, metrics.average_precision_score, metrics.recall_score)
+METRIC_FUNCTIONS = (metrics.accuracy_score, metrics.precision_score, metrics.recall_score)
+PROBABILITY_METRIC_FUNCTIONS = (metrics.average_precision_score)
 
 
 def print_metrics(metrics):
@@ -35,18 +36,21 @@ def evaluate_metric_functions(y_true, y_pred, metric_functions):
   return {metric_function.__name__ : metric_function(y_true, y_pred) for metric_function in metric_functions}
 
 
-def evaluate_default_metric_functions(y_true, y_pred):
+def evaluate_default_metric_functions(y_true, y_pred, y_prob):
   """
   Evaluates given metric functions on given true and predicted dense data.
 
   Keyword arguments:
   y_true -- true densely stored classes
-  y_pred -- predicted densely stored classes
+  y_pred -- predicted densely stored classes and probabilities
+  y_prob -- predicted densely stored probabilities
 
   Returns:
   dictionary mapping metric function name to metric score
   """
-  return evaluate_metric_functions(y_true, y_pred, METRIC_FUNCTIONS)
+  pred_metrics = evaluate_metric_functions(y_true, y_pred, METRIC_FUNCTIONS)
+  pred_metrics.update(evaluate_metric_functions(y_true, y_prob[:, 1], PROBABILITY_METRIC_FUNCTIONS))
+  return pred_metrics
 
 
 def evaluate(name, sess, batch_logits, batch_loss, batch_true_labels, num_examples, batch_size):
@@ -80,7 +84,7 @@ def evaluate(name, sess, batch_logits, batch_loss, batch_true_labels, num_exampl
     losses.append(loss_val)
     if not i % 10:
       print('\tstep {}/{}, {} examples/sec, {} sec/batch'.format(i+1, num_batches, batch_size / duration, duration))
-  metrics_dict = evaluate_default_metric_functions(y_true, y_pred)
+  metrics_dict = evaluate_default_metric_functions(y_true, y_pred, y_prob)
   print_metrics(metrics_dict)
   print('\taverage loss={}\n'.format(np.mean(losses)))
   cm = metrics.confusion_matrix(y_true, y_pred, labels=[0, 1])
