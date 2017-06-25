@@ -1123,6 +1123,73 @@ Za razliku od prethodnih eksperimenata, ovaj eksperiment je proveden na skupu po
 Eksperiment je proveden na pojedinačnim slikama kako bi se u daljnjim eksperimentima moglo usporediti poboljšava li se rezultat uvođenjem dodatnih informacija sa sekvencom slika koje prethode slici za koju je određena oznaka prisutnosti atributa pripajanja.
 
 \section{Klasifikacija sekvenci slika označenih konzistentno s projektom FTTS iRAP koristeći vremensko-prostorno sažimanje}
+Konačni rezultati dobiveni za eksperiment sa sekvencijalnim ulaznim podacima rezolucije $350$x$140$ su sljedeći:
+\begin{table}[H]
+\centering
+\caption{Statistički rezultati}
+\label{score:single_hand_175x70}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+podskup podataka      & točnost & preciznost & odziv & prosječna preciznost \\ \hline
+podskup za učenje     & 1.0     & 1.0        & 1.0  & 1.0  \\ \hline
+podskup za validaciju & 0.81     & 0.98        & 0.63  & 0.96 \\ \hline
+podskup za testiranje & 0.71     & 0.96          & 0.43 & 0.92 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $175$x$70$ na podskupu za učenje}
+\label{score:single_hand_175x70_tpfptnfn_train}
+\begin{tabular}{|c|c|c|}
+\hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 898 & 0 \\ \hline
+1                                & 0 & 898 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $175$x$70$ na podskupu za validaciju}
+\label{score:single_hand_175x70_tpfptnfn_valid}
+\begin{tabular}{|c|c|c|}
+\hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 310 & 3 \\ \hline
+1                                & 117 & 196 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $175$x$70$ na podskupu za testiranje}
+\label{score:single_hand_175x70_tpfptnfn_test}
+\begin{tabular}{|c|c|c|}
+\hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 291 & 6 \\ \hline
+1                                & 169 & 128 \\ \hline
+\end{tabular}
+\end{table}
+\noindent Tablica \ref{score:single_hand_175x70} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
+Tablice \ref{score:single_hand_175x70_tpfptnfn_train}, \ref{score:single_hand_175x70_tpfptnfn_valid} i \ref{score:single_hand_175x70_tpfptnfn_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matricu zabune.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/single_hand_scale025_loss.png}
+\caption{Kretanje prosječnog gubitka na skupu za učenje i validaciju po epohama}
+\label{img:single_hand_scale025_loss}
+\end{figure}
+\noindent Na slici \ref{img:single_hand_scale025_loss} vidljivo je kretanje prosječnog gubitka po epohama na podskupu za učenje i na podskupu za validaciju.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/single_hand_scale025_acc_ap.png}
+\caption{Kretanje točnosti, preciznosti i odziva po epohama}
+\label{img:single_hand_scale025_acc_ap}
+\end{figure}
+\noindent Na slici \ref{img:single_hand_scale025_acc_ap} vidljivo je kretanje točnosti, preciznosti i odziva po epohama na podskupu za validaciju.
+
+Vidljivo je kako se tek na rezoluciji $175$x$70$ pojavljuje značajniji pad performansi. 
+Iz tog razloga se za eksperimente nad sekvencama slika (zbog veće memorijske zahtjevnosti) koriste rezolucije pojedinih slika $350$x$140$.
 
 \section{Klasifikacija sekvenci slika označenih konzistentno s projektom FTTS iRAP koristeći povratne LSTM ćelije}
 

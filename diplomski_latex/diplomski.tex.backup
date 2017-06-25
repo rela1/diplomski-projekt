@@ -802,10 +802,11 @@ Kako su sve arhitekture korištene za potrebe ovog rada zasnovane na naučenom p
   \eta_{t}=\eta_0 \cdot 0.96^{\cfrac{t}{k}},
  \end{align}
 gdje je $t$ indeks koraka učenja, a $k$ je broj koraka učenja u jednoj epohi
- \item svi novo nadodani parametri (isključujući parametre naučenog prednjeg dijela VGG-16 arhitekture) inicijalizirani su na sljedeći način:
+ \item svi novo nadodani slobodni parametri (isključujući parametre naučenog prednjeg dijela VGG-16 arhitekture) inicijalizirani su na sljedeći način:
  \begin{itemize}
-  \item parametri slojeva s po dijelovima linearnom aktivacijskom funkcijom inicijalizirani su koristeći inicijalizator koji skalira varijancu prema \citep{article:delving_deep_into_rectifiers}
-  \item parametri slojeva s normalizirajućom eksponencijalnom aktivacijskom funkcijom inicijalizirani su koristeći Xavier inicijalizaciju prema \citep{article:delving_deep_into_rectifiers}
+  \item parametri slojeva (isključujući parametre pomaka) s po dijelovima linearnom aktivacijskom funkcijom inicijalizirani su koristeći inicijalizator koji skalira varijancu prema \citep{article:delving_deep_into_rectifiers}
+  \item parametri slojeva (isključujući parametre pomaka) s normalizirajućom eksponencijalnom aktivacijskom funkcijom inicijalizirani su koristeći Xavier inicijalizaciju prema \citep{article:delving_deep_into_rectifiers}
+  \item parametri pomaka svih slojeva inicijalizirani su s vrijednostima 0
  \end{itemize}
 
  \item slobodni parametri regularizirani su L2 regularizacijom s faktorom regularizacije iznosa $5\cdot10^{-4}$
@@ -815,7 +816,7 @@ gdje je $t$ indeks koraka učenja, a $k$ je broj koraka učenja u jednoj epohi
   \item za testiranje se odabire onaj skup parametara koji postiže najbolju performansu na podskupu za validaciju -- ovime se efektivno obavlja regularizacija jer odabiremo onaj skup parametara koji najbolje generalizira
  \end{itemize}
 \end{itemize}
-Svi eksperimenti provedeni su na nVidia grafičkim karticama GTX 1070 i GTX Titan.
+Svi eksperimenti provedeni su na nVIDIA grafičkim karticama GTX 1070 i GTX Titan.
 
 Zadatak ovog rada definiran je kao binarna klasifikacija pa možemo iskoristiti 4 definirana tipa predikcija modela: 
 \begin{itemize}
@@ -837,6 +838,10 @@ Preciznost jest definirana na sljedeći način:
 \begin{align}
  \text{preciznost} = \cfrac{\text{TP}}{\text{TP} + \text{FP}}
 \end{align}
+Kako je izlaz modela vjerojatnost da je atribut pripajanja prisutan na slici, odnosno da atribut pripajanja nije prisutan na slici, definira se prag kao iznos vjerojatnosti iznad koje se smatra da je atribut prisutan.
+Za različite pragove dobivaju se različite vrijednosti preciznosti i odziva modela prilikom evaluacije. 
+Ucrtavanjem svih točaka koje povezuju vrijednost preciznosti i odziva za različite pragove dobivamo graf ovisnosti preciznosti i odziva.
+Prosječna preciznost jest definirana kao površina ispod tog grafa.
 
 \section{Klasifikacija ručno označenih slika na različitim rezolucijama}
 Eksperimenti na ručno označenim slikama provedeni su koristeći arhitekturu za klasifikaciju pojedinačnih slika. 
@@ -852,12 +857,12 @@ Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $700$x$
 \centering
 \caption{Statistički rezultati na rezoluciji $700$x$280$}
 \label{score:single_hand_700x280}
-\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|c|c|c|c|c|}
 \hline
-podskup podataka      & točnost & preciznost & odziv \\ \hline
-podskup za učenje     & 1.0     & 1.0        & 1.0   \\ \hline
-podskup za validaciju & 0.91     & 0.98        & 0.83   \\ \hline
-podskup za testiranje & 0.95     & 0.99          & 0.91   \\ \hline
+podskup podataka      & točnost & preciznost & odziv & prosječna preciznost \\ \hline
+podskup za učenje     & 1.0     & 1.0        & 1.0  & 1.0 \\ \hline
+podskup za validaciju & 0.91     & 0.98        & 0.83  & 0.99 \\ \hline
+podskup za testiranje & 0.95     & 0.99          & 0.91  & 0.99 \\ \hline
 \end{tabular}
 \end{table}
 \begin{table}[H]
@@ -918,12 +923,12 @@ Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $525$x$
 \centering
 \caption{Statistički rezultati na rezoluciji $525$x$210$}
 \label{score:single_hand_525x210}
-\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|c|c|c|c|c|}
 \hline
-podskup podataka      & točnost & preciznost & odziv \\ \hline
-podskup za učenje     & 1.0     & 1.0        & 1.0   \\ \hline
-podskup za validaciju & 0.92     & 0.99        & 0.85   \\ \hline
-podskup za testiranje & 0.98     & 0.99          & 0.96   \\ \hline
+podskup podataka      & točnost & preciznost & odziv & prosječna preciznost \\ \hline
+podskup za učenje     & 1.0     & 1.0        & 1.0   & 1.0\\ \hline
+podskup za validaciju & 0.92     & 0.99        & 0.85  & 0.99 \\ \hline
+podskup za testiranje & 0.98     & 0.99          & 0.96  & 0.99 \\ \hline
 \end{tabular}
 \end{table}
 \begin{table}[H]
@@ -984,12 +989,12 @@ Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $350$x$
 \centering
 \caption{Statistički rezultati na rezoluciji  $350$x$140$}
 \label{score:single_hand_350x140}
-\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|c|c|c|c|c|}
 \hline
-podskup podataka      & točnost & preciznost & odziv \\ \hline
-podskup za učenje     & 1.0     & 1.0        & 1.0   \\ \hline
-podskup za validaciju & 0.92     & 0.96        & 0.88   \\ \hline
-podskup za testiranje & 0.98     & 0.96          & 0.99   \\ \hline
+podskup podataka      & točnost & preciznost & odziv & prosječna preciznost \\ \hline
+podskup za učenje     & 1.0     & 1.0        & 1.0  & 1.0 \\ \hline
+podskup za validaciju & 0.92     & 0.96        & 0.88 &  0.99 \\ \hline
+podskup za testiranje & 0.98     & 0.96          & 0.99 &  0.99 \\ \hline
 \end{tabular}
 \end{table}
 \begin{table}[H]
@@ -1050,12 +1055,12 @@ Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $175$x$
 \centering
 \caption{Statistički rezultati na rezoluciji $175$x$70$}
 \label{score:single_hand_175x70}
-\begin{tabular}{|c|c|c|c|}
+\begin{tabular}{|c|c|c|c|c|}
 \hline
-podskup podataka      & točnost & preciznost & odziv \\ \hline
-podskup za učenje     & 1.0     & 1.0        & 1.0   \\ \hline
-podskup za validaciju & 0.81     & 0.98        & 0.63   \\ \hline
-podskup za testiranje & 0.71     & 0.96          & 0.43   \\ \hline
+podskup podataka      & točnost & preciznost & odziv & prosječna preciznost \\ \hline
+podskup za učenje     & 1.0     & 1.0        & 1.0  & 1.0  \\ \hline
+podskup za validaciju & 0.81     & 0.98        & 0.63  & 0.96 \\ \hline
+podskup za testiranje & 0.71     & 0.96          & 0.43 & 0.92 \\ \hline
 \end{tabular}
 \end{table}
 \begin{table}[H]
@@ -1118,6 +1123,73 @@ Za razliku od prethodnih eksperimenata, ovaj eksperiment je proveden na skupu po
 Eksperiment je proveden na pojedinačnim slikama kako bi se u daljnjim eksperimentima moglo usporediti poboljšava li se rezultat uvođenjem dodatnih informacija sa sekvencom slika koje prethode slici za koju je određena oznaka prisutnosti atributa pripajanja.
 
 \section{Klasifikacija sekvenci slika označenih konzistentno s projektom FTTS iRAP koristeći vremensko-prostorno sažimanje}
+Konačni rezultati dobiveni za eksperiment sa sekvencijalnim ulaznim podacima rezolucije $350$x$140$ su sljedeći:
+\begin{table}[H]
+\centering
+\caption{Statistički rezultati na rezoluciji $175$x$70$}
+\label{score:single_hand_175x70}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+podskup podataka      & točnost & preciznost & odziv & prosječna preciznost \\ \hline
+podskup za učenje     & 1.0     & 1.0        & 1.0  & 1.0  \\ \hline
+podskup za validaciju & 0.81     & 0.98        & 0.63  & 0.96 \\ \hline
+podskup za testiranje & 0.71     & 0.96          & 0.43 & 0.92 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $175$x$70$ na podskupu za učenje}
+\label{score:single_hand_175x70_tpfptnfn_train}
+\begin{tabular}{|c|c|c|}
+\hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 898 & 0 \\ \hline
+1                                & 0 & 898 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $175$x$70$ na podskupu za validaciju}
+\label{score:single_hand_175x70_tpfptnfn_valid}
+\begin{tabular}{|c|c|c|}
+\hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 310 & 3 \\ \hline
+1                                & 117 & 196 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $175$x$70$ na podskupu za testiranje}
+\label{score:single_hand_175x70_tpfptnfn_test}
+\begin{tabular}{|c|c|c|}
+\hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 291 & 6 \\ \hline
+1                                & 169 & 128 \\ \hline
+\end{tabular}
+\end{table}
+\noindent Tablica \ref{score:single_hand_175x70} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
+Tablice \ref{score:single_hand_175x70_tpfptnfn_train}, \ref{score:single_hand_175x70_tpfptnfn_valid} i \ref{score:single_hand_175x70_tpfptnfn_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matricu zabune.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/single_hand_scale025_loss.png}
+\caption{Kretanje prosječnog gubitka na skupu za učenje i validaciju po epohama}
+\label{img:single_hand_scale025_loss}
+\end{figure}
+\noindent Na slici \ref{img:single_hand_scale025_loss} vidljivo je kretanje prosječnog gubitka po epohama na podskupu za učenje i na podskupu za validaciju.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/single_hand_scale025_acc_ap.png}
+\caption{Kretanje točnosti, preciznosti i odziva po epohama}
+\label{img:single_hand_scale025_acc_ap}
+\end{figure}
+\noindent Na slici \ref{img:single_hand_scale025_acc_ap} vidljivo je kretanje točnosti, preciznosti i odziva po epohama na podskupu za validaciju.
+
+Vidljivo je kako se tek na rezoluciji $175$x$70$ pojavljuje značajniji pad performansi. 
+Iz tog razloga se za eksperimente nad sekvencama slika (zbog veće memorijske zahtjevnosti) koriste rezolucije pojedinih slika $350$x$140$.
 
 \section{Klasifikacija sekvenci slika označenih konzistentno s projektom FTTS iRAP koristeći povratne LSTM ćelije}
 
