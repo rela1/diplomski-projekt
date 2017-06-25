@@ -2,7 +2,7 @@ import sys
 
 from dataset import ImageSequenceDataset
 from models.vgg_pretrained import SequentialImagePoolingModel
-from train_evaluate_model import freezed_pretrained_train_model
+from train_evaluate_model import evaluate_model
 
 
 WEIGHT_DECAY = 5e-4
