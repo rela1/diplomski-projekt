@@ -496,21 +496,21 @@ Zbog izrazite računske složenosti koja bi bila potrebna za to, uvode se neka p
 Prva pretpostavka za pojednostavljenje složenosti jest da umjesto normalizacije ulaza i izlaza združeno, normaliziramo svaku komponentu ulaza zasebno, s pretpostavkom da komponente nisu međusobno zavisne.
 Normalizacija $k$-te komponente ulaznog vektora $\mathbf{x}$ nekog sloja definirana je na sljedeći način:
 \begin{equation}
- \hat{\mathbf{x}}^{(k)} = \cfrac{\mathbf{x}^{(k)} - \mathop{\mathbb{E}} \left[ \mathbf{x}^{(k)} \right]} {\sqrt{ \mathrm{Var} \left[ \mathbf{x}^{(k)} \right] } }, \label{eq:bn_normalization}
+ \hat{\mathbf{x}}_{k} = \cfrac{\mathbf{x}_{k} - \mathop{\mathbb{E}} \left[ \mathbf{x}_{k} \right]} {\sqrt{ \mathrm{Var} \left[ \mathbf{x}_{k} \right] } }, \label{eq:bn_normalization}
 \end{equation}
 gdje su očekivanje i varijanca izračunati nad skupom podataka za učenje.
 Normalizacija svakog ulaza nekog sloja može promijeniti njegovu ekspresivnu snagu pa iz tog razloga uvodimo transformaciju normaliziranog ulaza kojom osiguravamo da je iz normaliziranih ulaznih podataka moguće dobiti originalne vrijednosti.
 Transformacija $k$-te komponente prethodno normaliziranog ulaznog vektora $\hat{\mathbf{x}}$ nekog sloja definirana je na sljedeći način:
 \begin{equation}
- \mathbf{y}^{(k)} = \boldsymbol{\gamma}^{(k)} \hat{\mathbf{x}}^{(k)} + \boldsymbol{\beta}^{(k)}, \label{eq:bn_transformation}
+ \mathbf{y}_{k} = \boldsymbol{\gamma}_{k} \hat{\mathbf{x}}_{k} + \boldsymbol{\beta}_{k}, \label{eq:bn_transformation}
 \end{equation}
-gdje su $\boldsymbol{\gamma}^{(k)}$ i $\boldsymbol{\beta}^{(k)}$ parametri koji se uče zajedno s parametrima modela i koji omogućuju skaliranje i pomak normalizirane vrijednosti izlaza.
+gdje su $\boldsymbol{\gamma}_{k}$ i $\boldsymbol{\beta}_{k}$ parametri koji se uče zajedno s parametrima modela i koji omogućuju skaliranje i pomak normalizirane vrijednosti izlaza.
 
 Druga pretpostavka za pojednostavljenje složenosti jest da normalizaciju umjesto nad statistikom cjelokupnog skupa podataka za učenje, obavljamo nad statistikama malih podskupova podataka \engl{mini-batch}.
 Grupna normalizacija nad statistikom malog podskupa skupa podataka za učenje u nekom sloju tada je definirana kao normalizacija i linearna transformacija ulaza, definirane u izrazima \ref{eq:bn_normalization} i \ref{eq:bn_transformation}.
 
 Transformacija grupne normalizacije najčešće se koristi nad izračunatim težinskim sumama slojeva, prije djelovanja aktivacijske funkcije.
-Normalizirane vrijednosti $\hat{\mathbf{x}}^{(k)}$ možemo promatrati kao ulaze u podsloj kojem je funkcija linearna, i to je upravo funkcija transformacije definirana u izrazu \ref{eq:bn_transformation}.
+Normalizirane vrijednosti $\hat{\mathbf{x}}_{k}$ možemo promatrati kao ulaze u podsloj kojem je funkcija linearna, i to je upravo funkcija transformacije definirana u izrazu \ref{eq:bn_transformation}.
 Na izlaz podsloja tada djeluje procesiranje originalnog sloja. 
 Takvom arhitekturom ostvarili smo da svi podslojevi na ulaze dobivaju podatke s fiksnom distribucijom (s očekivanjem 0 i varijancom 1), što ubrzava učenje podslojeva, a time posljedično i samih slojeva i kompletnog modela \citep{article:bn_paper} \citep{seminar:rela}.
 

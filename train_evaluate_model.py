@@ -188,8 +188,10 @@ def plot_wrong_classifications(model, dataset, model_path, save_path=None):
   num_batches = int(math.ceil(dataset.num_test_examples / dataset.batch_size))
 
   if save_path is not None:
-    false_positives = os.mkdir(os.path.join(save_path, 'false_positives'))
-    false_negatives = os.mkdir(os.path.join(save_path, 'false_negatives'))
+    false_positives = os.path.join(save_path, 'false_positives')
+    os.mkdir(false_positives)
+    false_negatives = os.path.join(save_path, 'false_negatives')
+    os.mkdir(false_negatives)
 
   for i in range(num_batches):
 
