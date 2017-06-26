@@ -57,8 +57,8 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
 
   positive_batch_labels = np.ones((dataset.batch_size, ), dtype=np.int32)
   negative_batch_labels = np.zeros((dataset.batch_size, ), dtype=np.int32)
-  negative_batch_masks = np.ones((dataset.batch_size, ), dtype=np.float32)
-  batch_handle = 0
+  positive_batch_handle = 0
+  negative_batch_handle = 0
   for i in range(num_epochs):
 
     epoch_start_time = time.time()
@@ -66,9 +66,7 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
     while True:
       start_time = time.time()
 
-      batch_images, batch_masks, new_epoch, batch_handle = dataset.next_positive_batch(mean_channels, dataset.positive_sequences_dirs_train, batch_handle, dataset.batch_size)
-
-      num_positive_examples = batch_images.shape[0] - sequence_length + 1
+      batch_images, batch_masks, new_epoch_positive, positive_batch_handle = dataset.next_data_batch(mean_channels, dataset.positive_sequences_dirs_train, positive_batch_handle, dataset.batch_size)
 
       for t in range(sequence_length - 1):
         representation_t = convolutional_model.spatials_train.forward(sess, t, batch_images[t])
@@ -80,21 +78,24 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
         loss, cumulated_representation_gradient = temporal_data[0], temporal_data[2]
         convolutional_model.spatials_train.backward(sess, cumulated_representation_gradient[0], t % sequence_length - sequence_length + 1)
 
-      for i in range(num_positive_examples):
-        images = sess.run(dataset.train_images)
-        for t in range(sequence_length - 1):
-          representation_t = convolutional_model.spatials_train.forward(sess, t, images[:, t])
-          logits = convolutional_model.temporal_train.forward(sess, representation_t, negative_batch_labels, negative_batch_masks)
-        representation_t = convolutional_model.spatials_train.forward(sess, t, images[:, sequence_length - 1])
-        temporal_data = convolutional_model.temporal_train.forward_backward(sess, representation_t, negative_batch_labels, negative_batch_masks)
-        loss_n, cumulated_representation_gradient = temporal_data[0], temporal_data[2]
-        convolutional_model.spatials_train.backward(sess, cumulated_representation_gradient[0], 0)
+      batch_images, batch_masks, new_epoch_negative, negative_batch_handle = dataset.next_data_batch(mean_channels, dataset.negative_sequences_dirs_train, negative_batch_handle, dataset.batch_size)
       
+      new_epoch = new_epoch_positive and new_epoch_negative
+
+      for t in range(sequence_length - 1):
+        representation_t = convolutional_model.spatials_train.forward(sess, t, batch_images[t])
+        logits = convolutional_model.temporal_train.forward(sess, representation_t, positive_batch_labels, batch_masks[t])
+
+      representation_t = convolutional_model.spatials_train.forward(sess, t % sequence_length, batch_images[t])
+      temporal_data = convolutional_model.temporal_train.forward_backward(sess, representation_t, positive_batch_labels, batch_masks[t])
+      loss, cumulated_representation_gradient = temporal_data[0], temporal_data[2]
+      convolutional_model.spatials_train.backward(sess, cumulated_representation_gradient[0], t % sequence_length - sequence_length + 1)
+
       duration = time.time() - start_time
 
       assert not np.isnan(loss), 'Model diverged with loss = NaN'    
 
-      print('\tEpoch: {}/{}, step loss: {}, {} examples/sec, learning rate: {}'.format(i+1, num_epochs, (loss + loss_n) / 2, (dataset.batch_size * num_positive_examples * 2) / duration, learning_rate))
+      print('\tEpoch: {}/{}, step loss: {}'.format(i+1, num_epochs, loss))
 
       if new_epoch:
         break
@@ -116,14 +117,13 @@ def train_model(fc_model, convolutional_model, dataset, sequence_length, num_epo
   sess.close()
 
 
-def evaluate(dataset_name, sess, sequence_length, convolutional_model, dataset, num_negative_examples, eval_images, positives_sequences_dirs, mean_channels):
+def evaluate(dataset_name, sess, sequence_length, convolutional_model, dataset, positives_sequences_dirs, negatives_sequences_dirs, mean_channels):
   print("\nRunning evaluation: ", dataset_name)
   y_true = []
   y_pred = []
   y_prob = []
   positive_batch_labels = np.ones((dataset.batch_size, ), dtype=np.int32)
   negative_batch_labels = np.zeros((dataset.batch_size, ), dtype=np.int32)
-  negative_batch_masks = np.ones((dataset.batch_size, ), dtype=np.float32)
   batch_handle = 0
   step = 0
   print('Positive examples evaluation...')
@@ -131,7 +131,7 @@ def evaluate(dataset_name, sess, sequence_length, convolutional_model, dataset, 
 
     start_time = time.time()
 
-    batch_images, batch_masks, new_epoch, batch_handle = dataset.next_positive_batch(mean_channels, positives_sequences_dirs, batch_handle, dataset.batch_size)
+    batch_images, batch_masks, new_epoch_positive, batch_handle_positive = dataset.next_data_batch(mean_channels, positives_sequences_dirs, batch_handle_positive, dataset.batch_size)
 
     for t in range(sequence_length - 1):
       representation_t = convolutional_model.spatials_eval.forward(sess, t, batch_images[t])
@@ -148,6 +148,21 @@ def evaluate(dataset_name, sess, sequence_length, convolutional_model, dataset, 
           y_pred.append(preds[i])
           y_prob.append(probs[i])
 
+    batch_images, batch_masks, new_epoch_negative, batch_handle_negative = dataset.next_data_batch(mean_channels, negatives_sequences_dirs, batch_handle_negative, dataset.batch_size)
+
+    for t in range(sequence_length - 1):
+      representation_t = convolutional_model.spatials_eval.forward(sess, t, batch_images[t])
+      logits = convolutional_model.temporal_eval.forward(sess, representation_t, positive_batch_labels, batch_masks[t])
+
+    representation_t = convolutional_model.spatials_eval.forward(sess, t % sequence_length, batch_images[t])
+    logits = convolutional_model.temporal_eval.forward(sess, representation_t, positive_batch_labels, batch_masks[t])
+    preds = np.argmax(logits, axis=1)
+    probs = softmax(logits)
+    for i in range(dataset.batch_size):
+      y_true.append(0)
+      y_pred.append(preds[i])
+      y_prob.append(probs[i])
+
     duration = time.time() - start_time
 
     if not step % 10:
@@ -155,31 +170,12 @@ def evaluate(dataset_name, sess, sequence_length, convolutional_model, dataset, 
 
     step += 1
 
+    new_epoch = new_epoch_negative and new_epoch_positive
+
     if new_epoch:
       break
 
-  num_batches = num_batches = int(math.ceil(num_negative_examples / dataset.batch_size))
-
-  print('Negative examples evaluation...')
-  for i in range(num_batches):
-    start_time = time.time()
-    images = sess.run(eval_images)
-    for t in range(sequence_length - 1):
-      representation_t = convolutional_model.spatials_train.forward(sess, t, images[:, t])
-      logits = convolutional_model.temporal_train.forward(sess, representation_t, negative_batch_labels, negative_batch_masks)
-    representation_t = convolutional_model.spatials_train.forward(sess, t, images[:, sequence_length - 1])
-    logits = convolutional_model.temporal_eval.forward(sess, representation_t, negative_batch_labels, negative_batch_masks)
-    probs_val = softmax(logits)
-    preds_val = np.argmax(logits, axis=1)
-    y_pred.extend(preds_val)
-    y_true.extend(negative_batch_labels)
-    y_prob.extend(probs_val)
-    duration = time.time() - start_time
-
-    if not i % 10:
-      print('\tstep {}/{}, {} examples/sec, {} sec/batch'.format(i+1, num_batches, dataset.batch_size / duration, duration))
-
-  metrics = evaluate_default_metric_functions(y_true, y_pred)
+  metrics = evaluate_default_metric_functions(y_true, y_pred, y_prob)
   print_metrics(metrics)
   return metrics, y_true, y_pred, y_prob
 

@@ -899,7 +899,7 @@ podskup za testiranje & 0.95     & 0.99          & 0.91  & 0.99 \\ \hline
 \end{tabular}
 \end{table}
 \noindent Tablica \ref{score:single_hand_700x280} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
-Tablice \ref{score:single_hand_700x280_tpfptnfn_train}, \ref{score:single_hand_700x280_tpfptnfn_valid} i \ref{score:single_hand_700x280_tpfptnfn_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matricu zabune.
+Tablice \ref{score:single_hand_700x280_tpfptnfn_train}, \ref{score:single_hand_700x280_tpfptnfn_valid} i \ref{score:single_hand_700x280_tpfptnfn_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matrice zabune.
 
 \begin{figure}[H]
 \centering
@@ -965,7 +965,7 @@ podskup za testiranje & 0.98     & 0.99          & 0.96  & 0.99 \\ \hline
 \end{tabular}
 \end{table}
 \noindent Tablica \ref{score:single_hand_525x210} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
-Tablice \ref{score:single_hand_525x210_tpfptnfn_train}, \ref{score:single_hand_525x210_tpfptnfn_valid} i \ref{score:single_hand_525x210_tpfptnfn_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matricu zabune.
+Tablice \ref{score:single_hand_525x210_tpfptnfn_train}, \ref{score:single_hand_525x210_tpfptnfn_valid} i \ref{score:single_hand_525x210_tpfptnfn_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matrice zabune.
 
 \begin{figure}[H]
 \centering
@@ -1031,7 +1031,7 @@ podskup za testiranje & 0.98     & 0.96          & 0.99 &  0.99 \\ \hline
 \end{tabular}
 \end{table}
 \noindent Tablica \ref{score:single_hand_350x140} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
-Tablice \ref{score:single_hand_350x140_tpfptnfn_train}, \ref{score:single_hand_350x140_tpfptnfn_valid} i \ref{score:single_hand_350x140_tpfptnfn_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matricu zabune.
+Tablice \ref{score:single_hand_350x140_tpfptnfn_train}, \ref{score:single_hand_350x140_tpfptnfn_valid} i \ref{score:single_hand_350x140_tpfptnfn_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matrice zabune.
 
 \begin{figure}[H]
 \centering
@@ -1097,7 +1097,7 @@ podskup za testiranje & 0.71     & 0.96          & 0.43 & 0.92 \\ \hline
 \end{tabular}
 \end{table}
 \noindent Tablica \ref{score:single_hand_175x70} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
-Tablice \ref{score:single_hand_175x70_tpfptnfn_train}, \ref{score:single_hand_175x70_tpfptnfn_valid} i \ref{score:single_hand_175x70_tpfptnfn_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matricu zabune.
+Tablice \ref{score:single_hand_175x70_tpfptnfn_train}, \ref{score:single_hand_175x70_tpfptnfn_valid} i \ref{score:single_hand_175x70_tpfptnfn_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matrice zabune.
 
 \begin{figure}[H]
 \centering
@@ -1127,75 +1127,201 @@ Konačni rezultati dobiveni za eksperiment sa sekvencijalnim ulaznim podacima re
 \begin{table}[H]
 \centering
 \caption{Statistički rezultati}
-\label{score:single_hand_175x70}
+\label{score:pooling}
 \begin{tabular}{|c|c|c|c|c|}
 \hline
 podskup podataka      & točnost & preciznost & odziv & prosječna preciznost \\ \hline
-podskup za učenje     & 1.0     & 1.0        & 1.0  & 1.0  \\ \hline
-podskup za validaciju & 0.81     & 0.98        & 0.63  & 0.96 \\ \hline
-podskup za testiranje & 0.71     & 0.96          & 0.43 & 0.92 \\ \hline
+podskup za učenje     & 0.91     & 0.91        & 0.91  & 0.97  \\ \hline
+podskup za validaciju & 0.87     & 0.90        & 0.85  & 0.95 \\ \hline
+podskup za testiranje & 0.83     & 0.88          & 0.77 & 0.91 \\ \hline
 \end{tabular}
 \end{table}
 \begin{table}[H]
 \centering
-\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $175$x$70$ na podskupu za učenje}
-\label{score:single_hand_175x70_tpfptnfn_train}
+\caption{Odnos predikcija modela i stvarnih oznaka na podskupu za učenje}
+\label{score:pooling_train}
 \begin{tabular}{|c|c|c|}
 \hline
 \diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
-0                                & 898 & 0 \\ \hline
-1                                & 0 & 898 \\ \hline
+0                                & 3430 & 347 \\ \hline
+1                                & 338 & 3439 \\ \hline
 \end{tabular}
 \end{table}
 \begin{table}[H]
 \centering
-\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $175$x$70$ na podskupu za validaciju}
-\label{score:single_hand_175x70_tpfptnfn_valid}
+\caption{Odnos predikcija modela i stvarnih oznaka na podskupu za validaciju}
+\label{score:pooling_valid}
 \begin{tabular}{|c|c|c|}
 \hline
 \diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
-0                                & 310 & 3 \\ \hline
-1                                & 117 & 196 \\ \hline
+0                                & 775 & 85 \\ \hline
+1                                & 133 & 727 \\ \hline
 \end{tabular}
 \end{table}
 \begin{table}[H]
 \centering
-\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $175$x$70$ na podskupu za testiranje}
-\label{score:single_hand_175x70_tpfptnfn_test}
+\caption{Odnos predikcija modela i stvarnih oznaka na podskupu za testiranje}
+\label{score:pooling_test}
 \begin{tabular}{|c|c|c|}
 \hline
 \diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
-0                                & 291 & 6 \\ \hline
-1                                & 169 & 128 \\ \hline
+0                                & 734 & 87 \\ \hline
+1                                & 189 & 632 \\ \hline
 \end{tabular}
 \end{table}
-\noindent Tablica \ref{score:single_hand_175x70} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
-Tablice \ref{score:single_hand_175x70_tpfptnfn_train}, \ref{score:single_hand_175x70_tpfptnfn_valid} i \ref{score:single_hand_175x70_tpfptnfn_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matricu zabune.
+\noindent Tablica \ref{score:pooling} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
+Tablice \ref{score:pooling_train}, \ref{score:pooling_valid} i \ref{score:pooling_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matrice zabune.
 
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.35]{images/single_hand_scale025_loss.png}
+\includegraphics[scale=0.35]{images/pooling_loss.png}
 \caption{Kretanje prosječnog gubitka na skupu za učenje i validaciju po epohama}
-\label{img:single_hand_scale025_loss}
+\label{img:pooling_loss}
 \end{figure}
-\noindent Na slici \ref{img:single_hand_scale025_loss} vidljivo je kretanje prosječnog gubitka po epohama na podskupu za učenje i na podskupu za validaciju.
+\noindent Na slici \ref{img:pooling_loss} vidljivo je kretanje prosječnog gubitka po epohama na podskupu za učenje i na podskupu za validaciju.
 
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.35]{images/single_hand_scale025_acc_ap.png}
+\includegraphics[scale=0.35]{images/pooling_ac_ap.png}
 \caption{Kretanje točnosti, preciznosti i odziva po epohama}
-\label{img:single_hand_scale025_acc_ap}
+\label{img:pooling_ac_ap}
 \end{figure}
-\noindent Na slici \ref{img:single_hand_scale025_acc_ap} vidljivo je kretanje točnosti, preciznosti i odziva po epohama na podskupu za validaciju.
-
-Vidljivo je kako se tek na rezoluciji $175$x$70$ pojavljuje značajniji pad performansi. 
-Iz tog razloga se za eksperimente nad sekvencama slika (zbog veće memorijske zahtjevnosti) koriste rezolucije pojedinih slika $350$x$140$.
+\noindent Na slici \ref{img:pooling_ac_ap} vidljivo je kretanje točnosti, preciznosti i odziva po epohama na podskupu za validaciju.
 
 \section{Klasifikacija sekvenci slika označenih konzistentno s projektom FTTS iRAP koristeći povratne LSTM ćelije}
+Konačni rezultati dobiveni za eksperiment sa sekvencijalnim ulaznim podacima rezolucije $350$x$140$ su sljedeći:
+\begin{table}[H]
+\centering
+\caption{Statistički rezultati}
+\label{score:lstm}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+podskup podataka      & točnost & preciznost & odziv & prosječna preciznost \\ \hline
+podskup za učenje     & 0.99     & 0.99        & 0.99  & 0.99  \\ \hline
+podskup za validaciju & 0.89     & 0.95        & 0.83  & 0.94 \\ \hline
+podskup za testiranje & 0.87     & 0.91          & 0.82 & 0.94 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na podskupu za učenje}
+\label{score:lstm_train}
+\begin{tabular}{|c|c|c|}
+\hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 3731 & 46 \\ \hline
+1                                & 3 & 3774 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na podskupu za validaciju}
+\label{score:lstm_valid}
+\begin{tabular}{|c|c|c|}
+\hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 821 & 39 \\ \hline
+1                                & 147 & 713 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na podskupu za testiranje}
+\label{score:lstm_test}
+\begin{tabular}{|c|c|c|}
+\hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 735 & 68 \\ \hline
+1                                & 149 & 672 \\ \hline
+\end{tabular}
+\end{table}
+\noindent Tablica \ref{score:lstm} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
+Tablice \ref{score:lstm_train}, \ref{score:lstm_valid} i \ref{score:lstm_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matrice zabune.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/lstm_loss.png}
+\caption{Kretanje prosječnog gubitka na skupu za učenje i validaciju po epohama}
+\label{img:lstm_loss}
+\end{figure}
+\noindent Na slici \ref{img:lstm_loss} vidljivo je kretanje prosječnog gubitka po epohama na podskupu za učenje i na podskupu za validaciju.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/lstm_ac_ap.png}
+\caption{Kretanje točnosti, preciznosti i odziva po epohama}
+\label{img:lstm_ac_ap}
+\end{figure}
+\noindent Na slici \ref{img:lstm_ac_ap} vidljivo je kretanje točnosti, preciznosti i odziva po epohama na podskupu za validaciju.
 
 \section{Klasifikacija sekvenci slika označenih konzistentno s projektom FTTS iRAP koristeći vremenski potpuno povezani sloj}
+Konačni rezultati dobiveni za eksperiment sa sekvencijalnim ulaznim podacima rezolucije $350$x$140$ su sljedeći:
+\begin{table}[H]
+\centering
+\caption{Statistički rezultati}
+\label{score:temporal}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+podskup podataka      & točnost & preciznost & odziv & prosječna preciznost \\ \hline
+podskup za učenje     & 0.99     & 0.99        & 1.0  & 1.0  \\ \hline
+podskup za validaciju & 0.89     & 0.98        & 0.80  & 0.96 \\ \hline
+podskup za testiranje & 0.86     & 0.95          & 0.76 & 0.94 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na podskupu za učenje}
+\label{score:temporal_train}
+\begin{tabular}{|c|c|c|}
+\hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 3775 & 2 \\ \hline
+1                                & 0 & 3777 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na podskupu za validaciju}
+\label{score:temporal_valid}
+\begin{tabular}{|c|c|c|}
+\hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 843 & 17 \\ \hline
+1                                & 176 & 684 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na podskupu za testiranje}
+\label{score:temporal_test}
+\begin{tabular}{|c|c|c|}
+\hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 787 & 34 \\ \hline
+1                                & 199 & 622 \\ \hline
+\end{tabular}
+\end{table}
+\noindent Tablica \ref{score:temporal} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
+Tablice \ref{score:temporal_train}, \ref{score:temporal_valid} i \ref{score:temporal_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matrice zabune.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/temporal_loss.png}
+\caption{Kretanje prosječnog gubitka na skupu za učenje i validaciju po epohama}
+\label{img:temporal_loss}
+\end{figure}
+\noindent Na slici \ref{img:temporal_loss} vidljivo je kretanje prosječnog gubitka po epohama na podskupu za učenje i na podskupu za validaciju.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/temporal_ac_ap.png}
+\caption{Kretanje točnosti, preciznosti i odziva po epohama}
+\label{img:temporal_ac_ap}
+\end{figure}
+\noindent Na slici \ref{img:temporal_ac_ap} vidljivo je kretanje točnosti, preciznosti i odziva po epohama na podskupu za validaciju.
 
 \section{Analiza rezultata}
+
 
 \chapter{Zaključak}
 Zaključak.

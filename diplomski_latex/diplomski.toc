@@ -36,8 +36,8 @@
 \contentsline {subsection}{\numberline {4.2.4}Rezultati na rezoluciji 175x70}{38}
 \contentsline {section}{\numberline {4.3}Klasifikacija pojedina\IeC {\v c}nih slika ozna\IeC {\v c}enih konzistentno s projektom FTTS iRAP na originalnoj rezoluciji}{40}
 \contentsline {section}{\numberline {4.4}Klasifikacija sekvenci slika ozna\IeC {\v c}enih konzistentno s projektom FTTS iRAP koriste\IeC {\'c}i vremensko-prostorno sa\IeC {\v z}imanje}{40}
-\contentsline {section}{\numberline {4.5}Klasifikacija sekvenci slika ozna\IeC {\v c}enih konzistentno s projektom FTTS iRAP koriste\IeC {\'c}i povratne LSTM \IeC {\'c}elije}{40}
-\contentsline {section}{\numberline {4.6}Klasifikacija sekvenci slika ozna\IeC {\v c}enih konzistentno s projektom FTTS iRAP koriste\IeC {\'c}i vremenski potpuno povezani sloj}{40}
-\contentsline {section}{\numberline {4.7}Analiza rezultata}{40}
-\contentsline {chapter}{\numberline {5}Zaklju\IeC {\v c}ak}{41}
-\contentsline {chapter}{Literatura}{42}
+\contentsline {section}{\numberline {4.5}Klasifikacija sekvenci slika ozna\IeC {\v c}enih konzistentno s projektom FTTS iRAP koriste\IeC {\'c}i povratne LSTM \IeC {\'c}elije}{42}
+\contentsline {section}{\numberline {4.6}Klasifikacija sekvenci slika ozna\IeC {\v c}enih konzistentno s projektom FTTS iRAP koriste\IeC {\'c}i vremenski potpuno povezani sloj}{45}
+\contentsline {section}{\numberline {4.7}Analiza rezultata}{47}
+\contentsline {chapter}{\numberline {5}Zaklju\IeC {\v c}ak}{48}
+\contentsline {chapter}{Literatura}{49}
