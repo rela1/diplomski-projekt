@@ -120,8 +120,8 @@ class CombinedImageSequenceDataset(Dataset):
     def __init__(self, dataset_root, batch_size, input_shape, is_training=True):
         super().__init__(parse_sequence_example, 'sequential', dataset_root, batch_size, input_shape, is_training=is_training)
         train_tfrecords_dirs = [os.path.join(self.train_dir, directory) for directory in self.train_tfrecords_dirs]
-        valid_tfrecords_dirs = [os.path.join(self.train_dir, directory) for directory in self.valid_tfrecords_dirs]
-        test_tfrecords_dirs = [os.path.join(self.train_dir, directory) for directory in self.test_tfrecords_dirs]
+        valid_tfrecords_dirs = [os.path.join(self.valid_dir, directory) for directory in self.valid_tfrecords_dirs]
+        test_tfrecords_dirs = [os.path.join(self.test_dir, directory) for directory in self.test_tfrecords_dirs]
         self.positive_sequences_dirs_train = self.get_sequences_dirs(train_tfrecords_dirs, 'positives')
         self.negative_sequences_dirs_train = self.get_sequences_dirs(train_tfrecords_dirs, 'negatives')
         self.positive_sequences_dirs_valid = self.get_sequences_dirs(valid_tfrecords_dirs, 'positives')
