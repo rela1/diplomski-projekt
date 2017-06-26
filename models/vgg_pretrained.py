@@ -174,7 +174,7 @@ class SequentialImageTemporalFCModelOnline:
         net = layers.max_pool2d(net, 2, 2, scope='pool4')
         net = layers.convolution2d(net, 512, scope='conv5_1', reuse=reuse_weights)
         net = layers.convolution2d(net, 512, scope='conv5_2', reuse=reuse_weights)
-        net = layers.convolution2d(net, 512, scope='conv5_3', normalizer_fn=layers.batch_norm, normalizer_params=bn_params, reuse=reuse_weights)
+        net = layers.convolution2d(net, 512, scope='conv5_3', reuse=reuse_weights)
         net = layers.max_pool2d(net, 2, 2, scope='pool5')
 
       net = layers.flatten(net)
