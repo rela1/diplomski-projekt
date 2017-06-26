@@ -187,6 +187,10 @@ def plot_wrong_classifications(model, dataset, model_path, save_path=None):
 
   num_batches = int(math.ceil(dataset.num_test_examples / dataset.batch_size))
 
+  if save_path is not None:
+    false_positives = os.mkdir(os.path.join(save_path, 'false_positives'))
+    false_negatives = os.mkdir(os.path.join(save_path, 'false_negatives'))
+
   for i in range(num_batches):
 
     logits_vals, label_vals, image_vals = sess.run([model.test_logits, dataset.test_labels, dataset.test_images])
@@ -218,7 +222,10 @@ def plot_wrong_classifications(model, dataset, model_path, save_path=None):
         if save_path is None:
           plt.show()
         else:
-          plt.savefig(os.path.join(save_path, str(fig_cnt) + '.png'))
+          if prediction_vals[j] == 1:
+            plt.savefig(os.path.join(false_positives, str(fig_cnt) + '.png'))
+          else:
+            plt.savefig(os.path.join(false_negatives, str(fig_cnt) + '.png'))
 
         fig_cnt += 1
 
