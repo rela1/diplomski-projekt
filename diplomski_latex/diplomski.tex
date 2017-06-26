@@ -314,15 +314,15 @@ Parametar $\epsilon$ služi za izbjegavanje dijeljenja s nulom i postavlja se na
 \subsection{Prenaučenost modela}
 
 Slojevi u dubokim modelima često imaju vrlo velik broj parametara što može dovesti do problema prenaučenosti.
-Vrlo česta regularizacijska metoda koja nastoji spriječiti prenaučenost jest regularizacija metodom smanjenja težina \engl{weight decay}.
-Regularizacija metodom smanjenja težina mijenja funkciju gubitka koja se optimira tako da uvodi član ovisan o normi parametara, i to na sljedeći način:
+Vrlo česta regularizacijska metoda koja nastoji spriječiti prenaučenost jest regularizacija metodom smanjenja normi parametara \engl{weight decay}.
+Regularizacija metodom smanjenja normi parametara mijenja funkciju gubitka koja se optimira tako da uvodi član ovisan o normi parametara, i to na sljedeći način:
 \begin{equation}
  C^* = C + \lambda p(\boldsymbol{\phi}),
 \end{equation}
 gdje je $C^*$ nova funkcija gubitka koju optimiramo, $C$ je originalna funkcija gubitka, $p(\boldsymbol{\phi})$ predstavlja funkciju norme nad parametrima $\boldsymbol{\phi}$, a $\lambda$ je regularizacijski faktor.
 Faktor $\lambda$ određuje utjecaj regularizacije -- što je on veći, regularizacija je jača i dobivamo jednostavnije modele koji nisu skloni prenaučenosti.
 
-Motivacija za korištenje regularizacije metodom smanjenja težina leži u tome da će funkcije neuronskih mreža koje imaju niže vrijednosti težina biti zaglađenije, odnosno imat će nižu varijancu što je poželjno za bolju generalizaciju.
+Motivacija za korištenje regularizacije metodom smanjenja normi parametara leži u tome da će funkcije modela koje imaju niže vrijednosti normi parametara biti zaglađenije, odnosno imat će nižu varijancu što je poželjno za bolju generalizaciju.
 Obično se prilikom regularizacije parametri koji modeliraju pomak ne regulariziraju jer je na njih dovedena konstantna vrijednost ulaza pa samim time utječu samo na pomak unutar prostora \citep{seminar:rela}.
 
 Često korištene funkcije norme $p(\boldsymbol{\phi})$ za vektor slobodnih parametara dimenzionalnosti $n$ jesu:
@@ -370,7 +370,7 @@ Sigmoidalna aktivacijska funkcija i njena derivacija definirane su kao:
 Slika \ref{img:sigmoid_graph} prikazuje graf sigmoidalne aktivacijske funkcije. 
 Iz njega je vidljivo kako će gradijent za većinu vrijednosti sigmoidalne funkcije biti vrlo niska zbog toga što je vrijednost sigmoidalne funkcije gotovo na cijeloj domeni u zasićenju \engl{saturating function} — asimptotski se približava vrijednosti 0 ili 1.
 Kako je ranije navedeno, učenje modela obavljamo koristeći gradijentni spust funkcije gubitka po parametrima modela. 
-Uglavnom nizak iznos gradijenta utječe na to da će već u zadnjem, izlaznom sloju korekcije parametara mreže biti vrlo male. 
+Uglavnom nizak iznos gradijenta utječe na to da će već u zadnjem, izlaznom sloju korekcije parametara modela biti vrlo male. 
 Kako izračun korekcija propagiramo unatrag, slojevi koji su sve dalje od završnog sloja imat će sve manje iznose korekcija što će uvelike utjecati na brzinu i kvalitetu učenja koje će se drastično smanjiti.
 Sigmoidalne aktivacijske funkcije se u praksi zato ne koriste u dubokim modelima \citep{seminar:rela}.
 
@@ -490,7 +490,7 @@ Opisani problem nazivamo interni kovarijacijski pomak \engl{internal covariate s
 Metoda grupne normalizacije \engl{Batch Normalization} uklanja taj problem i uvelike ubrzava učenje dubokih modela.
 
 Uklanjanje problema internog kovarijacijskog pomaka rješavamo normalizacijom ulaza svakog sloja -- linearno ga transformiramo tako da mu je srednja vrijednost jednaka 0, a varijanca mu je jednaka 1.
-Direktna normalizacija ulaza i izlaza nekog sloja ovisi o statistici svih ulaza tog sloja nad kompletnim skupom podataka nad kojim učimo mrežu.
+Direktna normalizacija ulaza i izlaza nekog sloja ovisi o statistici svih ulaza tog sloja nad kompletnim skupom podataka nad kojim učimo model.
 Zbog izrazite računske složenosti koja bi bila potrebna za to, uvode se neka pojednostavljenja.
 
 Prva pretpostavka za pojednostavljenje složenosti jest da umjesto normalizacije ulaza i izlaza združeno, normaliziramo svaku komponentu ulaza zasebno, s pretpostavkom da komponente nisu međusobno zavisne.
@@ -512,7 +512,7 @@ Grupna normalizacija nad statistikom malog podskupa skupa podataka za učenje u 
 Transformacija grupne normalizacije najčešće se koristi nad izračunatim težinskim sumama slojeva, prije djelovanja aktivacijske funkcije.
 Normalizirane vrijednosti $\hat{\mathbf{x}}^{(k)}$ možemo promatrati kao ulaze u podsloj kojem je funkcija linearna, i to je upravo funkcija transformacije definirana u izrazu \ref{eq:bn_transformation}.
 Na izlaz podsloja tada djeluje procesiranje originalnog sloja. 
-Takvom arhitekturom ostvarili smo da svi podslojevi na ulaze dobivaju podatke s fiksnom distribucijom (s očekivanjem 0 i varijancom 1), što ubrzava učenje podslojeva, a time posljedično i samih slojeva i kompletne mreže \citep{article:bn_paper} \citep{seminar:rela}.
+Takvom arhitekturom ostvarili smo da svi podslojevi na ulaze dobivaju podatke s fiksnom distribucijom (s očekivanjem 0 i varijancom 1), što ubrzava učenje podslojeva, a time posljedično i samih slojeva i kompletnog modela \citep{article:bn_paper} \citep{seminar:rela}.
 
 \section{Arhitekture korištene u eksperimentima}
 U poglavlju \ref{chapter:skupovi_podataka} opisana su dva tipa skupova podataka korištenih za eksperimente -- skup podataka sa statičnim slikama i skup podataka sa sekvencama slika.
@@ -816,7 +816,9 @@ gdje je $t$ indeks koraka učenja, a $k$ je broj koraka učenja u jednoj epohi
   \item za testiranje se odabire onaj skup parametara koji postiže najbolju performansu na podskupu za validaciju -- ovime se efektivno obavlja regularizacija jer odabiremo onaj skup parametara koji najbolje generalizira
  \end{itemize}
 \end{itemize}
-Svi eksperimenti provedeni su na nVIDIA grafičkim karticama GTX 1070 i GTX Titan.
+Svi eksperimenti provedeni su na nVIDIA grafičkim karticama GTX 1070 i GTX Titan. 
+Programska izvedba ostvarena je koristeći programski jezik Python i programski okvir TensorFlow \citep{framework:tensorflow}.
+TensorFlow je vrlo popularan programski okvir za zadatke dubokog učenja jer pruža mogućnost automatske diferencijacije što omogućuje vrlo brzu izgradnju modela i provođenje eksperimenata.
 
 Zadatak ovog rada definiran je kao binarna klasifikacija pa možemo iskoristiti 4 definirana tipa predikcija modela: 
 \begin{itemize}
@@ -1120,10 +1122,74 @@ Iz tog razloga se za eksperimente nad sekvencama slika (zbog veće memorijske za
 
 \section{Klasifikacija pojedinačnih slika označenih konzistentno s projektom FTTS iRAP na originalnoj rezoluciji}
 Za razliku od prethodnih eksperimenata, ovaj eksperiment je proveden na skupu podataka označenom konzistentno sa sustavom FTTS iRAP.
-Eksperiment je proveden na pojedinačnim slikama kako bi se u daljnjim eksperimentima moglo usporediti poboljšava li se rezultat uvođenjem dodatnih informacija sa sekvencom slika koje prethode slici za koju je određena oznaka prisutnosti atributa pripajanja.
+Eksperiment je proveden na pojedinačnim slikama rezolucije $700$x$280$ kako bi se u daljnjim eksperimentima moglo usporediti poboljšava li se rezultat uvođenjem dodatnih informacija sa sekvencom slika koje prethode slici za koju je određena oznaka prisutnosti atributa pripajanja.
+
+\begin{table}[H]
+\centering
+\caption{Statistički rezultati}
+\label{score:single_irap}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+podskup podataka      & točnost & preciznost & odziv & prosječna preciznost \\ \hline
+podskup za učenje     & 0.95     & 0.95        & 0.95  & 0.99  \\ \hline
+podskup za validaciju & 0.88     & 0.92        & 0.83  & 0.93 \\ \hline
+podskup za testiranje & 0.82     & 0.87          & 0.76 & 0.90 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na podskupu za učenje}
+\label{score:single_irap_train}
+\begin{tabular}{|c|c|c|}
+\hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 3572 & 205 \\ \hline
+1                                & 173 & 3604 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na podskupu za validaciju}
+\label{score:single_irap_valid}
+\begin{tabular}{|c|c|c|}
+\hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 800 & 60 \\ \hline
+1                                & 149 & 711 \\ \hline
+\end{tabular}
+\end{table}
+\begin{table}[H]
+\centering
+\caption{Odnos predikcija modela i stvarnih oznaka na podskupu za testiranje}
+\label{score:single_irap_test}
+\begin{tabular}{|c|c|c|}
+\hline
+\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
+0                                & 731 & 90 \\ \hline
+1                                & 198 & 623 \\ \hline
+\end{tabular}
+\end{table}
+\noindent Tablica \ref{score:single_irap} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
+Tablice \ref{score:single_irap_train}, \ref{score:single_irap_valid} i \ref{score:single_irap_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matrice zabune.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/single_irap_loss.png}
+\caption{Kretanje prosječnog gubitka na skupu za učenje i validaciju po epohama}
+\label{img:single_irap_loss}
+\end{figure}
+\noindent Na slici \ref{img:single_irap_loss} vidljivo je kretanje prosječnog gubitka po epohama na podskupu za učenje i na podskupu za validaciju.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/single_irap_ac_ap.png}
+\caption{Kretanje točnosti, preciznosti i odziva po epohama}
+\label{img:single_irap_ac_ap}
+\end{figure}
+\noindent Na slici \ref{img:single_irap_ac_ap} vidljivo je kretanje točnosti, preciznosti i odziva po epohama na podskupu za validaciju.
 
 \section{Klasifikacija sekvenci slika označenih konzistentno s projektom FTTS iRAP koristeći vremensko-prostorno sažimanje}
-Konačni rezultati dobiveni za eksperiment sa sekvencijalnim ulaznim podacima rezolucije $350$x$140$ su sljedeći:
+Konačni rezultati dobiveni za eksperiment sa sekvencom slika rezolucije $350$x$140$ su sljedeći:
 \begin{table}[H]
 \centering
 \caption{Statistički rezultati}
@@ -1321,6 +1387,31 @@ Tablice \ref{score:temporal_train}, \ref{score:temporal_valid} i \ref{score:temp
 \noindent Na slici \ref{img:temporal_ac_ap} vidljivo je kretanje točnosti, preciznosti i odziva po epohama na podskupu za validaciju.
 
 \section{Analiza rezultata}
+Prvi dio eksperimenata na ručno označenim slikama proveden je kako bi se ustanovila rezolucija slika na kojima je još uvijek moguće prepoznati diskriminativni dio.
+Bilo je važno znati granicu do koje je moguće smanjiti slike jer su eksperimenti nad sekvencama slika memorijski mnogo zahtjevniji pa je za njihovo učenje s kraja na kraj potrebno imati slike mnogo manjih rezolucija.
+
+Drugi dio eksperimenata proveden je na slikama označenima konzistentno sa sustavom FTTS iRAP.
+Proveden je eksperiment na pojedinačnim i na sekvencama slika kako bi se ustanovilo dobiva li se na točnosti uvođenjem dodatnih informacija kroz sekvencu slika koja prethodi označenoj slici.
+
+\subsection{Analiza rezultata na ručno označenim slikama}
+Eksperimentima na ručno označenim slikama utvrđeno je da je rezolucija slika $350$x$140$ pogodna za korištenje u sekvencijalnom pristupu jer je to najniža rezolucija na kojoj se ne događa pad performanse.
+
+Pad performanse može se objasniti time što je prednji dio modela VGG-16 koji služi za izlučivanje značajki originalno naučen na slikama rezolucije $224$x$224$. 
+Najveći pad performanse vidljiv je na mjeri odziva -- zbog manje rezolucije slika model ne uspijeva uvijek prepoznati diskriminativni dio na temelju kojeg bi donio odluku da je slika pozitivna.
+
+\subsection{Analiza rezultata na slikama označenima konzistentno sa sustavom FTTS iRAP}
+Prvi dio eksperimenata na slikama označenima konzistentno sa sustavom FTTS iRAP proveden je nad pojedinačnim slikama. 
+Vidljiv je značajniji pad performansi u odnosu na ručno označene slike. 
+Razlog tomu jest način na koji su slike u sustavu FTTS iRAP označene, kako je objašnjeno u poglavlju \ref{chapter:skupovi_podataka}.
+
+Kako su eksperimenti pokazali, uvođenjem sekvence slika koja prethodi označenoj slici dobiva se na performansama u odnosu na pojedinačne slike označene konzistentno sa sustavom FTTS iRAP. 
+Najbolji rezultat dobiven je modelom koji dobivene prostorne značajke obrađuje povratnim LSTM ćelijama.
+
+Performansa modela koji prostorne značajke slika označenih konzistentno sa sustavom FTTS iRAP obrađuje povratnim LSTM ćelijama i dalje je niža od performanse modela na ručno označenim pojedinačnim slikama.
+Pad performanse možemo analizirati tako da promotrimo sekvence slika iz podskupa za testiranje koje model loše klasificira. 
+U nastavku su pokazani tipovi pogrešaka na kojima model griješi.
+
+\subsubsection{Lažni pozitivi \engl{false positives}}
 
 
 \chapter{Zaključak}

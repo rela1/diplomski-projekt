@@ -13,45 +13,45 @@ Warning--empty journal in article:bn_paper
 Warning--empty year in article:bn_paper
 Warning--empty year in article:bn_paper
 Warning--empty journal in article:maxpooling_article
-You've used 19 entries,
+You've used 20 entries,
             2773 wiz_defined-function locations,
-            688 strings with 8114 characters,
-and the built_in function-call counts, 7772 in all, are:
-= -- 665
-> -- 498
+            693 strings with 8986 characters,
+and the built_in function-call counts, 10043 in all, are:
+= -- 812
+> -- 861
 < -- 7
-+ -- 173
-- -- 153
-* -- 614
-:= -- 1181
-add.period$ -- 63
-call.type$ -- 19
-change.case$ -- 105
-chr.to.int$ -- 18
-cite$ -- 52
-duplicate$ -- 348
-empty$ -- 637
-format.name$ -- 176
-if$ -- 1631
++ -- 294
+- -- 273
+* -- 870
+:= -- 1579
+add.period$ -- 67
+call.type$ -- 20
+change.case$ -- 148
+chr.to.int$ -- 19
+cite$ -- 54
+duplicate$ -- 364
+empty$ -- 670
+format.name$ -- 297
+if$ -- 2052
 int.to.chr$ -- 2
 int.to.str$ -- 1
 missing$ -- 13
-newline$ -- 109
-num.names$ -- 60
-pop$ -- 255
+newline$ -- 115
+num.names$ -- 64
+pop$ -- 344
 preamble$ -- 1
-purify$ -- 89
+purify$ -- 131
 quote$ -- 0
-skip$ -- 284
+skip$ -- 336
 stack$ -- 0
-substring$ -- 84
-swap$ -- 20
+substring$ -- 86
+swap$ -- 21
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 204
+type$ -- 215
 warning$ -- 10
-while$ -- 47
+while$ -- 50
 width$ -- 0
-write$ -- 253
+write$ -- 267
 (There were 10 warnings)
