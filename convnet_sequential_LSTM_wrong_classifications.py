@@ -1,7 +1,7 @@
 import sys
 
 from dataset import ImageSequenceDataset
-from models.vgg_pretrained import SequentialImageTemporalFCModel
+from models.vgg_pretrained import SequentialImageLSTMModel
 from train_evaluate_model import plot_wrong_classifications
 
 
