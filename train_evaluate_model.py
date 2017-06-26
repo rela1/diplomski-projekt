@@ -218,7 +218,7 @@ def plot_wrong_classifications(model, dataset, model_path, save_path=None):
         if save_path is None:
           plt.show()
         else:
-          plt.savefi(os.path.join(save_path, str(fig_cnt) + '.png'))
+          plt.savefig(os.path.join(save_path, str(fig_cnt) + '.png'))
 
         fig_cnt += 1
 
