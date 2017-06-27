@@ -30,7 +30,7 @@
 \contentsline {chapter}{\numberline {4}Eksperimenti i rezultati}{29}
 \contentsline {section}{\numberline {4.1}Na\IeC {\v c}in u\IeC {\v c}enja i testiranja u eksperimentima}{29}
 \contentsline {section}{\numberline {4.2}Klasifikacija ru\IeC {\v c}no ozna\IeC {\v c}enih slika na razli\IeC {\v c}itim rezolucijama}{31}
-\contentsline {subsection}{\numberline {4.2.1}Rezultati na rezoluciji 700x280}{31}
+\contentsline {subsection}{\numberline {4.2.1}Rezultati na rezoluciji 700x280}{32}
 \contentsline {subsection}{\numberline {4.2.2}Rezultati na rezoluciji 525x210}{34}
 \contentsline {subsection}{\numberline {4.2.3}Rezultati na rezoluciji 350x140}{36}
 \contentsline {subsection}{\numberline {4.2.4}Rezultati na rezoluciji 175x70}{38}
@@ -42,5 +42,6 @@
 \contentsline {subsection}{\numberline {4.7.1}Analiza rezultata na ru\IeC {\v c}no ozna\IeC {\v c}enim slikama}{48}
 \contentsline {subsection}{\numberline {4.7.2}Analiza rezultata na slikama ozna\IeC {\v c}enima konzistentno sa sustavom FTTS iRAP}{48}
 \contentsline {subsubsection}{La\IeC {\v z}ni pozitivi (engl.~\emph {false positives})}{49}
-\contentsline {chapter}{\numberline {5}Zaklju\IeC {\v c}ak}{50}
-\contentsline {chapter}{Literatura}{51}
+\contentsline {subsubsection}{La\IeC {\v z}ni negativi (engl.~\emph {false negatives})}{51}
+\contentsline {chapter}{\numberline {5}Zaklju\IeC {\v c}ak}{55}
+\contentsline {chapter}{Literatura}{56}

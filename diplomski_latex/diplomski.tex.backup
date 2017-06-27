@@ -54,11 +54,11 @@ Upravo zbog vrlo dobrih rezultata koje duboki modeli ostvaruju, sve više zadata
 
 Dobri rezultati dubokih modela na području računalnog vida svakako otvaraju mnoge primjene računala u praktičnim problemima. 
 Jedan takav problem, kojim se ovaj rad bavi, jest inspekcija kvaliteta cesta. 
-Organizacija iRAP \engl{International Road Assessment Programe} ima za cilj upravo inspekciju kvaliteta ceste pridruživanjem različitih sigurnosnih atributa dijelovima prometnica.
+Organizacija iRAP \engl{International Road Assessment Programe} ima za cilj upravo inspekciju kvaliteta ceste pridruživanjem različitih sigurnosnih atributa segmentima prometnica.
 Zadatak se obavlja tako da se na temelju video sekvenci prometnica uz geolokacije pridružene video sekvencama određuje prisutnost sigurnosnog atributa na tom dijelu prometnice.
 Na temelju prisutnih atributa moguće je procijeniti sigurnost promatranog dijela prometnice što je vrlo korisno.
 
-Trenutno, pridruživanje atributa dijelovima prometnica obavljaju ljudi. 
+Trenutno, pridruživanje atributa segmentima prometnica obavljaju ljudi. 
 Zadatak je vrlo naporan i skup te su moguće raznorazne greške -- greške uzrokovane subjektivnošću, greške uzrokovane nekonzistentnim pridruživanjem različitih osoba, greške uzrokovane umorom te mnoge druge.
 Prednost korištenja dubokog modela za taj zadatak je njegova veća brzina, manja cijena i objektivnost u procjeni u odnosu na čovjeka.
 
@@ -496,21 +496,21 @@ Zbog izrazite računske složenosti koja bi bila potrebna za to, uvode se neka p
 Prva pretpostavka za pojednostavljenje složenosti jest da umjesto normalizacije ulaza i izlaza združeno, normaliziramo svaku komponentu ulaza zasebno, s pretpostavkom da komponente nisu međusobno zavisne.
 Normalizacija $k$-te komponente ulaznog vektora $\mathbf{x}$ nekog sloja definirana je na sljedeći način:
 \begin{equation}
- \hat{\mathbf{x}}^{(k)} = \cfrac{\mathbf{x}^{(k)} - \mathop{\mathbb{E}} \left[ \mathbf{x}^{(k)} \right]} {\sqrt{ \mathrm{Var} \left[ \mathbf{x}^{(k)} \right] } }, \label{eq:bn_normalization}
+ \hat{\mathbf{x}}_{k} = \cfrac{\mathbf{x}_{k} - \mathop{\mathbb{E}} \left[ \mathbf{x}_{k} \right]} {\sqrt{ \mathrm{Var} \left[ \mathbf{x}_{k} \right] } }, \label{eq:bn_normalization}
 \end{equation}
 gdje su očekivanje i varijanca izračunati nad skupom podataka za učenje.
 Normalizacija svakog ulaza nekog sloja može promijeniti njegovu ekspresivnu snagu pa iz tog razloga uvodimo transformaciju normaliziranog ulaza kojom osiguravamo da je iz normaliziranih ulaznih podataka moguće dobiti originalne vrijednosti.
 Transformacija $k$-te komponente prethodno normaliziranog ulaznog vektora $\hat{\mathbf{x}}$ nekog sloja definirana je na sljedeći način:
 \begin{equation}
- \mathbf{y}^{(k)} = \boldsymbol{\gamma}^{(k)} \hat{\mathbf{x}}^{(k)} + \boldsymbol{\beta}^{(k)}, \label{eq:bn_transformation}
+ \mathbf{y}_{k} = \boldsymbol{\gamma}_{k} \hat{\mathbf{x}}_{k} + \boldsymbol{\beta}_{k}, \label{eq:bn_transformation}
 \end{equation}
-gdje su $\boldsymbol{\gamma}^{(k)}$ i $\boldsymbol{\beta}^{(k)}$ parametri koji se uče zajedno s parametrima modela i koji omogućuju skaliranje i pomak normalizirane vrijednosti izlaza.
+gdje su $\boldsymbol{\gamma}_{k}$ i $\boldsymbol{\beta}_{k}$ parametri koji se uče zajedno s parametrima modela i koji omogućuju skaliranje i pomak normalizirane vrijednosti izlaza.
 
 Druga pretpostavka za pojednostavljenje složenosti jest da normalizaciju umjesto nad statistikom cjelokupnog skupa podataka za učenje, obavljamo nad statistikama malih podskupova podataka \engl{mini-batch}.
 Grupna normalizacija nad statistikom malog podskupa skupa podataka za učenje u nekom sloju tada je definirana kao normalizacija i linearna transformacija ulaza, definirane u izrazima \ref{eq:bn_normalization} i \ref{eq:bn_transformation}.
 
 Transformacija grupne normalizacije najčešće se koristi nad izračunatim težinskim sumama slojeva, prije djelovanja aktivacijske funkcije.
-Normalizirane vrijednosti $\hat{\mathbf{x}}^{(k)}$ možemo promatrati kao ulaze u podsloj kojem je funkcija linearna, i to je upravo funkcija transformacije definirana u izrazu \ref{eq:bn_transformation}.
+Normalizirane vrijednosti $\hat{\mathbf{x}}_{k}$ možemo promatrati kao ulaze u podsloj kojem je funkcija linearna, i to je upravo funkcija transformacije definirana u izrazu \ref{eq:bn_transformation}.
 Na izlaz podsloja tada djeluje procesiranje originalnog sloja. 
 Takvom arhitekturom ostvarili smo da svi podslojevi na ulaze dobivaju podatke s fiksnom distribucijom (s očekivanjem 0 i varijancom 1), što ubrzava učenje podslojeva, a time posljedično i samih slojeva i kompletnog modela \citep{article:bn_paper} \citep{seminar:rela}.
 
@@ -785,6 +785,7 @@ Nastavak opisuje sažeti pseudokod automatiziranog postupka:
 \chapter{Eksperimenti i rezultati}
 Za potrebe ovog rada provedeno je nekoliko eksperimenata. 
 Postupak učenja i testiranja u svakom eksperimentu je jednak, razlikuju se samo u vrsti ulaznih podataka (statične slike ili sekvence slika) te u korištenoj arhitekturi.
+U eksperimentima u kojima su korištene sekvence slika, duljina sekvence je eksperimentalno utvrđena i postavljena na 25 sličica.
 
 \section{Način učenja i testiranja u eksperimentima}
 Početni korak prilikom učenja jest normalizacija skupa podataka.
@@ -812,7 +813,7 @@ gdje je $t$ indeks koraka učenja, a $k$ je broj koraka učenja u jednoj epohi
  \item slobodni parametri regularizirani su L2 regularizacijom s faktorom regularizacije iznosa $5\cdot10^{-4}$
  \item podskup za validaciju korišten je za odabir slobodnih parametara modela
  \begin{itemize}
-  \item na kraju svake epohe mjeri se performansa modela na podskupu za validaciju
+  \item na kraju svake epohe mjere se performanse modela na podskupu za validaciju
   \item za testiranje se odabire onaj skup parametara koji postiže najbolju performansu na podskupu za validaciju -- ovime se efektivno obavlja regularizacija jer odabiremo onaj skup parametara koji najbolje generalizira
  \end{itemize}
 \end{itemize}
@@ -1407,25 +1408,110 @@ Razlog tomu jest način na koji su slike u sustavu FTTS iRAP označene, kako je 
 Kako su eksperimenti pokazali, uvođenjem sekvence slika koja prethodi označenoj slici dobiva se na performansama u odnosu na pojedinačne slike označene konzistentno sa sustavom FTTS iRAP. 
 Najbolji rezultat dobiven je modelom koji dobivene prostorne značajke obrađuje povratnim LSTM ćelijama.
 
-Performansa modela koji prostorne značajke slika označenih konzistentno sa sustavom FTTS iRAP obrađuje povratnim LSTM ćelijama i dalje je niža od performanse modela na ručno označenim pojedinačnim slikama.
-Pad per
+Performanse modela koji prostorne značajke slika označenih konzistentno sa sustavom FTTS iRAP obrađuje povratnim LSTM ćelijama i dalje su niža od performansa modela na ručno označenim pojedinačnim slikama.
+Pad performansa možemo analizirati tako da promotrimo sekvence slika iz podskupa za testiranje koje model loše klasificira. 
+U nastavku su pokazani tipovi pogrešaka na kojima model griješi.
+
+\subsubsection{Lažni pozitivi \engl{false positives}}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{images/fp_1.png}
+\caption{Lažni pozitiv s lijevom trakom različite boje, preuzeto s \citep{url:ftts_irap}}
+\label{img:fp_1}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{images/fp_2.png}
+\caption{Lažni pozitiv s diskriminativnim uzorcima kakvi se pojavljuju kod pripajanja, preuzeto s \citep{url:ftts_irap}}
+\label{img:fp_2}
+\end{figure}
+
+Slika \ref{img:fp_1} prikazuje cestu gdje je lijeva traka različite boje od ostalih. 
+Model mnogo takvih sličnih primjera označava kao pozitivne. Moguć razlog je što ga različitost lijeve trake može podsjećati na pripajanje.
+Slika \ref{img:fp_2} prikazuje razdvajanje koje ima vrlo slične diskriminativne uzorke onima na pripajanjima. 
+Modelu je iz tog razloga teško donijeti odluku je li riječ o pozitivu ili negativu.
+
+\subsubsection{Lažni negativi \engl{false negatives}}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{images/fn_1.png}
+\caption{Lažni negativ s razdvajanjem službeno označenim kao pripajanje, preuzeto s \citep{url:ftts_irap}}
+\label{img:fn_1}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{images/fn_2.png}
+\caption{Lažni negativ s pripajanjem na suprotnoj strani autoceste službeno označenim kao pripajanje, preuzeto s \citep{url:ftts_irap}}
+\label{img:fn_2}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{images/fn_2.png}
+\caption{Lažni negativ s pripajanjem u sjeni, preuzeto s \citep{url:ftts_irap}}
+\label{img:fn_3}
+\end{figure}
+
+Slika \ref{img:fn_1} prikazuje situaciju u kojoj je razdvajanje, prema službenim oznakama sustava FTTS iRAP, označeno kao pripajanje. 
+Slika \ref{img:fn_2} prikazuje situaciju u kojoj se dogodilo da je zbog prisutnosti pripajanja na drugoj strani autoceste i promatrana sekvenca označena kao pozitivna.
+Slika \ref{img:fn_3} prikazuje situaciju u kojoj je pripajanje u sjeni i model ne uspijeva prepoznati diskriminativnu značajku na temelju koje bi mogao prepoznati prisutnost atribut apripajanja.
+
+U razgovoru s kreatorima sustava FTTS iRAP zaključeno je kako je moguće da postoje moguće nekonzistentnosti i kriva označavanja prisutnosti atributa pripajanja uslijed ljudske pogreške i uslijed načina na koji se oznake dodjeljuju.
+Iz tog razloga skup podataka sadrži ``nečistoće'' koje je potrebno validirati sa samim sustavom. 
+Podatak koji se u tom slučaju može pokazati kao koristan je geolokacija svakog primjera iz skupa podataka za učenje.
+Na taj način moguće je relativno brzo provjeriti sve sumnjive primjere iz skupa za učenje, eventualno im promijeniti oznaku prisutnosti atributa te generirati novi, čišći skup podataka.
 
 \chapter{Zaključak}
-Zaključak.
+Organizacija iRAP bavi se inspekcijom kvaliteta ceste pridruživanjem različitih sigurnosnih atributa segmentima prometnica. 
+Sustav FTTS iRAP je geolokacijski informacijski sustav koji sadrži video snimke s geolokacijskim oznakama i pridruženim sigurnosnim atributima prema naputcima organizacije iRAP. 
+Označavanje segmenata video snimaka obavlja se ručno što može biti skupo, vremenski zahtjevno i otvara mogućnost za brojne pogreške. 
+
+Duboko učenje donijelo je revoluciju u mnogim područjima pa tako i u području računalnog vida. 
+Cilj rada bio je iskoristiti moć dubokog učenja i pokušati napraviti sustav zasnovan na dubokom modelu koji bi iz video snimaka naučio automatski označavati jedan od velikog broja sigurnosnih atributa - pripajanje na autocesti. 
+Prednost korištenja dubokog modela jest jeftinije i objektivnije pridruživanje sigurnosnih atributa segmentima video snimaka. 
+Konačno naučen sustav postizao je zadovoljavajuću performanse s obzirom na nekonzistentnost oznaka skupa podataka. 
+Naučen sustav može se iskoristiti za brzu validaciju ručno označenih atributa. 
+Svaki uzorak koji model krivo označi potencijalno je pogrešno označen i u sustavu pa je iz njegove geolokacije moguće brzo validirati prisutnost atributa pripajanja u samom sustavu.
+
+Prvi korak za budući rad i poboljšanje sustava bio bi validirati skup podataka sa sustavom FTTS iRAP i tako ukloniti svaku moguću nekonzistentnost koja dovodi do lošijih performansi. 
+Nadalje, pokazano je kako korištenje sekvenci slika dovodi do povećanja performansi modela -- poboljšanje bi se moglo ostvariti korištenjem mnogo duljih sekvenci uz rjeđe uzorkovanje te uz uzorkovanje slika koje prethode i koje slijede pojedinačnoj slici od interesa. 
+Moguća poboljšanja mogla bi se ostvariti i u vidu korištenja modernijih naučenih arhitektura korištenih za tipične zadatke u računalnom vidu.
 
 \bibliography{literatura}
 \bibliographystyle{fer}
 
 \begin{sazetak}
-Sažetak na hrvatskom jeziku.
+Ovaj rad opisuje modeliranje i učenje dubokih modela za klasifikaciju sekvenci prometnih scena.
+Svrha učenje modela za klasifikaciju sekvenci prometnih scena jest automatizirati dodjeljivanje sigurnosnih atributa definiranih od strane organizacije iRAP.
+Dodjeljivanje sigurnosnih atributa u različitim sustavima trenutno se obavlja ručno.
+Korištenje dubokih modela pruža jeftiniju i objektivniju alternativu takvom zadatku.
 
-\kljucnerijeci{Ključne riječi, odvojene zarezima.}
+Predloženo je nekoliko arhitektura koje rade s pojedinačnim slikama i sa sekvencama slika te koje je moguće učiti s kraja na kraj.
+Skupovi podataka generirani su na dva načina -- ručnim označavanjem i automatskom metodom koja oznake generira na temelju podataka iz sustava FTTS iRAP.
+Eksperimentalni rezultati prikazani su nad oba skupa. 
+Ručno označen skup podataka korišten je za pronalaženje najniže rezolucije na kojoj se ručno označenim slikama i dalje klasificiraju uspješno. 
+Niska rezolucija slika na kojoj klasifikacija i dalje uspješno radi važna je jer učenje nad sekvencama slika zahtjeva više memorije.
+Skup podataka označen na temelju podataka iz sustava FTTS iRAP korišten je za usporedbu dobitka na performansama uvođenjem dodatnih informacija kroz sekvencu slika.
+
+
+\kljucnerijeci{duboko učenje, sekvencijalni podaci, iRAP sigurnosni atributi, klasifikacija, prometne scene}
 \end{sazetak}
 
 % TODO: Navedite naslov na engleskom jeziku.
 \engtitle{Title}
 \begin{abstract}
-Abstract.
+This paper describes modeling and training of deep models for classification of traffic scene sequences.
+Purpose of training the model for classifications of traffic scenes is to automate the assignment of safety attributes defined by the iRAP organization.
+Assignment of safety attributes in different systems is done manually at the moment.
+Usage of the deep models provides cheaper and more objective alternative for that task.
+
+Several architectures that work with single images and image sequences and which are able to be trained end-to-end are suggested.
+Datasets are generated in two ways -- by manual labeling and by the automated method which generates labels based on the data from FTTS iRAP system.
+Experimental results are presented on both datasets.
+Manually labeled dataset is used to find the lowest resolution on which manually labeled images are still successfully classified.
+Low image resolution on which classification still works successfully is important because training on image sequences is memory
 
 \keywords{Keywords.}
 \end{abstract}
