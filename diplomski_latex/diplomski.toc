@@ -1,47 +1,47 @@
 \select@language {croatian}
 \contentsline {chapter}{\numberline {1}Uvod}{1}
 \contentsline {chapter}{\numberline {2}Skupovi podataka i njihovo kori\IeC {\v s}tenje}{3}
-\contentsline {section}{\numberline {2.1}Video snimke projekta FTTS iRAP}{3}
-\contentsline {section}{\numberline {2.2}Ru\IeC {\v c}no ozna\IeC {\v c}en skup podataka}{4}
-\contentsline {section}{\numberline {2.3}Skup podataka ozna\IeC {\v c}en konzistentno s projektom FTTS iRAP}{6}
-\contentsline {chapter}{\numberline {3}Kori\IeC {\v s}tene metode, modeli i postupci prilikom oblikovanja sustava}{8}
-\contentsline {section}{\numberline {3.1}Unakrsna entropija kao funkcija gubitka}{9}
-\contentsline {section}{\numberline {3.2}Gradijentni spust}{10}
-\contentsline {subsection}{\numberline {3.2.1}Adam optimizator}{10}
-\contentsline {subsection}{\numberline {3.2.2}Prenau\IeC {\v c}enost modela}{12}
-\contentsline {section}{\numberline {3.3}Tipi\IeC {\v c}ni slojevi dubokih modela za primjenu u ra\IeC {\v c}unalnom vidu}{13}
-\contentsline {subsection}{\numberline {3.3.1}Potpuno povezani sloj}{13}
-\contentsline {subsubsection}{Sigmoidalna aktivacijska funkcija}{13}
-\contentsline {subsubsection}{Po dijelovima linearna aktivacijska funkcija}{14}
-\contentsline {subsubsection}{Normaliziraju\IeC {\'c}a eksponencijalna aktivacijska funkcija}{15}
-\contentsline {subsection}{\numberline {3.3.2}Konvolucijski sloj}{16}
-\contentsline {subsection}{\numberline {3.3.3}Sloj sa\IeC {\v z}imanja}{18}
-\contentsline {subsection}{\numberline {3.3.4}Sloj grupne normalizacije (engl.~\emph {batch normalization})}{18}
-\contentsline {section}{\numberline {3.4}Arhitekture kori\IeC {\v s}tene u eksperimentima}{20}
-\contentsline {subsection}{\numberline {3.4.1}Arhitektura VGG-16 modela}{20}
-\contentsline {subsection}{\numberline {3.4.2}Arhitektura za klasifikaciju pojedina\IeC {\v c}nih slika}{21}
-\contentsline {subsection}{\numberline {3.4.3}Arhitekture za klasifikaciju sekvenci slika}{22}
-\contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem vremensko-prostornog sa\IeC {\v z}imanja}{22}
-\contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem povratnih LSTM \IeC {\'c}elija (engl.~\emph {Long Short Term Memory})}{23}
-\contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem vremenskog potpuno povezanog sloja}{24}
-\contentsline {section}{\numberline {3.5}Postupak pripreme skupova podataka}{25}
-\contentsline {subsection}{\numberline {3.5.1}Pretprocesiranje slika}{25}
-\contentsline {subsection}{\numberline {3.5.2}Postupak kreiranja slika ozna\IeC {\v c}enih konzistentno s projektom FTTS iRAP}{27}
-\contentsline {chapter}{\numberline {4}Eksperimenti i rezultati}{29}
-\contentsline {section}{\numberline {4.1}Na\IeC {\v c}in u\IeC {\v c}enja i testiranja u eksperimentima}{29}
-\contentsline {section}{\numberline {4.2}Klasifikacija ru\IeC {\v c}no ozna\IeC {\v c}enih slika na razli\IeC {\v c}itim rezolucijama}{31}
-\contentsline {subsection}{\numberline {4.2.1}Rezultati na rezoluciji 700x280}{32}
-\contentsline {subsection}{\numberline {4.2.2}Rezultati na rezoluciji 525x210}{34}
-\contentsline {subsection}{\numberline {4.2.3}Rezultati na rezoluciji 350x140}{36}
-\contentsline {subsection}{\numberline {4.2.4}Rezultati na rezoluciji 175x70}{38}
-\contentsline {section}{\numberline {4.3}Klasifikacija pojedina\IeC {\v c}nih slika ozna\IeC {\v c}enih konzistentno s projektom FTTS iRAP na originalnoj rezoluciji}{40}
-\contentsline {section}{\numberline {4.4}Klasifikacija sekvenci slika ozna\IeC {\v c}enih konzistentno s projektom FTTS iRAP koriste\IeC {\'c}i vremensko-prostorno sa\IeC {\v z}imanje}{42}
-\contentsline {section}{\numberline {4.5}Klasifikacija sekvenci slika ozna\IeC {\v c}enih konzistentno s projektom FTTS iRAP koriste\IeC {\'c}i povratne LSTM \IeC {\'c}elije}{44}
-\contentsline {section}{\numberline {4.6}Klasifikacija sekvenci slika ozna\IeC {\v c}enih konzistentno s projektom FTTS iRAP koriste\IeC {\'c}i vremenski potpuno povezani sloj}{46}
-\contentsline {section}{\numberline {4.7}Analiza rezultata}{48}
-\contentsline {subsection}{\numberline {4.7.1}Analiza rezultata na ru\IeC {\v c}no ozna\IeC {\v c}enim slikama}{48}
-\contentsline {subsection}{\numberline {4.7.2}Analiza rezultata na slikama ozna\IeC {\v c}enima konzistentno sa sustavom FTTS iRAP}{48}
-\contentsline {subsubsection}{La\IeC {\v z}ni pozitivi (engl.~\emph {false positives})}{49}
-\contentsline {subsubsection}{La\IeC {\v z}ni negativi (engl.~\emph {false negatives})}{51}
-\contentsline {chapter}{\numberline {5}Zaklju\IeC {\v c}ak}{55}
-\contentsline {chapter}{Literatura}{56}
+\contentsline {section}{\numberline {2.1}Video snimke projekta FTTS iRAP}{4}
+\contentsline {section}{\numberline {2.2}Skup podataka s eksperimentalnim oznakama}{5}
+\contentsline {section}{\numberline {2.3}Skup podataka s oznakama iz sustava FTTS iRAP}{6}
+\contentsline {chapter}{\numberline {3}Metode, modeli i postupci}{9}
+\contentsline {section}{\numberline {3.1}Unakrsna entropija kao funkcija gubitka}{10}
+\contentsline {section}{\numberline {3.2}Gradijentni spust}{11}
+\contentsline {subsection}{\numberline {3.2.1}U\IeC {\v c}enje postupkom Adam}{11}
+\contentsline {subsection}{\numberline {3.2.2}Regularizacija modela}{13}
+\contentsline {section}{\numberline {3.3}Tipi\IeC {\v c}ni slojevi dubokih modela za primjenu u ra\IeC {\v c}unalnom vidu}{14}
+\contentsline {subsection}{\numberline {3.3.1}Potpuno povezani sloj}{14}
+\contentsline {subsubsection}{Sigmoidalna aktivacijska funkcija}{15}
+\contentsline {subsubsection}{Po dijelovima linearna aktivacijska funkcija}{16}
+\contentsline {subsubsection}{Normaliziraju\IeC {\'c}a eksponencijalna aktivacijska funkcija}{17}
+\contentsline {subsection}{\numberline {3.3.2}Konvolucijski sloj}{17}
+\contentsline {subsection}{\numberline {3.3.3}Sloj sa\IeC {\v z}imanja}{19}
+\contentsline {subsection}{\numberline {3.3.4}Sloj grupne normalizacije (engl.~\emph {batch normalization})}{20}
+\contentsline {section}{\numberline {3.4}Arhitekture kori\IeC {\v s}tene u eksperimentima}{21}
+\contentsline {subsection}{\numberline {3.4.1}Arhitektura VGG-16 modela}{22}
+\contentsline {subsection}{\numberline {3.4.2}Arhitektura za klasifikaciju pojedina\IeC {\v c}nih slika}{23}
+\contentsline {subsection}{\numberline {3.4.3}Arhitekture za klasifikaciju sekvenci slika}{24}
+\contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem vremensko-prostornog sa\IeC {\v z}imanja}{24}
+\contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem povratnih LSTM \IeC {\'c}elija (engl.~\emph {Long Short Term Memory})}{25}
+\contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem vremenskog potpuno povezanog sloja}{26}
+\contentsline {section}{\numberline {3.5}Postupak pripreme skupova podataka}{27}
+\contentsline {subsection}{\numberline {3.5.1}Pretprocesiranje slika}{27}
+\contentsline {subsection}{\numberline {3.5.2}Postupak kreiranja slika ozna\IeC {\v c}enih konzistentno s projektom FTTS iRAP}{29}
+\contentsline {chapter}{\numberline {4}Eksperimenti i rezultati}{31}
+\contentsline {section}{\numberline {4.1}Na\IeC {\v c}in u\IeC {\v c}enja i testiranja u eksperimentima}{31}
+\contentsline {section}{\numberline {4.2}Klasifikacija ru\IeC {\v c}no ozna\IeC {\v c}enih slika na razli\IeC {\v c}itim rezolucijama}{33}
+\contentsline {subsection}{\numberline {4.2.1}Rezultati na rezoluciji 700x280}{34}
+\contentsline {subsection}{\numberline {4.2.2}Rezultati na rezoluciji 525x210}{36}
+\contentsline {subsection}{\numberline {4.2.3}Rezultati na rezoluciji 350x140}{38}
+\contentsline {subsection}{\numberline {4.2.4}Rezultati na rezoluciji 175x70}{40}
+\contentsline {section}{\numberline {4.3}Klasifikacija pojedina\IeC {\v c}nih slika ozna\IeC {\v c}enih konzistentno s projektom FTTS iRAP na originalnoj rezoluciji}{42}
+\contentsline {section}{\numberline {4.4}Klasifikacija sekvenci slika ozna\IeC {\v c}enih konzistentno s projektom FTTS iRAP koriste\IeC {\'c}i vremensko-prostorno sa\IeC {\v z}imanje}{44}
+\contentsline {section}{\numberline {4.5}Klasifikacija sekvenci slika ozna\IeC {\v c}enih konzistentno s projektom FTTS iRAP koriste\IeC {\'c}i povratne LSTM \IeC {\'c}elije}{46}
+\contentsline {section}{\numberline {4.6}Klasifikacija sekvenci slika ozna\IeC {\v c}enih konzistentno s projektom FTTS iRAP koriste\IeC {\'c}i vremenski potpuno povezani sloj}{48}
+\contentsline {section}{\numberline {4.7}Analiza rezultata}{50}
+\contentsline {subsection}{\numberline {4.7.1}Analiza rezultata na ru\IeC {\v c}no ozna\IeC {\v c}enim slikama}{50}
+\contentsline {subsection}{\numberline {4.7.2}Analiza rezultata na slikama ozna\IeC {\v c}enima konzistentno sa sustavom FTTS iRAP}{50}
+\contentsline {subsubsection}{La\IeC {\v z}ni pozitivi (engl.~\emph {false positives})}{51}
+\contentsline {subsubsection}{La\IeC {\v z}ni negativi (engl.~\emph {false negatives})}{53}
+\contentsline {chapter}{\numberline {5}Zaklju\IeC {\v c}ak}{57}
+\contentsline {chapter}{Literatura}{58}

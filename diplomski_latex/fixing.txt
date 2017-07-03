@@ -1,0 +1,1 @@
+Klasifikacija sekvenci slika korištenjem vremensko-prostornog sažimanja

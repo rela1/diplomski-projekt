@@ -1,4 +1,4 @@
-\begin{thebibliography}{20}
+\begin{thebibliography}{22}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -100,6 +100,15 @@ Joe~Yue{-}Hei Ng, Matthew~J. Hausknecht, Sudheendra Vijayanarasimhan, Oriol
 \newblock \emph{CoRR}, abs/1503.08909, 2015.
 \newblock URL \url{http://arxiv.org/abs/1503.08909}.
 
+\bibitem[Oquab et~al.(2014)Oquab, Bottou, Laptev, i
+  Sivic]{proceeding:transfer_learning}
+Maxime Oquab, L{\'e}on Bottou, Ivan Laptev, i Josef Sivic.
+\newblock {Learning and Transferring Mid-Level Image Representations using
+  Convolutional Neural Networks}.
+\newblock U \emph{{IEEE Conference on Computer Vision and Pattern
+  Recognition}}, Columbus, OH, United States, Lipanj 2014.
+\newblock URL \url{https://hal.inria.fr/hal-00911179}.
+
 \bibitem[Relić(2016)]{seminar:rela}
 Ivan Relić.
 \newblock {Klasifikacija slika dubokim konvolucijskim mrežama}, 2016.
@@ -144,5 +153,10 @@ Siniša Šegvić.
 \newblock {Uvodno predavanje}.
 \newblock \url{http://www.zemris.fer.hr/~ssegvic/du/du0intro.pdf}, 2016.
 \newblock [pristupano 17. lipnja 2017.].
+
+\bibitem[Šnajder i Bašić(2014)]{book:machine_learning}
+Jan Šnajder i Bojana~Dalbelo Bašić.
+\newblock \emph{Strojno učenje}.
+\newblock 2014.
 
 \end{thebibliography}
