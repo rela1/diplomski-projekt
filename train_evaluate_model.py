@@ -174,7 +174,7 @@ def plot_wrong_classifications(model, dataset, model_path, save_path=None):
   sess.run(tf.global_variables_initializer())
   sess.run(tf.local_variables_initializer())
     
-  saver = tf.train.Saver()
+  saver = tf.train.Saver(get_saver_variables())
   saver.restore(sess, model_path)
 
   coord = tf.train.Coordinator()
