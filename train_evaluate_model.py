@@ -196,7 +196,7 @@ def plot_wrong_classifications(model, dataset, model_path, save_path=None):
 
   image_name_to_geo = {}
 
-  for i in range(10):
+  for i in range(num_batches):
 
     logits_vals, label_vals, image_vals, geo_vals = sess.run([model.test_logits, dataset.test_labels, dataset.test_images, dataset.test_geo])
     probability_vals = softmax(logits_vals)
@@ -244,4 +244,4 @@ def plot_wrong_classifications(model, dataset, model_path, save_path=None):
       geo = image_name_to_geo[image_name]
       #utm_coords = utm.from_latlon(geo[1], geo[0])
       #f.write(image_name + ' -> ' + 'https://he.ftts-irap.org/gis?baselayer=OsmLayer&overlaylayers=ir_roads&y={}&x={}&zoom=15&method=zoom'.format(utm_coords[1], utm_coords[0]) + '\n')
-      f.write(image_name + ' -> ' + str(geo[0]) + ',' + str(geo[1]))
+      f.write(image_name + ' -> ' + str(geo[0]) + ',' + str(geo[1]) + '\n')
