@@ -53,7 +53,8 @@ class SequentialImageLSTMModel:
     reuse = None
     for sequence_image in range(sequence_length):
       with tf.contrib.framework.arg_scope([layers.convolution2d],
-        kernel_size=3, stride=1, padding='SAME', rate=1, activation_fn=tf.nn.relu, weights_initializer=None,
+        kernel_size=3, stride=1, padding='SAME', rate=1, activation_fn=tf.nn.relu,
+        normalizer_fn=layers.batch_norm, normalizer_params=bn_params, weights_initializer=None,
         weights_regularizer=layers.l2_regularizer(weight_decay)):
 
         net = layers.convolution2d(inputs[:, sequence_image], 64, scope='conv1_1', reuse=reuse)
