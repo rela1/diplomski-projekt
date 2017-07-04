@@ -18,13 +18,13 @@ class Dataset:
         self.valid_dir = os.path.join(dataset_root, 'validate')
         self.test_dir = os.path.join(dataset_root, 'test')
 
-        self.train_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(self.train_dir)]
+        self.train_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(self.train_dir)][0:2]
         self.train_tfrecords = [os.path.join(self.train_dir, train_tfrecords_dir, train_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for train_tfrecords_dir in self.train_tfrecords_dirs]
         
         self.valid_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(self.valid_dir)]
         self.valid_tfrecords = [os.path.join(self.valid_dir, valid_tfrecords_dir, valid_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for valid_tfrecords_dir in self.valid_tfrecords_dirs]
 
-        self.test_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(self.test_dir)]
+        self.test_tfrecords_dirs = [tfrecords_dir for tfrecords_dir in os.listdir(self.test_dir)][0:2]
         self.test_tfrecords = [os.path.join(self.test_dir, test_tfrecords_dir, test_tfrecords_dir + '_' + dataset_suffix + '.tfrecords') for test_tfrecords_dir in self.test_tfrecords_dirs]
 
         self.num_train_examples = number_of_examples(self.train_tfrecords_dirs, self.train_dir)
@@ -37,7 +37,7 @@ class Dataset:
         valid_file_queue = tf.train.string_input_producer(self.valid_tfrecords, capacity=len(self.valid_tfrecords))
         test_file_queue = tf.train.string_input_producer(self.test_tfrecords, capacity=len(self.test_tfrecords))
 
-        train_images, train_labels = input_decoder(train_file_queue, example_parser)
+        train_images, train_labels, self.train_geo = input_decoder(train_file_queue, example_parser)
         if is_training:
             self.train_images, self.train_labels = tf.train.shuffle_batch(
                 [train_images, train_labels], batch_size=batch_size, shapes=shapes, capacity=100, min_after_dequeue=50)
@@ -45,11 +45,11 @@ class Dataset:
             self.train_images, self.train_labels = tf.train.batch(
                 [train_images, train_labels], batch_size=batch_size, shapes=shapes)
 
-        valid_images, valid_labels = input_decoder(valid_file_queue, example_parser)
+        valid_images, valid_labels, self.valid_geo = input_decoder(valid_file_queue, example_parser)
         self.valid_images, self.valid_labels = tf.train.batch(
             [valid_images, valid_labels], batch_size=batch_size, shapes=shapes)
 
-        test_images, test_labels = input_decoder(test_file_queue, example_parser)
+        test_images, test_labels, self.test_geo = input_decoder(test_file_queue, example_parser)
         self.test_images, self.test_labels = tf.train.batch(
             [test_images, test_labels], batch_size=batch_size, shapes=shapes)
 
@@ -218,7 +218,8 @@ def parse_sequence_example(record_string):
                         'width' : tf.FixedLenFeature([], tf.int64),
                         'height' : tf.FixedLenFeature([], tf.int64),
                         'depth' : tf.FixedLenFeature([], tf.int64),
-                        'sequence_length' : tf.FixedLenFeature([], tf.int64)
+                        'sequence_length' : tf.FixedLenFeature([], tf.int64),
+                        'geo' : tf.FixedLenFeature([], tf.string)
                     }
   )
   images = tf.decode_raw(features['images_raw'], tf.float32)
@@ -228,7 +229,9 @@ def parse_sequence_example(record_string):
   label = tf.cast(features['label'], tf.int32)
   sequence_length = tf.cast(features['sequence_length'], tf.int32)
   images = tf.reshape(images, [sequence_length, height, width, depth])
-  return images, label
+  geo = tf.decode_raw(features['geo'], tf.float32)
+  geo = tf.reshape(geo, [2, ])
+  return images, label, geo
 
 
 def parse_single_example(record_string):
@@ -249,7 +252,7 @@ def parse_single_example(record_string):
     label = tf.cast(features['label'], tf.int32)
     image = tf.reshape(image, [height, width, depth])
     image = tf.cast(image, tf.float32)
-    return image, label
+    return image, label, None
 
 
 def input_decoder(filename_queue, example_parser):

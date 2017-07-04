@@ -6,6 +6,7 @@ import shutil
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
+import utm
 
 from evaluate_helper import evaluate, softmax
 
@@ -193,9 +194,11 @@ def plot_wrong_classifications(model, dataset, model_path, save_path=None):
     false_negatives = os.path.join(save_path, 'false_negatives')
     os.mkdir(false_negatives)
 
+  image_name_to_geo = {}
+
   for i in range(num_batches):
 
-    logits_vals, label_vals, image_vals = sess.run([model.test_logits, dataset.test_labels, dataset.test_images])
+    logits_vals, label_vals, image_vals, geo_vals = sess.run([model.test_logits, dataset.test_labels, dataset.test_images, dataset.test_geo])
     probability_vals = softmax(logits_vals)
     prediction_vals = np.argmax(logits_vals, axis=1)
 
@@ -225,10 +228,19 @@ def plot_wrong_classifications(model, dataset, model_path, save_path=None):
           plt.show()
         else:
           if prediction_vals[j] == 1:
-            plt.savefig(os.path.join(false_positives, str(fig_cnt) + '.png'))
+            name = os.path.join(false_positives, str(fig_cnt) + '.png')
+            image_name_to_geo[name] = geo_vals[j]
+            plt.savefig(name)
           else:
-            plt.savefig(os.path.join(false_negatives, str(fig_cnt) + '.png'))
+            name = os.path.join(false_negatives, str(fig_cnt) + '.png')
+            image_name_to_geo[name] = geo_vals[j]
+            plt.savefig(name)
 
         fig_cnt += 1
 
     print('Done with step {}/{} wrong classified: {}'.format(i + 1, num_batches, fig_cnt))
+  with open(os.path.join(save_path, 'geo_data.txt'), 'w') as f:
+    for image_name in image_name_to_geo:
+      geo = image_name_to_geo[image_name]
+      utm_coords = utm.from_latlon(geo[1], geo[0])
+      f.write(image_name + ' -> ' + 'https://he.ftts-irap.org/gis?baselayer=OsmLayer&overlaylayers=ir_roads&y={}&x={}&zoom=15&method=zoom'.format(utm_coords[1], utm_coords[0]) + '\n')
