@@ -12,7 +12,7 @@ class Dataset:
     def __init__(self, example_parser, dataset_suffix, dataset_root, batch_size, input_shape, is_training=True):
         self.batch_size = batch_size
         self.input_shape = input_shape
-        shapes = [input_shape, []]
+        shapes = [input_shape, [], [2]]
 
         self.train_dir = os.path.join(dataset_root, 'train')
         self.valid_dir = os.path.join(dataset_root, 'validate')
@@ -37,21 +37,21 @@ class Dataset:
         valid_file_queue = tf.train.string_input_producer(self.valid_tfrecords, capacity=len(self.valid_tfrecords))
         test_file_queue = tf.train.string_input_producer(self.test_tfrecords, capacity=len(self.test_tfrecords))
 
-        train_images, train_labels, self.train_geo = input_decoder(train_file_queue, example_parser)
+        train_images, train_labels, train_geo = input_decoder(train_file_queue, example_parser)
         if is_training:
-            self.train_images, self.train_labels = tf.train.shuffle_batch(
-                [train_images, train_labels], batch_size=batch_size, shapes=shapes, capacity=100, min_after_dequeue=50)
+            self.train_images, self.train_labels, self.train_geo = tf.train.shuffle_batch(
+                [train_images, train_labels, train_geo], batch_size=batch_size, shapes=shapes, capacity=100, min_after_dequeue=50)
         else:
-            self.train_images, self.train_labels = tf.train.batch(
-                [train_images, train_labels], batch_size=batch_size, shapes=shapes)
+            self.train_images, self.train_labels, self.train_geo = tf.train.batch(
+                [train_images, train_labels, train_geo], batch_size=batch_size, shapes=shapes)
 
-        valid_images, valid_labels, self.valid_geo = input_decoder(valid_file_queue, example_parser)
-        self.valid_images, self.valid_labels = tf.train.batch(
-            [valid_images, valid_labels], batch_size=batch_size, shapes=shapes)
+        valid_images, valid_labels, valid_geo = input_decoder(valid_file_queue, example_parser)
+        self.valid_images, self.valid_labels, self.valid_geo = tf.train.batch(
+            [valid_images, valid_labels, valid_geo], batch_size=batch_size, shapes=shapes)
 
-        test_images, test_labels, self.test_geo = input_decoder(test_file_queue, example_parser)
-        self.test_images, self.test_labels = tf.train.batch(
-            [test_images, test_labels], batch_size=batch_size, shapes=shapes)
+        test_images, test_labels, test_geo = input_decoder(test_file_queue, example_parser)
+        self.test_images, self.test_labels, self.test_geo = tf.train.batch(
+            [test_images, test_labels, test_geo], batch_size=batch_size, shapes=shapes)
 
 
     def mean_image_normalization(self, sess):
