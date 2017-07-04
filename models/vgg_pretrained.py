@@ -29,15 +29,6 @@ class SequentialImageLSTMModel:
         self.test_logits, self.test_loss = self.build(lstm_state_sizes, dataset.test_images, dataset.test_labels, weight_decay, vgg_init_dir, False)
 
   def build(self, lstm_state_sizes, inputs, labels, weight_decay, vgg_init_dir, is_training):
-    bn_params = {
-      'decay': 0.999,
-      'center': True,
-      'scale': True,
-      'epsilon': 0.001,
-      'updates_collections': None,
-      'is_training': is_training,
-    }
-
     if is_training:
       vgg_layers, vgg_layer_names = read_vgg_init(vgg_init_dir)
 
@@ -54,7 +45,7 @@ class SequentialImageLSTMModel:
     for sequence_image in range(sequence_length):
       with tf.contrib.framework.arg_scope([layers.convolution2d],
         kernel_size=3, stride=1, padding='SAME', rate=1, activation_fn=tf.nn.relu,
-        normalizer_fn=layers.batch_norm, normalizer_params=bn_params, weights_initializer=None,
+        normalizer_fn=None, weights_initializer=None,
         weights_regularizer=layers.l2_regularizer(weight_decay)):
 
         net = layers.convolution2d(inputs[:, sequence_image], 64, scope='conv1_1', reuse=reuse)
