@@ -613,24 +613,24 @@ Dobivene izlazne mape značajki pretvaraju se u jednodimenzionalan vektor koji s
 \end{itemize}
 
 \subsection{Arhitekture za klasifikaciju sekvenci slika}
-Za klasifikaciju sekvenci slika korišteno je nekoliko različitih modela temeljenih na prednaučenoj VGG-16 arhitekturi. 
+Za klasifikaciju sekvenci slika korišteno je nekoliko različitih modela temeljenih na prednaučenoj arhitekturi VGG-16. 
 Korišteni modeli su inspirirani arhitekturama iz \citep{article:sequential_architectures}.
 
-Zajednički postupak koji svi modeli dijele jest postupak izlučivanja prostornih značajki -- za svaku sliku sekvence se koristeći prednji dio naučenog VGG-16 modela izračunaju značajke koje se zatim dalje obrađuju na različite načine.
-Dobivene prostorne značajke svake pojedine slike su dimenzija $H$ x $W$ x $512$, gdje dimenzije $H$ i $W$ ovise o dimenzijama ulaznih slika, a treća dimenzija je određena brojem izlaznih mapa značajki posljednjeg konvolucijskog sloja VGG-16 modela. 
+Zajednički postupak koji svi modeli dijele jest postupak izlučivanja prostornih značajki -- za svaku sliku sekvence se koristeći prednji dio prednaučene arhitekture VGG-16 izračunaju značajke koje se zatim dalje obrađuju na različite načine.
+Dobivene prostorne značajke svake pojedine slike su dimenzija $H$ x $W$ x $512$, gdje dimenzije $H$ i $W$ ovise o dimenzijama ulaznih slika, a treća dimenzija je određena brojem izlaznih mapa značajki posljednjeg konvolucijskog sloja arhitekture VGG-16. 
 
 \subsubsection{Klasifikacija sekvenci slika korištenjem vremensko-prostornog sažimanja}
-Model koji koristi vremensko-prostorno sažimanje prostorne značajke svake slike pretvori u jednodimenzionalni vektor dimenzija $H$ x $W$ x $512$.
-Dobiveni jednodimenzionalni vektori se zatim oblikuju u dvodimenzionalnu strukturu dimenzija $N$ x ($H$ x $W$ x $512$), gdje je $N$ duljina sekvence slika.
+Model koji koristi vremensko-prostorno sažimanje pretvara dobivene prostorne značajke svake slike u jednodimenzionalni vektor dimenzija $H$ x $W$ x $512$.
+Dobiveni jednodimenzionalni vektori se zatim oblikuju u dvodimenzionalni tenzor dimenzija $N$ x ($H$ x $W$ x $512$), gdje je $N$ duljina sekvence slika.
 
-Dvodimenzionalna struktura koja se dobije povezivanjem prostornih značajki sadrži i vremenske i prostorne informacije. 
-Dobivena dvodimenzionalna zatim se obrađuje kroz nekoliko slojeva kako slijedi:
+Dvodimenzionalni tenzor koja se dobije povezivanjem prostornih značajki sadrži i vremenske i prostorne informacije. 
+Taj se tenzor zatim obrađuje kroz nekoliko slojeva kako slijedi:
 \begin{itemize}
  \item sloj za sažimanje maksimalnom vrijednošću s podmapama za grupiranje veličina $2$ x $2$ uz korak uzorkovanja podmapa 2
  \begin{itemize}
   \item operacija efektivno provodi vremensko-prostorno sažimanje značajki koje su bliske vremenski i prostorno
  \end{itemize}
- \item pretvaranje dobivene dvodimenzionalne strukture u jednodimenzionalnu
+ \item pretvaranje dobivenog dvodimenzionalnog tenzora u jednodimenzionalni
  \item potpuno povezani sloj dimenzionalnosti 200
  \begin{itemize}
   \item po dijelovima linearna \engl{ReLU} aktivacijska funkcija
@@ -645,32 +645,43 @@ Dobivena dvodimenzionalna zatim se obrađuje kroz nekoliko slojeva kako slijedi:
 \end{itemize}
 
 \subsubsection{Klasifikacija sekvenci slika korištenjem povratnih LSTM ćelija \engl{Long Short Term Memory}}
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.6]{images/lstm.png}
-\caption{Arhitektura LSTM ćelije, nacrtano prema \citep{article:lstm}}
-\label{img:lstm}
-\end{figure}
-Slika \ref{img:lstm} prikazuje arhitekturu LSTM ćelije. 
 LSTM ćelije pogodne su za korištenje nad sekvencama podataka iz razloga što sadrže memorijske ćelije u kojima mogu čuvati informacije kroz dugačke vremenske periode.
 
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.7]{images/lstm_input.png}
+\caption{Arhitektura jednoslojne LSTM ćelije (slika nacrtana prema \citep{article:lstm})}
+\label{img:lstm_input}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.7]{images/lstm_hidden.png}
+\caption{Arhitektura s više slojeva LSTM ćelija (slika nacrtana prema \citep{article:lstm})}
+\label{img:lstm_hidden}
+\end{figure}
+
+Slika \ref{img:lstm_input} prikazuje arhitekturu jednoslojne LSTM ćelije koja kao ulaz dobiva ulazni podatak. 
+Slika \ref{img:lstm_input} prikazuje arhitekturu s više slojeva LSTM ćelija u kojoj je izlaz LSTM ćelije prethodnog sloja ulaz LSTM ćeliji idućeg sloja.
+
 U svakom vremenskom koraku potrebno je izračunati izlaz LSTM ćelije i novi sadržaj memorijske ćelije.
-Izlaz LSTM ćelije i novi sadržaj memorijske ćelije računaju se na temelju tri stvari:
+Izlaz LSTM ćelije i novi sadržaj memorijske ćelije računaju se na temelju tri vektora:
 \begin{itemize}
- \item izlaz iz LSTM ćelije iz prethodnog sloja za trenutni vremenski korak (ili ulazni podatak trenutnog vremenskog koraka ukoliko je riječ o prvom sloju LSTM ćelija) -- $\mathbf{h}_{l-1}^t$ na slici \ref{img:lstm}
- \item izlaz iz LSTM ćelije trenutnog sloja za prethodni vremenski korak  -- $\mathbf{h}_{l}^{t-1}$ na slici \ref{img:lstm}
- \item sadržaj memorijske ćelije trenutnog sloja za prethodni vremenski korak -- $\mathbf{c}_t$ na slici \ref{img:lstm}
+ \item ulaznom podatku trenutnog vremenskog koraka, odnosno izlazu LSTM ćelije prethodnog sloja trenutnog vremenskog koraka -- $\mathbf{x}_t$ na slici \ref{img:lstm_input}, odnosno $\mathbf{h}^{1}_t$ na slici \ref{img:lstm_hidden}
+ \item izlazu LSTM ćelije trenutnog sloja za prethodni vremenski korak  -- $\mathbf{h}_{t-1}$  na slici \ref{img:lstm_input}, odnosno $\mathbf{h}_{t-1}^1$ i $\mathbf{h}_{t-1}^2$ na slici \ref{img:lstm_hidden}
+ \item sadržaju memorijske ćelije trenutnog sloja za prethodni vremenski korak -- $\mathbf{c}_{t-1}$ na slici \ref{img:lstm_input}, odnosno $\mathbf{c}_{t-1}^1$ i $\mathbf{c}_{t-1}^2$ na slici \ref{img:lstm_hidden}
 \end{itemize}
-Izlaz LSTM ćelije i novi sadržaj memorijske ćelije računaju se sljedećim izrazima:
+U općenitom slučaju višeslojne arhitekture LSTM ćelija, izlaz i novi sadržaj memorijske ćelije računaju se sljedećim izrazima:
 \begin{align}
- \mathbf{c}_t^l &= \mathbf{f} \odot \mathbf{c}_{t-1}^l + \mathbf{i} \odot \mathbf{g} \\
- \mathbf{h}_t^l &= \mathbf{o} \odot \tanh(\mathbf{c}^l_t) \\
- \mathbf{i} &= \sigma (\mathbf{W}_i [\mathbf{h}_{l}^{t-1}, \mathbf{h}_{l-1}^t] + \mathbf{b}_i) \\
- \mathbf{f} &= \sigma (\mathbf{W}_f [\mathbf{h}_{l}^{t-1}, \mathbf{h}_{l-1}^t] + \mathbf{b}_f) \\
- \mathbf{o} &= \sigma (\mathbf{W}_o [\mathbf{h}_{l}^{t-1}, \mathbf{h}_{l-1}^t] + \mathbf{b}_o) \\
- \mathbf{g} &= \sigma (\mathbf{W}_g [\mathbf{h}_{l}^{t-1}, \mathbf{h}_{l-1}^t] + \mathbf{b}_g), 
+ \text{stanje ćelije: } \mathbf{c}_t^l &= \mathbf{f} \odot \mathbf{c}_{t-1}^l + \mathbf{i} \odot \mathbf{g} \\
+ \text{izlaz ćelije: } \mathbf{h}_t^l &= \mathbf{o} \odot \tanh(\mathbf{c}^l_t) \\
+ \text{vektor ulaznih vrata: } \mathbf{i} &= \sigma (\mathbf{W}_i [\mathbf{h}^{l}_{t-1}, \mathbf{h}^{l-1}_t] + \mathbf{b}_i) \\
+ \text{vektor vrata zaboravljanja: } \mathbf{f} &= \sigma (\mathbf{W}_f [\mathbf{h}^{l}_{t-1}, \mathbf{h}^{l-1}_t] + \mathbf{b}_f) \\
+ \text{vektor izlaznih vrata: } \mathbf{o} &= \sigma (\mathbf{W}_o [\mathbf{h}^{l}_{t-1}, \mathbf{h}^{l-1}_t] + \mathbf{b}_o) \\
+ \text{vektor ulaznih modulacijskih vrata: } \mathbf{g} &= \sigma (\mathbf{W}_g [\mathbf{h}^{l}_{t-1}, \mathbf{h}^{l-1}_t] + \mathbf{b}_g), 
 \end{align}
 gdje je $\tanh$ aktivacijska funkcija tangens hiperbolni, $\sigma$ je sigmoidalna aktivacijska funkcija, $\odot$ je operator množenja koji djeluje po elementima, a $[\mathbf{x}, \mathbf{y}]$ je operacija spajanja vektora $\mathbf{x}$ dimenzija $n_1$ i vektora $\mathbf{y}$ dimenzija $n_2$ u vektor dimenzija $n_1 + n_2$.
+Notacija $\mathbf{h}^{l}_{t}$ predstavlja izlazni vektor LSTM ćelije vremenskog trenutka $t$ u sloju $l$.
 
 Model koji koristi LSTM ćelije prostorne značajke svake slike pretvori u jednodimenzionalni vektor dimenzija $H$ x $W$ x $512$.
 Dobiveni jednodimenzionalni vektori se zatim redom obrađuju kako slijedi:
@@ -699,10 +710,10 @@ Svaki dobiveni jednodimenzionalni vektor prostornih značajki se zatim obrađuje
   \item ovaj potpuno povezani sloj služi za predstavljanje prostornih značajki vektorom manjih dimenzija
  \end{itemize}
 \end{itemize}
-Jednodimenzionalni vektori dobiveni nakon potpuno povezanog sloja se zatim oblikuju u dvodimenzionalnu strukturu dimenzija $N$ x ($H$ x $W$ x $512$), gdje je $N$ duljina sekvence slika.
-Dobivena dvodimenzionalna zatim se obrađuje kroz nekoliko slojeva kako slijedi:
+Jednodimenzionalni vektori dobiveni nakon potpuno povezanog sloja se zatim oblikuju u dvodimenzionalni tenzor dimenzija $N$ x $64$, gdje je $N$ duljina sekvence slika.
+Taj se tenzor zatim obrađuje kroz nekoliko slojeva kako slijedi:
 \begin{itemize}
- \item pretvaranje dobivene dvodimenzionalne strukture u jednodimenzionalnu
+ \item pretvaranje dobivenog dvodimenzionalnog tenzora u jednodimenzionalni
  \item potpuno povezani sloj dimenzionalnosti 64
  \begin{itemize}
   \item po dijelovima linearna \engl{ReLU} aktivacijska funkcija
@@ -719,7 +730,7 @@ Dobivena dvodimenzionalna zatim se obrađuje kroz nekoliko slojeva kako slijedi:
 
 \section{Postupak pripreme skupova podataka}
 Poglavlje \ref{chapter:skupovi_podataka} opisuje dva tipa skupova podataka korištenih u ovom radu.
-U nastavku je opisan postupak pretprocesiranja slika dobivenih iz videa sa stranice \citep{url:ftts_irap} te postupak kreiranja slika označenih konzistentno s projektom FTTS iRAP.
+U nastavku je opisan postupak pretprocesiranja slika koje se dobivaju iz georeferenciranih video snimaka sa stranice \citep{url:ftts_irap} te postupak kreiranja skupa podataka s oznakama iz sustava FTTS iRAP.
 
 \subsection{Pretprocesiranje slika}
 Slike korištene za kreiranje skupova podataka dobivene su iz video snimaka snimljenih automobilom koji se kretao engleskim autocestama.
@@ -733,29 +744,30 @@ Metoda adaptivnog izjednačavanja histograma za računanje histograma ne uzima u
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.2]{images/original.png}
-\caption{Originalna slika, preuzeto s \citep{url:ftts_irap}}
+\caption{Originalna slika (slika preuzeta s \citep{url:ftts_irap})}
 \label{img:original}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.2]{images/hist.png}
-\caption{Slika s izjednačenim histogramom, preuzeto s \citep{url:ftts_irap}}
+\caption{Slika s izjednačenim histogramom}
 \label{img:hist}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.2]{images/adapt_hist.png}
-\caption{Slika s adaptivno izjednačenim histogramom, preuzeto s \citep{url:ftts_irap}}
+\caption{Slika s adaptivno izjednačenim histogramom}
 \label{img:adapt_hist}
 \end{figure}
 
 Iz slika \ref{img:original}, \ref{img:hist} i \ref{img:adapt_hist} vidljivo je kako su, u odnosu na originalnu sliku, na slici s adaptivno izjednačenim histogramom najbolje naglašeni detalji zbog najbolje ublažene varijacije kontrasta.
+Eksperimentalno je utvrđeno da adaptivno izjednavačanje histograma poboljšava performanse dubokog modela.
 Metoda adaptivnog izjednačavanja histograma se iz tog razloga koristi kao korak pretprocesiranja za svaku sliku korištenu prilikom kreiranja skupova podataka.
 
-\subsection{Postupak kreiranja slika označenih konzistentno s projektom FTTS iRAP}
-Za postupak kreiranja slika prometnih scena označenih konzistentno s projektom FTTS iRAP kreiran je automatizirani postupak.
+\subsection{Postupak kreiranja slika s oznakama iz sustava FTTS iRAP}
+Kreiranje slika prometnih scena s oznakama iz sustava FTTS iRAP obavlja se automatiziranim postupkom.
 Ulazni podaci za automatizirani postupak su sljedeći:
 \begin{itemize}
  \item geolokacije na kojima je prisutan atribut pripajanja
@@ -823,7 +835,7 @@ Kako su sve arhitekture korištene za potrebe ovog rada zasnovane na naučenom p
   \eta_{t}=\eta_0 \cdot 0.96^{\cfrac{t}{k}},
  \end{align}
 gdje je $t$ indeks koraka učenja, a $k$ je broj koraka učenja u jednoj epohi
- \item svi novo nadodani slobodni parametri (isključujući parametre naučenog prednjeg dijela VGG-16 arhitekture) inicijalizirani su na sljedeći način:
+ \item svi novo nadodani slobodni parametri (isključujući parametre prednaučenog prednjeg dijela arhitekture VGG-16) inicijalizirani su na sljedeći način:
  \begin{itemize}
   \item parametri slojeva (isključujući parametre pomaka) s po dijelovima linearnom aktivacijskom funkcijom inicijalizirani su koristeći inicijalizator koji skalira varijancu prema \citep{article:delving_deep_into_rectifiers}
   \item parametri slojeva (isključujući parametre pomaka) s normalizirajućom eksponencijalnom aktivacijskom funkcijom inicijalizirani su koristeći Xavier inicijalizaciju prema \citep{article:delving_deep_into_rectifiers}
@@ -834,7 +846,7 @@ gdje je $t$ indeks koraka učenja, a $k$ je broj koraka učenja u jednoj epohi
  \item podskup za validaciju korišten je za odabir slobodnih parametara modela
  \begin{itemize}
   \item na kraju svake epohe mjere se performanse modela na podskupu za validaciju
-  \item za testiranje se odabire onaj skup parametara koji postiže najbolju performansu na podskupu za validaciju -- ovime se efektivno obavlja regularizacija jer odabiremo onaj skup parametara koji najbolje generalizira
+  \item za testiranje se odabire onaj skup parametara koji postiže najbolju performansu na podskupu za validaciju -- ovime se efektivno obavlja regularizacija (rano zaustavljanje) jer odabiremo onaj skup parametara koji najbolje generalizira
  \end{itemize}
 \end{itemize}
 Svi eksperimenti provedeni su na nVIDIA grafičkim karticama GTX 1070 i GTX Titan. 
@@ -1417,7 +1429,7 @@ Proveden je eksperiment na pojedinačnim i na sekvencama slika kako bi se ustano
 \subsection{Analiza rezultata na ručno označenim slikama}
 Eksperimentima na ručno označenim slikama utvrđeno je da je rezolucija slika $350$x$140$ pogodna za korištenje u sekvencijalnom pristupu jer je to najniža rezolucija na kojoj se ne događa pad performanse.
 
-Pad performanse može se objasniti time što je prednji dio modela VGG-16 koji služi za izlučivanje značajki originalno naučen na slikama rezolucije $224$x$224$. 
+Pad performanse može se objasniti time što je prednji dio arhitekture VGG-16 koji služi za izlučivanje značajki originalno naučen na slikama rezolucije $224$x$224$. 
 Najveći pad performanse vidljiv je na mjeri odziva -- zbog manje rezolucije slika model ne uspijeva uvijek prepoznati diskriminativni dio na temelju kojeg bi donio odluku da je slika pozitivna.
 
 \subsection{Analiza rezultata na slikama označenima konzistentno sa sustavom FTTS iRAP}

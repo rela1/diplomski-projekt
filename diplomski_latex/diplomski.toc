@@ -23,9 +23,9 @@
 \contentsline {subsection}{\numberline {3.4.3}Arhitekture za klasifikaciju sekvenci slika}{24}
 \contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem vremensko-prostornog sa\IeC {\v z}imanja}{24}
 \contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem povratnih LSTM \IeC {\'c}elija (engl.~\emph {Long Short Term Memory})}{25}
-\contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem vremenskog potpuno povezanog sloja}{26}
+\contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem vremenskog potpuno povezanog sloja}{27}
 \contentsline {section}{\numberline {3.5}Postupak pripreme skupova podataka}{27}
-\contentsline {subsection}{\numberline {3.5.1}Pretprocesiranje slika}{27}
+\contentsline {subsection}{\numberline {3.5.1}Pretprocesiranje slika}{28}
 \contentsline {subsection}{\numberline {3.5.2}Postupak kreiranja slika ozna\IeC {\v c}enih konzistentno s projektom FTTS iRAP}{29}
 \contentsline {chapter}{\numberline {4}Eksperimenti i rezultati}{31}
 \contentsline {section}{\numberline {4.1}Na\IeC {\v c}in u\IeC {\v c}enja i testiranja u eksperimentima}{31}
