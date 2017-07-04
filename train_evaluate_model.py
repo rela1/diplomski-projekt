@@ -242,5 +242,6 @@ def plot_wrong_classifications(model, dataset, model_path, save_path=None):
   with open(os.path.join(save_path, 'geo_data.txt'), 'w') as f:
     for image_name in image_name_to_geo:
       geo = image_name_to_geo[image_name]
-      utm_coords = utm.from_latlon(geo[0], geo[1])
-      f.write(image_name + ' -> ' + 'https://he.ftts-irap.org/gis?baselayer=OsmLayer&overlaylayers=ir_roads&y={}&x={}&zoom=15&method=zoom'.format(utm_coords[1], utm_coords[0]) + '\n')
+      #utm_coords = utm.from_latlon(geo[1], geo[0])
+      #f.write(image_name + ' -> ' + 'https://he.ftts-irap.org/gis?baselayer=OsmLayer&overlaylayers=ir_roads&y={}&x={}&zoom=15&method=zoom'.format(utm_coords[1], utm_coords[0]) + '\n')
+      f.write(image_name + ' -> ' + str(geo[0]) + ',' + str(geo[1]))
