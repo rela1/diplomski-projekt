@@ -85,7 +85,7 @@ class Dataset:
         image_shape = self.train_images.get_shape().as_list()[1:]
         print('Image shape', image_shape)
         mean_channels = np.zeros((3))
-        for i in range(num_batches):
+        for i in range(5):
             print('Normalization step {}/{}'.format(i + 1, num_batches))
             image_vals = sess.run(self.train_images)
             mean_image_vals = np.mean(image_vals, axis=0)
@@ -288,7 +288,7 @@ def parse_single_example(record_string, add_geolocations):
     if add_geolocations:
         geo = tf.decode_raw(features['geo'], tf.float32)
         geo = tf.reshape(geo, [2, ])
-        return images, label, geo
+        return image, label, geo
     else:
         return image, label
 
