@@ -19,7 +19,7 @@ if __name__ == '__main__':
   model_path = sys.argv[3]
   batch_size = int(sys.argv[4])
 
-  dataset = ImageSequenceDataset(dataset_root, batch_size, INPUT_SHAPE, is_training=True)
+  dataset = ImageSequenceDataset(dataset_root, batch_size, INPUT_SHAPE, add_geolocations=True, is_training=True)
 
   model = SequentialImageTemporalFCModel(SPATIAL_FULLY_CONNECTED, TEMPORAL_FULLY_CONNECTED, dataset, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=True)
 

@@ -8,7 +8,7 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 import utm
 
-from evaluate_helper import evaluate, softmax
+from evaluate_helper import evaluate, softmax, treshold_validate
 
 
 np.set_printoptions(linewidth=250)
@@ -156,92 +156,26 @@ def evaluate_model(model, dataset, model_path):
   coord = tf.train.Coordinator()
   threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
-  dataset.mean_image_normalization(sess)
+  mean_channels = dataset.mean_image_normalization(sess)
+
+  evaluate_dir_path = os.path.join(model_path, 'evaluation')
+  shutil.rmtree(evaluate_dir_path)
+  os.mkdir(evaluate_dir_path)
   
-  evaluate('Train', sess, model.train_logits, model.train_loss, dataset.train_labels, dataset.num_train_examples, dataset.batch_size)
-  evaluate('Validation', sess, model.valid_logits, model.valid_loss, dataset.valid_labels, dataset.num_valid_examples, dataset.batch_size)
-  evaluate('Test', sess, model.test_logits, model.test_loss, dataset.test_labels, dataset.num_test_examples, dataset.batch_size)
+  metrics_dict, y_true, y_pred, y_prob = evaluate('Validation', sess, model.valid_logits, model.valid_loss, dataset.valid_labels, dataset.num_valid_examples, dataset.batch_size)
+  tresholds, precisions, recalls, accuracies = treshold_validate(y_true, y_prob)
+  argmax_accuracy = np.argmax(accuracies)
+  validated_treshold = tresholds[argmax_accuracy]
+
+  train_geolocations = dataset.train_geolocations if dataset.contains_geolocations else None
+  evaluate_and_save_wrong_classifications('Train', sess, model.train_images, model.train_logits, model.train_loss, model.train_labels, train_geolocations, dataset.num_train_examples, dataset.batch_size, mean_channels, evaluate_dir_path, treshold=validated_treshold)
+  
+  valid_geolocations = dataset.valid_geolocations if dataset.contains_geolocations else None
+  evaluate_and_save_wrong_classifications('Validation', sess, model.valid_images, model.valid_logits, model.valid_loss, model.valid_labels, valid_geolocations, dataset.num_valid_examples, dataset.batch_size, mean_channels, evaluate_dir_path, treshold=validated_treshold)
+
+  test_geolocations = dataset.test_geolocations if dataset.contains_geolocations else None
+  evaluate_and_save_wrong_classifications('Test', sess, model.test_images, model.test_logits, model.test_loss, model.test_labels, test_geolocations, dataset.num_test_examples, dataset.batch_size, mean_channels, evaluate_dir_path, treshold=validated_treshold)
 
   coord.request_stop()
   coord.join(threads)
   sess.close()
-
-
-def plot_wrong_classifications(model, dataset, model_path, save_path=None):
-
-  sess = get_session()
-
-  sess.run(tf.global_variables_initializer())
-  sess.run(tf.local_variables_initializer())
-    
-  saver = tf.train.Saver(get_saver_variables())
-  saver.restore(sess, model_path)
-
-  coord = tf.train.Coordinator()
-  threads = tf.train.start_queue_runners(sess=sess, coord=coord)
-
-  mean_image_val = dataset.mean_image_normalization(sess)
-
-  fig_cnt = 0
-
-  plt.figure(figsize=(20, 20))
-
-  num_batches = int(math.ceil(dataset.num_test_examples / dataset.batch_size))
-
-  if save_path is not None:
-    false_positives = os.path.join(save_path, 'false_positives')
-    os.mkdir(false_positives)
-    false_negatives = os.path.join(save_path, 'false_negatives')
-    os.mkdir(false_negatives)
-
-  image_name_to_geo = {}
-
-  for i in range(num_batches):
-
-    logits_vals, label_vals, image_vals, geo_vals = sess.run([model.test_logits, dataset.test_labels, dataset.test_images, dataset.test_geo])
-    probability_vals = softmax(logits_vals)
-    prediction_vals = np.argmax(logits_vals, axis=1)
-
-    for j in range(dataset.batch_size):
-
-      if label_vals[j] != prediction_vals[j]:
-
-        if len(image_vals.shape) == 5:
-
-          sequence_length = image_vals.shape[1]
-
-          rows = 5
-          cols = int(math.ceil(sequence_length / rows))
-
-          for k in range(1, sequence_length + 1):
-            plt.subplot(rows, cols, k)
-            np.add(image_vals[j][k - 1], mean_image_val, image_vals[j][k - 1])
-            plt.imshow(image_vals[j][k - 1])
-
-        else:
-          np.add(image_vals[j], mean_image_val, image_vals[j])
-          plt.imshow(image_vals[j])
-
-        plt.suptitle('True label {}, prediction: {}, probabilities: {}'.format(label_vals[j], prediction_vals[j], probability_vals[j]))
-
-        if save_path is None:
-          plt.show()
-        else:
-          if prediction_vals[j] == 1:
-            name = os.path.join(false_positives, str(fig_cnt) + '.png')
-            image_name_to_geo[name] = geo_vals[j]
-            plt.savefig(name)
-          else:
-            name = os.path.join(false_negatives, str(fig_cnt) + '.png')
-            image_name_to_geo[name] = geo_vals[j]
-            plt.savefig(name)
-
-        fig_cnt += 1
-
-    print('Done with step {}/{} wrong classified: {}'.format(i + 1, num_batches, fig_cnt))
-  with open(os.path.join(save_path, 'geo_data.txt'), 'w') as f:
-    for image_name in image_name_to_geo:
-      geo = image_name_to_geo[image_name]
-      #utm_coords = utm.from_latlon(geo[1], geo[0])
-      #f.write(image_name + ' -> ' + 'https://he.ftts-irap.org/gis?baselayer=OsmLayer&overlaylayers=ir_roads&y={}&x={}&zoom=15&method=zoom'.format(utm_coords[1], utm_coords[0]) + '\n')
-      f.write(image_name + ' -> ' + str(geo[0]) + ',' + str(geo[1]) + '\n')

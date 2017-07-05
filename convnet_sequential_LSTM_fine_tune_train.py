@@ -18,7 +18,7 @@ if __name__ == '__main__':
   dataset_root = sys.argv[2]
   model_path = sys.argv[3]
 
-  dataset = ImageSequenceDataset(dataset_root, BATCH_SIZE, INPUT_SHAPE, is_training=True)
+  dataset = ImageSequenceDataset(dataset_root, BATCH_SIZE, INPUT_SHAPE, add_geolocations=True, is_training=True)
 
   model = SequentialImageLSTMModel(LSTM_STATE_SIZES, dataset, weight_decay=WEIGHT_DECAY, vgg_init_dir=vgg_init_dir, is_training=True)
 

@@ -78,3 +78,6 @@ if __name__ == '__main__':
 
     with open(log_file_path, 'w') as log_file:
         log_file.write('Number of positive examples: {}, number of negative examples: {}\n'.format(number_of_positive_examples, number_of_positive_examples))
+
+    with open(os.path.join(video_name, 'examples.txt'), 'w') as examples_file:
+        examples_file.write(str(number_of_positive_examples * 2))

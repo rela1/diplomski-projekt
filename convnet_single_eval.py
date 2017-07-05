@@ -16,8 +16,9 @@ if __name__ == '__main__':
   dataset_root = sys.argv[1]
   model_path = sys.argv[2]
   resolution_factor = float(sys.argv[3])
+  add_geolocations = eval(sys.argv[4])
 
-  dataset = SingleImageDataset(dataset_root, BATCH_SIZE, INPUT_SHAPE, is_training=False)
+  dataset = SingleImageDataset(dataset_root, BATCH_SIZE, INPUT_SHAPE, add_geolocations=add_geolocations, is_training=False)
 
   new_width = int(round(resolution_factor * INPUT_SHAPE[1]))
   new_height = int(round(resolution_factor * INPUT_SHAPE[0]))
