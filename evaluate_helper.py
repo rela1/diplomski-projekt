@@ -137,11 +137,11 @@ def evaluate_and_save_wrong_classifications(name, sess, batch_images, batch_logi
   false_positives_dir = os.path.join(save_path, name, 'false_positives')
   if os.path.isdir(false_positives_dir):
     shutil.rmtree(false_positives_dir)
-  os.mkdirs(false_positives_dir)
+  os.makedirs(false_positives_dir)
   false_negatives_dir = os.path.join(save_path, name, 'false_negatives')
   if os.path.isdir(false_negatives_dir):
     shutil.rmtree(false_negatives_dir)
-  os.mkdirs(false_negatives_dir)
+  os.makedirs(false_negatives_dir)
 
   img_cnt = 0
 
