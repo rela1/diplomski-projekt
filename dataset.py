@@ -85,7 +85,7 @@ class Dataset:
         image_shape = self.train_images.get_shape().as_list()[1:]
         print('Image shape', image_shape)
         mean_channels = np.zeros((3))
-        for i in range(50):
+        for i in range(num_batches):
             print('Normalization step {}/{}'.format(i + 1, num_batches))
             image_vals = sess.run(self.train_images)
             mean_image_vals = np.mean(image_vals, axis=0)
