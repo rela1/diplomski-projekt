@@ -8,7 +8,7 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 import utm
 
-from evaluate_helper import evaluate, softmax, treshold_validate
+from evaluate_helper import evaluate, softmax, treshold_validate, evaluate_and_save_wrong_classifications
 
 
 np.set_printoptions(linewidth=250)
@@ -163,7 +163,7 @@ def evaluate_model(model, dataset, model_path):
   	shutil.rmtree(evaluate_dir_path)
   os.mkdir(evaluate_dir_path)
   
-  metrics_dict, y_true, y_pred, y_prob = evaluate('Validation', sess, model.valid_logits, model.valid_loss, dataset.valid_labels, dataset.num_valid_examples, dataset.batch_size)
+  metrics_dict, y_true, y_pred, y_prob = evaluate('Validation -- treshold validation', sess, model.valid_logits, model.valid_loss, dataset.valid_labels, dataset.num_valid_examples, dataset.batch_size)
   tresholds, precisions, recalls, accuracies = treshold_validate(y_true, y_prob)
   argmax_accuracy = np.argmax(accuracies)
   validated_treshold = tresholds[argmax_accuracy]
