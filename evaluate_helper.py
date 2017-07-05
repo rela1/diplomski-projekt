@@ -134,10 +134,12 @@ def evaluate_and_save_wrong_classifications(name, sess, batch_images, batch_logi
     image_name_to_geolocation = {}
 
   false_positives_dir = os.path.join(save_path, name, 'false_positives')
-  shutil.rmtree(false_positives_dir)
+  if os.path.isdir(false_positives_dir):
+    shutil.rmtree(false_positives_dir)
   os.mkdir(false_positives_dir)
   false_negatives_dir = os.path.join(save_path, name, 'false_negatives')
-  shutil.rmtree(false_negatives_dir)
+  if os.path.isdir(false_negatives_dir):
+    shutil.rmtree(false_negatives_dir)
   os.mkdir(false_negatives_dir)
 
   img_cnt = 0

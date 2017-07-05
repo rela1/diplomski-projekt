@@ -159,7 +159,8 @@ def evaluate_model(model, dataset, model_path):
   mean_channels = dataset.mean_image_normalization(sess)
 
   evaluate_dir_path = os.path.join(model_path, 'evaluation')
-  shutil.rmtree(evaluate_dir_path)
+  if os.path.isdir(evaluate_dir_path):
+  	shutil.rmtree(evaluate_dir_path)
   os.mkdir(evaluate_dir_path)
   
   metrics_dict, y_true, y_pred, y_prob = evaluate('Validation', sess, model.valid_logits, model.valid_loss, dataset.valid_labels, dataset.num_valid_examples, dataset.batch_size)
