@@ -187,6 +187,7 @@ def evaluate_and_save_wrong_classifications(name, sess, batch_images, batch_logi
           image_name_to_geolocation[img_name] = geolocations[j]
 
         imsave(img_name, image_val)
+        img_cnt += 1
 
     if not i % 10:
       print('\tstep {}/{}, {} examples/sec, {} sec/batch'.format(i+1, num_batches, batch_size / duration, duration))
