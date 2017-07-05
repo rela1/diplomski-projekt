@@ -181,7 +181,7 @@ def evaluate_and_save_wrong_classifications(name, sess, batch_images, batch_logi
         if preds_vals[j] == 1:
           img_name = os.path.join(false_positives_dir, str(img_cnt) + '.png')
         else:
-          img_name = os.path.join(false_negatives_dir, str(fig_cnt) + '.png')
+          img_name = os.path.join(false_negatives_dir, str(img_cnt) + '.png')
 
         if batch_geolocations is not None:
           image_name_to_geolocation[img_name] = geolocations[j]
