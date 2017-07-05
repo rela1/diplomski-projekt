@@ -167,11 +167,6 @@ def evaluate_model(model, dataset, model_path):
   tresholds, precisions, recalls, accuracies = treshold_validate(y_true, y_prob)
   argmax_accuracy = np.argmax(accuracies)
   validated_treshold = tresholds[argmax_accuracy]
-  print(tresholds)
-  print(precisions)
-  print(recalls)
-  print(accuracies)
-  print(validated_treshold)
 
   train_geolocations = dataset.train_geolocations if dataset.contains_geolocations else None
   evaluate_and_save_wrong_classifications('Train', sess, dataset.train_images, model.train_logits, model.train_loss, dataset.train_labels, train_geolocations, dataset.num_train_examples, dataset.batch_size, mean_channels, evaluate_dir_path, treshold=validated_treshold)

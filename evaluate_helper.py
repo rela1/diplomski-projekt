@@ -81,7 +81,7 @@ def evaluate(name, sess, batch_logits, batch_loss, batch_true_labels, num_exampl
   y_prob = []
   losses = []
   num_batches = int(math.ceil(num_examples / batch_size))
-  for i in range(5):
+  for i in range(50):
     start_time = time.time()
     logits_val, loss_val, labels_val = sess.run([batch_logits, batch_loss, batch_true_labels])
     duration = time.time() - start_time
@@ -145,7 +145,7 @@ def evaluate_and_save_wrong_classifications(name, sess, batch_images, batch_logi
 
   img_cnt = 0
 
-  for i in range(5):
+  for i in range(50):
     start_time = time.time()
     results = sess.run(operations)
     duration = time.time() - start_time
