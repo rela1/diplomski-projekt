@@ -150,10 +150,10 @@ def evaluate_and_save_wrong_classifications(name, sess, batch_images, batch_logi
     results = sess.run(operations)
     duration = time.time() - start_time
 
-    image_vals = operations[0]
-    logits_vals = operations[1]
-    labels_vals = operations[2]
-    loss_val = operations[3]
+    image_vals = results[0]
+    logits_vals = results[1]
+    labels_vals = results[2]
+    loss_val = results[3]
 
     probs_vals = softmax(logits_vals)
     preds_vals = np.zeros(len(probs_vals), dtype=np.int8)
@@ -165,7 +165,7 @@ def evaluate_and_save_wrong_classifications(name, sess, batch_images, batch_logi
     losses.append(loss_val)
 
     if batch_geolocations is not None:
-      geolocations = operations[4]
+      geolocations = results[4]
 
     for j in range(batch_size):
 
