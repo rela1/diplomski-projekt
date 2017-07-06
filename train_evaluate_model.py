@@ -160,7 +160,7 @@ def evaluate_model(model, dataset, model_path):
 
   evaluate_dir_path = os.path.join(model_path, 'evaluation')
   if os.path.isdir(evaluate_dir_path):
-  	shutil.rmtree(evaluate_dir_path)
+    shutil.rmtree(evaluate_dir_path)
   os.makedirs(evaluate_dir_path)
   
   metrics_dict, y_true, y_pred, y_prob = evaluate('Validation -- treshold validation', sess, model.valid_logits, model.valid_loss, dataset.valid_labels, dataset.num_valid_examples, dataset.batch_size)
