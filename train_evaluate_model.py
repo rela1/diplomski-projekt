@@ -169,13 +169,25 @@ def evaluate_model(model, dataset, model_path):
   validated_treshold = tresholds[argmax_accuracy]
 
   train_geolocations = dataset.train_geolocations if dataset.contains_geolocations else None
-  evaluate_and_save_wrong_classifications('Train', sess, dataset.train_images, model.train_logits, model.train_loss, dataset.train_labels, train_geolocations, dataset.num_train_examples, dataset.batch_size, mean_channels, evaluate_dir_path, treshold=validated_treshold)
+  y_true, y_prob, y_pred = evaluate_and_save_wrong_classifications('Train', sess, dataset.train_images, model.train_logits, model.train_loss, dataset.train_labels, train_geolocations, dataset.num_train_examples, dataset.batch_size, mean_channels, evaluate_dir_path, treshold=validated_treshold)
+  train_data_dir = os.path.join(evaluate_dir_path, 'Train')
+  y_true.dump(os.path.join(train_data_dir, 'y_true.npy'))
+  y_prob.dump(os.path.join(train_data_dir, 'y_prob.npy'))
+  y_pred.dump(os.path.join(train_data_dir, 'y_pred.npy'))
   
   valid_geolocations = dataset.valid_geolocations if dataset.contains_geolocations else None
-  evaluate_and_save_wrong_classifications('Validation', sess, dataset.valid_images, model.valid_logits, model.valid_loss, dataset.valid_labels, valid_geolocations, dataset.num_valid_examples, dataset.batch_size, mean_channels, evaluate_dir_path, treshold=validated_treshold)
+  y_true, y_prob, y_pred = evaluate_and_save_wrong_classifications('Validation', sess, dataset.valid_images, model.valid_logits, model.valid_loss, dataset.valid_labels, valid_geolocations, dataset.num_valid_examples, dataset.batch_size, mean_channels, evaluate_dir_path, treshold=validated_treshold)
+  valid_data_dir = os.path.join(evaluate_dir_path, 'Validation')
+  y_true.dump(os.path.join(valid_data_dir, 'y_true.npy'))
+  y_prob.dump(os.path.join(valid_data_dir, 'y_prob.npy'))
+  y_pred.dump(os.path.join(valid_data_dir, 'y_pred.npy'))
 
   test_geolocations = dataset.test_geolocations if dataset.contains_geolocations else None
-  evaluate_and_save_wrong_classifications('Test', sess, dataset.test_images, model.test_logits, model.test_loss, dataset.test_labels, test_geolocations, dataset.num_test_examples, dataset.batch_size, mean_channels, evaluate_dir_path, treshold=validated_treshold)
+  y_true, y_prob, y_pred = evaluate_and_save_wrong_classifications('Test', sess, dataset.test_images, model.test_logits, model.test_loss, dataset.test_labels, test_geolocations, dataset.num_test_examples, dataset.batch_size, mean_channels, evaluate_dir_path, treshold=validated_treshold)
+  test_data_dir = os.path.join(evaluate_dir_path, 'Test')
+  y_true.dump(os.path.join(test_data_dir, 'y_true.npy'))
+  y_prob.dump(os.path.join(test_data_dir, 'y_prob.npy'))
+  y_pred.dump(os.path.join(test_data_dir, 'y_pred.npy'))
 
   coord.request_stop()
   coord.join(threads)

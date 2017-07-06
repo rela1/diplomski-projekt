@@ -45,7 +45,7 @@ def evaluate_default_metric_functions(y_true, y_pred, y_prob):
 
   Keyword arguments:
   y_true -- true densely stored classes
-  y_pred -- predicted densely stored classes and probabilities
+  y_pred -- predicted densely stored classes
   y_prob -- predicted densely stored probabilities
 
   Returns:
@@ -81,7 +81,7 @@ def evaluate(name, sess, batch_logits, batch_loss, batch_true_labels, num_exampl
   y_prob = []
   losses = []
   num_batches = int(math.ceil(num_examples / batch_size))
-  for i in range(num_batches):
+  for i in range(10):
     start_time = time.time()
     logits_val, loss_val, labels_val = sess.run([batch_logits, batch_loss, batch_true_labels])
     duration = time.time() - start_time
@@ -145,7 +145,7 @@ def evaluate_and_save_wrong_classifications(name, sess, batch_images, batch_logi
 
   img_cnt = 0
 
-  for i in range(num_batches):
+  for i in range(10):
     start_time = time.time()
     results = sess.run(operations)
     duration = time.time() - start_time
@@ -204,6 +204,8 @@ def evaluate_and_save_wrong_classifications(name, sess, batch_images, batch_logi
       for image_name in image_name_to_geolocation:
         geolocation = image_name_to_geolocation[image_name]
         f.write(image_name + ' -> ' + str(geolocation[0]) + ',' + str(geolocation[1]) + '\n')
+
+  return np.array(y_true), np.array(y_prob), np.array(y_pred)
 
 
 def treshold_validate(y_true, y_prob, n_tresholds=100):
