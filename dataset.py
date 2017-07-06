@@ -1,6 +1,7 @@
 import os
 import math
 from random import shuffle
+import pdb
 
 import tensorflow as tf
 import numpy as np
@@ -52,6 +53,7 @@ class Dataset:
                 self.train_images, self.train_labels, self.train_geolocations = tf.train.batch(
                     [train_images, train_labels, train_geolocations], batch_size=batch_size, shapes=shapes)
         else:
+            pdb.set_trace()
             train_images, train_labels = input_decoder(train_file_queue, example_parser, add_geolocations)
             if is_training:
                 self.train_images, self.train_labels = tf.train.shuffle_batch(
