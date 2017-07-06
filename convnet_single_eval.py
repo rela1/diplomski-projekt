@@ -22,9 +22,9 @@ if __name__ == '__main__':
 
   new_width = int(round(resolution_factor * INPUT_SHAPE[1]))
   new_height = int(round(resolution_factor * INPUT_SHAPE[0]))
-  dataset.train_images = tf.image.resize_images(dataset.train_images, (new_height, new_width), tf.image.ResizeMethod.AREA)
-  dataset.valid_images = tf.image.resize_images(dataset.valid_images, (new_height, new_width), tf.image.ResizeMethod.AREA)
-  dataset.test_images = tf.image.resize_images(dataset.test_images, (new_height, new_width), tf.image.ResizeMethod.AREA)
+  #dataset.train_images = tf.image.resize_images(dataset.train_images, (new_height, new_width), tf.image.ResizeMethod.AREA)
+  #dataset.valid_images = tf.image.resize_images(dataset.valid_images, (new_height, new_width), tf.image.ResizeMethod.AREA)
+  #dataset.test_images = tf.image.resize_images(dataset.test_images, (new_height, new_width), tf.image.ResizeMethod.AREA)
 
   model = SingleImageModel(FULLY_CONNECTED, dataset, is_training=False)
 
