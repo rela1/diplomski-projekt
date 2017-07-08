@@ -278,7 +278,7 @@ def parse_single_example(record_string, add_geolocations):
                     record_string,
                     features_dict
     )
-    image = tf.decode_raw(features['image_raw'], tf.float32)
+    image = tf.decode_raw(features['image_raw'], tf.float64)
     width = tf.cast(features['width'], tf.int32)
     height = tf.cast(features['height'], tf.int32)
     depth = tf.cast(features['depth'], tf.int32)
