@@ -35,8 +35,8 @@ def extract_positive_examples(video_name, positive_images_ranges, frames_resolut
                 if diff < treshold:
                     continue
             prev_img = img
-            img_eq = equalize_adapthist(img, clip_limit=0.03).astype(np.float32)
-            write_single_example(img_eq, 1, tf_records_writer)
+            #img_eq = equalize_adapthist(img, clip_limit=0.03).astype(np.float32)
+            write_single_example(img, 1, None, tf_records_writer)
             positive_examples += 1
     return positive_examples
 
@@ -51,8 +51,8 @@ def extract_negative_examples(video_name, number_of_positive_examples, positive_
             for positive_images_range in positive_images_ranges]):
                 continue
         img = imread(os.path.join(video_name, 'frames', str(image).zfill(zero_pad_number) + '.png'))
-        img_eq = equalize_adapthist(img, clip_limit=0.03).astype(np.float32)
-        write_single_example(img_eq, 0, tf_records_writer)
+        #img_eq = equalize_adapthist(img, clip_limit=0.03).astype(np.float32)
+        write_single_example(img, 0, None, tf_records_writer)
         selected_single_images.add(image)
 
 

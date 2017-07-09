@@ -53,17 +53,18 @@ IMG_RESIZER = TFImageResizer()
 
 def write_single_example(img, label, geolocation, tf_records_writer):
     img_raw = img.tostring()
-
-    image_example = tf.train.Example(
-        features=tf.train.Features(
-            feature={
+    feature_map = {
                 'height': _int64_feature(img.shape[0]),
                 'width': _int64_feature(img.shape[1]),
                 'depth': _int64_feature(img.shape[2]),
                 'label': _int64_feature(label),
-                'image_raw': _bytes_feature(img_raw),
-                'geo' : _bytes_feature(np.array(geolocation, dtype=np.float32).tostring())
-            }
+                'image_raw': _bytes_feature(img_raw)
+    }
+    if geolocation is not None:
+        feature_map['geo'] = _bytes_feature(np.array(geolocation, dtype=np.float32).tostring())
+    image_example = tf.train.Example(
+        features=tf.train.Features(
+            feature=feature_map
         )
     )
     tf_records_writer.write(image_example.SerializeToString())
@@ -71,18 +72,19 @@ def write_single_example(img, label, geolocation, tf_records_writer):
 
 def write_example_sequence(img_sequence, label, geolocation, tf_records_writer):
     img_sequence_raw = img_sequence.tostring()
-
-    sequence_example = tf.train.Example(
-        features=tf.train.Features(
-            feature={
+    feature_map = {
                 'height': _int64_feature(img_sequence.shape[1]),
                 'width': _int64_feature(img_sequence.shape[2]),
                 'depth': _int64_feature(img_sequence.shape[3]),
                 'label': _int64_feature(label),
                 'sequence_length': _int64_feature(img_sequence.shape[0]),
-                'images_raw': _bytes_feature(img_sequence_raw),
-                'geo' : _bytes_feature(np.array(geolocation, dtype=np.float32).tostring())
-            }
+                'images_raw': _bytes_feature(img_sequence_raw)
+    }
+    if geolocation is not None:
+        feature_map['geo'] = _bytes_feature(np.array(geolocation, dtype=np.float32).tostring())
+    sequence_example = tf.train.Example(
+        features=tf.train.Features(
+            feature=feature_map
         )
     )
     tf_records_writer.write(sequence_example.SerializeToString())

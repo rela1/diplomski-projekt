@@ -174,9 +174,6 @@ Također, moguće je i otvoriti video snimku koja prikazuje trenutak kada započ
 \label{img:sattelite_merge_lane_irap}
 \end{figure}
 
-Promotrimo sliku \ref{img:sattelite_merge_lane_irap}. Na slici je crvenom linijom označen segment koji je na stranici \citep{url:ftts_irap} prema pravilima koje propisuje iRAP označen kao pripajanje. 
-Već sa satelitske snimke je vidljivo kako bi moglo biti problema prilikom učenja zbog nedostatka diskriminativnih značajki koje bi mogle olakšati raspoznavanje pripajanja.
-
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.5]{images/video_merge_lane_irap.png}
@@ -184,8 +181,38 @@ Već sa satelitske snimke je vidljivo kako bi moglo biti problema prilikom učen
 \label{img:video_merge_lane_irap}
 \end{figure}
 
-\noindent Slika \ref{img:video_merge_lane_irap} prikazuje isječak iz video snimke u trenutku kada započinje segment sa slike \ref{img:sattelite_merge_lane_irap} označen kao pripajanje. 
-Iz same slike je vrlo teško odrediti da je u tom trenutku prisutan atribut pripajanja.
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/sattelite_merge_lane_irap2.png}
+\caption{Prikaz satelitske snimke s označenim segmentom atributa pripajanja (slika preuzeta s \citep{url:google_maps})}
+\label{img:sattelite_merge_lane_irap2}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{images/video_merge_lane_irap2.png}
+\caption{Prikaz video snimke s označenim segmentom atributa pripajanja sa slike \ref{img:sattelite_merge_lane_irap2} (slika preuzeta s \citep{url:ftts_irap})}
+\label{img:video_merge_lane_irap2}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/sattelite_merge_lane_irap3.png}
+\caption{Prikaz satelitske snimke s označenim segmentom atributa pripajanja (slika preuzeta s \citep{url:google_maps})}
+\label{img:sattelite_merge_lane_irap3}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{images/video_merge_lane_irap3.png}
+\caption{Prikaz video snimke s označenim segmentom atributa pripajanja sa slike \ref{img:sattelite_merge_lane_irap3} (slika preuzeta s \citep{url:ftts_irap})}
+\label{img:video_merge_lane_irap3}
+\end{figure}
+
+Promotrimo slike \ref{img:sattelite_merge_lane_irap}, \ref{img:sattelite_merge_lane_irap2} i \ref{img:sattelite_merge_lane_irap3}. Na slikama je crvenom linijom označen segment koji je na stranici \citep{url:ftts_irap} prema pravilima koje propisuje iRAP označen kao pripajanje. 
+Već sa satelitske snimke je vidljivo kako bi moglo biti problema prilikom detekcije tog atributa zbog nedostatka diskriminativnih značajki koje bi to mogle olakšati.
+Slike \ref{img:video_merge_lane_irap}, \ref{img:video_merge_lane_irap2} i \ref{img:video_merge_lane_irap3} redom prikazuju isječke iz video snimaka u trenucima kada započinju segmenti sa slika \ref{img:sattelite_merge_lane_irap}, \ref{img:sattelite_merge_lane_irap2} i \ref{img:sattelite_merge_lane_irap3} označeni kao pripajanja. 
+Iz same slike je vrlo teško odrediti da je u tom trenutku prisutan atribut pripajanja što pokazuje težinu zadatka koji pokušavamo riješiti.
 
 Problem nedostatka informacije možemo riješiti tako da odluku ne temeljimo na jednoj slici nego na sekvenci slika koje su prethodile trenutnoj. 
 Koristeći sekvencu slika koja prethodi slici označenoj kao početak segmenta označenog kao pripajanje, model će biti u mogućnosti lakše donijeti odluku zbog prisutnosti diskriminativne značajke (karakteristične bijele trake u uzorku).
