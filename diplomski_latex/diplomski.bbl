@@ -81,10 +81,12 @@ Kaiming He, Xiangyu Zhang, Shaoqing Ren, i Jian Sun.
 \newblock \emph{CoRR}, abs/1502.01852, 2015.
 \newblock URL \url{http://arxiv.org/abs/1502.01852}.
 
-\bibitem[Ioffe i Szegedy()]{article:bn_paper}
+\bibitem[Ioffe i Szegedy(2015)]{article:bn_paper}
 Sergey Ioffe i Christian Szegedy.
-\newblock {Batch Normalization: Accelerating Deep Network Training by Reducing
-  Internal Covariate Shift}.
+\newblock Batch normalization: Accelerating deep network training by reducing
+  internal covariate shift.
+\newblock \emph{CoRR}, abs/1502.03167, 2015.
+\newblock URL \url{http://arxiv.org/abs/1502.03167}.
 
 \bibitem[Kingma i Ba(2014)]{article:adam}
 Diederik~P. Kingma i Jimmy Ba.
@@ -112,7 +114,8 @@ Maxime Oquab, L{\'e}on Bottou, Ivan Laptev, i Josef Sivic.
 \bibitem[Relić(2016)]{seminar:rela}
 Ivan Relić.
 \newblock {Klasifikacija slika dubokim konvolucijskim mrežama}, 2016.
-\newblock seminarski rad.
+\newblock Sveučilište u Zagrebu, Fakultet elektrotehnike i računarstva,
+  seminarski rad.
 
 \bibitem[Russakovsky et~al.(2015)Russakovsky, Deng, Su, Krause, Satheesh, Ma,
   Huang, Karpathy, Khosla, Bernstein, Berg, i Fei-Fei]{article:ilsvrc2015}
@@ -124,12 +127,16 @@ Olga Russakovsky, Jia Deng, Hao Su, Jonathan Krause, Sanjeev Satheesh, Sean Ma,
   (3):\penalty0 211--252, 2015.
 \newblock \doi{10.1007/s11263-015-0816-y}.
 
-\bibitem[Scherer et~al.(2010)Scherer, Muller, i
+\bibitem[Scherer et~al.(2010)Scherer, M\"{u}ller, i
   Behnke]{article:maxpooling_article}
-Dominik Scherer, Andreas Muller, i Sven Behnke.
-\newblock {Evaluation of Pooling Operations in Convolutional Architectures for
-  Object Recognition}.
-\newblock 2010.
+Dominik Scherer, Andreas M\"{u}ller, i Sven Behnke.
+\newblock Evaluation of pooling operations in convolutional architectures for
+  object recognition.
+\newblock U \emph{Proceedings of the 20th International Conference on
+  Artificial Neural Networks: Part III}, ICANN'10, stranice 92--101, Berlin,
+  Heidelberg, 2010. Springer-Verlag.
+\newblock ISBN 3-642-15824-2, 978-3-642-15824-7.
+\newblock URL \url{http://dl.acm.org/citation.cfm?id=1886436.1886447}.
 
 \bibitem[Simonyan i Zisserman(2014)]{article:vgg}
 Karen Simonyan i Andrew Zisserman.
@@ -140,7 +147,8 @@ Karen Simonyan i Andrew Zisserman.
 \bibitem[Vukotić(2014)]{masters:vukotic_ms}
 Vedran Vukotić.
 \newblock {Raspoznavanje objekata dubokim neuronskim mrežama}, 2014.
-\newblock diplomski rad.
+\newblock Sveučilište u Zagrebu, Fakultet elektrotehnike i računarstva,
+  diplomski rad.
 
 \bibitem[Zaremba et~al.(2014)Zaremba, Sutskever, i Vinyals]{article:lstm}
 Wojciech Zaremba, Ilya Sutskever, i Oriol Vinyals.
@@ -152,11 +160,13 @@ Wojciech Zaremba, Ilya Sutskever, i Oriol Vinyals.
 Siniša Šegvić.
 \newblock {Uvodno predavanje}.
 \newblock \url{http://www.zemris.fer.hr/~ssegvic/du/du0intro.pdf}, 2016.
-\newblock [pristupano 17. lipnja 2017.].
+\newblock Sveučilište u Zagrebu, Fakultet elektrotehnike i računarstva,
+  [pristupano 17. lipnja 2017.].
 
 \bibitem[Šnajder i Bašić(2014)]{book:machine_learning}
 Jan Šnajder i Bojana~Dalbelo Bašić.
 \newblock \emph{Strojno učenje}.
-\newblock 2014.
+\newblock Sveučilište u Zagrebu, Fakultet elektrotehnike i računarstva,
+  2014.
 
 \end{thebibliography}

@@ -9,50 +9,45 @@ Warning--to sort, need author or key in man:ftts_irap_attributes
 Warning--to sort, need author or key in man:ftts_irap_coding_manual
 Warning--empty year in url:ftts_irap
 Warning--empty year in url:google_maps
-Warning--empty journal in article:bn_paper
-Warning--empty year in article:bn_paper
-Warning--empty year in article:bn_paper
-Warning--empty journal in article:maxpooling_article
-Warning--empty publisher in book:machine_learning
 You've used 22 entries,
             2773 wiz_defined-function locations,
-            702 strings with 9372 characters,
-and the built_in function-call counts, 10913 in all, are:
-= -- 882
+            710 strings with 9794 characters,
+and the built_in function-call counts, 11157 in all, are:
+= -- 924
 > -- 921
-< -- 8
+< -- 9
 + -- 314
 - -- 291
-* -- 941
-:= -- 1716
-add.period$ -- 74
+* -- 955
+:= -- 1750
+add.period$ -- 79
 call.type$ -- 22
 change.case$ -- 159
 chr.to.int$ -- 21
-cite$ -- 59
-duplicate$ -- 408
-empty$ -- 741
+cite$ -- 54
+duplicate$ -- 419
+empty$ -- 760
 format.name$ -- 319
-if$ -- 2233
+if$ -- 2302
 int.to.chr$ -- 2
 int.to.str$ -- 1
 missing$ -- 16
-newline$ -- 126
+newline$ -- 130
 num.names$ -- 72
-pop$ -- 375
+pop$ -- 361
 preamble$ -- 1
 purify$ -- 141
 quote$ -- 0
-skip$ -- 364
+skip$ -- 377
 stack$ -- 0
-substring$ -- 90
-swap$ -- 24
-text.length$ -- 0
+substring$ -- 117
+swap$ -- 33
+text.length$ -- 1
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 232
-warning$ -- 11
-while$ -- 56
+warning$ -- 6
+while$ -- 59
 width$ -- 0
-write$ -- 293
-(There were 11 warnings)
+write$ -- 309
+(There were 6 warnings)

@@ -572,7 +572,7 @@ Pokazuje se da model iz tog razloga vrlo dobro generalizira i na drugim problemi
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.65]{images/vgg_architecture.png}
-\caption{Arhitektura VGG-16 modela, preuzeto i prerađeno iz \citep{article:vgg_architecture}}
+\caption{Arhitektura VGG-16 modela (slika preuzeta i prerađena iz \citep{article:vgg_architecture})}
 \label{img:vgg_architecture}
 \end{figure}
 Slika \ref{img:vgg_architecture} prikazuje originalnu arhitekturu VGG-16 građenu od 16 slojeva.
@@ -1397,30 +1397,49 @@ Svrha niza eksperimenata provedenih na slikama s oznakama iz sustava FTTS iRAP j
 Provedeni su eksperimenti na pojedinačnim slikama i na sekvencama slika kako bi se ustanovilo dobiva li se na performansama uvođenjem dodatnih informacija kroz sekvencu slika koja prethodi označenoj slici.
 
 \subsection{Analiza rezultata na slikama s oznakama iz sustava FTTS iRAP}
-Prvi dio eksperimenata na slikama označenima konzistentno sa sustavom FTTS iRAP proveden je nad pojedinačnim slikama. 
-Vidljiv je značajniji pad performansi u odnosu na ručno označene slike. 
+Prvi dio eksperimenata na podacima s oznakama iz sustava FTTS iRAP proveden je nad pojedinačnim slikama. 
+Vidljiv je značajniji pad performansi u odnosu na slike s diskriminativnim oznakama. 
 Razlog tomu jest način na koji su slike u sustavu FTTS iRAP označene, kako je objašnjeno u poglavlju \ref{chapter:skupovi_podataka}.
 
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.55]{images/single_irap_false_positive.png}
+\caption{Lažni pozitiv (slika preuzeta s \citep{url:ftts_irap})}
+\label{img:single_irap_false_positive}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.55]{images/single_irap_false_negative.png}
+\caption{Lažni negativ (slika preuzeta s \citep{url:ftts_irap})}
+\label{img:single_irap_false_negative}
+\end{figure}
+
+Slike \ref{img:single_irap_false_positive} i \ref{img:single_irap_false_negative} prikazuju po jedan primjer lažnog negativa i lažnog pozitiva iz podskupa za testiranje.
+Težina zadatka očituje se ukoliko promotrimo koliko su obe slike slične.
+Sustavu za detekciju atributa iz tog je razloga potrebno više informacija od onih koje uspije izlučiti iz pojedine slike.
+Zbog toga je korištena sekvenca slika koja prethodi pojedinim slikama označenima kao pozitivnima.
+
 \subsection{Analiza rezultata na sekvencama slika s oznakama iz sustava FTTS iRAP}
-Kako su eksperimenti pokazali, uvođenjem sekvence slika koja prethodi označenoj slici dobiva se na performansama u odnosu na pojedinačne slike označene konzistentno sa sustavom FTTS iRAP. 
+Kako su eksperimenti pokazali, uvođenjem sekvence slika koja prethodi označenoj slici dobiva se na performansama u odnosu na pojedinačne slike s oznakama iz sustava FTTS iRAP. 
 Najbolji rezultat dobiven je modelom koji dobivene prostorne značajke obrađuje koristeći vremenski potpuno povezani sloj.
 
-Performanse modela koji prostorne značajke slika s oznakama iz sustava FTTS iRAP obrađuje vremenskim potpuno povezanim slojem i dalje su niže od performansi modela na slikama s diskriminativnim oznakama.
-Pad performansi možemo analizirati tako da promotrimo sekvence slika iz podskupa za testiranje koje model loše klasificira. 
-U nastavku su pokazani tipovi pogrešaka na kojima model griješi.
+Performanse modela koji prostorne značajke slika s oznakama iz sustava FTTS iRAP obrađuje vremenskim potpuno povezanim slojem i dalje su niže od performansi modela za pojedinačne slike na slikama s diskriminativnim oznakama.
+Pad performansi možemo analizirati tako da promotrimo slike iz podskupa za testiranje koje model loše klasificira. 
+U nastavku su pokazani najčešći tipovi pogrešaka modela.
 
 \subsubsection{Lažni pozitivi \engl{false positives}}
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.3]{images/fp_1.png}
-\caption{Lažni pozitiv s lijevom trakom različite boje, preuzeto s \citep{url:ftts_irap}}
+\includegraphics[scale=1]{images/fp_1.png}
+\caption{Lažni pozitiv s lijevom trakom različite boje (slika preuzeta s \citep{url:ftts_irap})}
 \label{img:fp_1}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.3]{images/fp_2.png}
-\caption{Lažni pozitiv s diskriminativnim uzorcima kakvi se pojavljuju kod pripajanja, preuzeto s \citep{url:ftts_irap}}
+\includegraphics[scale=1]{images/fp_2.png}
+\caption{Lažni pozitiv s diskriminativnim uzorcima kakvi se pojavljuju kod pripajanja (slika preuzeta s \citep{url:ftts_irap})}
 \label{img:fp_2}
 \end{figure}
 
@@ -1432,47 +1451,55 @@ Modelu je iz tog razloga teško donijeti odluku je li riječ o pozitivu ili nega
 \subsubsection{Lažni negativi \engl{false negatives}}
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.3]{images/fn_1.png}
-\caption{Lažni negativ s razdvajanjem službeno označenim kao pripajanje, preuzeto s \citep{url:ftts_irap}}
+\includegraphics[scale=1]{images/fn_1.png}
+\caption{Lažni negativ s razdvajanjem službeno označenim kao pripajanje (slika preuzeta s \citep{url:ftts_irap})}
 \label{img:fn_1}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.3]{images/fn_2.png}
-\caption{Lažni negativ s pripajanjem na suprotnoj strani autoceste službeno označenim kao pripajanje, preuzeto s \citep{url:ftts_irap}}
+\includegraphics[scale=1]{images/fn_2.png}
+\caption{Lažni negativ s pripajanjem na suprotnoj strani autoceste službeno označenim kao pripajanje (slika preuzeta s \citep{url:ftts_irap})}
 \label{img:fn_2}
 \end{figure}
 
+Slika \ref{img:fn_1} prikazuje situaciju u kojoj je razdvajanje, prema službenim oznakama sustava FTTS iRAP, označeno kao pripajanje. 
+Slika \ref{img:fn_2} prikazuje situaciju u kojoj se dogodilo da je zbog prisutnosti pripajanja na drugoj strani autoceste i promatrana sekvenca u sustavu označena kao pozitivna.
+
+\section{Detekcije krivih oznaka}
+Analizom lažnih pozitiva i lažnih negativa sa skupa za testiranje utvrđeno je kako se lažni negativi pojavljuju u sekvencama -- kompletni dijelovi video snimaka označeni atributom pripajanja trakova su klasificirani pogrešno.
+Lažni pozitivi uglavnom se pojavljuju pojedinačno, bez slijedova lažno klasificiranih pozitivnih slika.
+
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.3]{images/fn_2.png}
-\caption{Lažni negativ s pripajanjem u sjeni, preuzeto s \citep{url:ftts_irap}}
-\label{img:fn_3}
+\includegraphics[scale=0.5]{images/wrong_lane_label.png}
+\caption{Oznaka atributa pripajanja dodijeljena drugom traku (slika preuzeta s \citep{url:google_maps})}
+\label{img:wrong_lane_label}
 \end{figure}
 
-Slika \ref{img:fn_1} prikazuje situaciju u kojoj je razdvajanje, prema službenim oznakama sustava FTTS iRAP, označeno kao pripajanje. 
-Slika \ref{img:fn_2} prikazuje situaciju u kojoj se dogodilo da je zbog prisutnosti pripajanja na drugoj strani autoceste i promatrana sekvenca označena kao pozitivna.
-Slika \ref{img:fn_3} prikazuje situaciju u kojoj je pripajanje u sjeni i model ne uspijeva prepoznati diskriminativnu značajku na temelju koje bi mogao prepoznati prisutnost atribut apripajanja.
+U razgovoru s kreatorima sustava FTTS iRAP zaključeno je kako je moguće da postoje moguće nekonzistentnosti i krive oznake atributa pripajanja uslijed ljudske pogreške i uslijed načina na koji se oznake dodjeljuju.
+Analizom geolokacija slika koje su pogrešno klasificirane utvrđeno je kako uglavnom dolazi do sljedeće situacije: atributi pripajanja su po geolokaciji pridruženi drugom traku što je prikazano na slici \ref{img:wrong_lane_label}.
+Vidljivo je kako je pripajanje ustvari na drugom traku od originalne geolokacije atributa pripajanja. 
 
-U razgovoru s kreatorima sustava FTTS iRAP zaključeno je kako je moguće da postoje moguće nekonzistentnosti i kriva označavanja prisutnosti atributa pripajanja uslijed ljudske pogreške i uslijed načina na koji se oznake dodjeljuju.
 Iz tog razloga skup podataka sadrži ``nečistoće'' koje je potrebno validirati sa samim sustavom. 
-Podatak koji se u tom slučaju može pokazati kao koristan je geolokacija svakog primjera iz skupa podataka za učenje.
-Na taj način moguće je relativno brzo provjeriti sve sumnjive primjere iz skupa za učenje, eventualno im promijeniti oznaku prisutnosti atributa te generirati novi, čišći skup podataka.
+Podatak koji se u tom slučaju može pokazati kao koristan, osim geolokacije svakog primjera iz skupa podataka za učenje, i podatak o tome događaju li se iste klasifikacijske pogreške kod različitih modela.
+Analizom je utvrđeno da modeli uglavnom griješe na istim primjerima -- pokazuje se da su na preko 50\% primjera iz skupa za testiranje pogriješila sva 3 modela za klasifikaciju sekvenci slika.
+Na taj način moguće je relativno brzo provjeriti sve sumnjive primjere iz skupa za učenje, eventualno im promijeniti oznaku prisutnosti atributa pripajanja te generirati novi, nekontaminirani skup podataka.
 
 \chapter{Zaključak}
 Organizacija iRAP bavi se inspekcijom kvaliteta ceste pridruživanjem različitih sigurnosnih atributa segmentima prometnica. 
 Sustav FTTS iRAP je geolokacijski informacijski sustav koji sadrži video snimke s geolokacijskim oznakama i pridruženim sigurnosnim atributima prema naputcima organizacije iRAP. 
 Označavanje segmenata video snimaka obavlja se ručno što može biti skupo, vremenski zahtjevno i otvara mogućnost za brojne pogreške. 
 
-Duboko učenje donijelo je revoluciju u mnogim područjima pa tako i u području računalnog vida. 
-Cilj rada bio je iskoristiti moć dubokog učenja i pokušati napraviti sustav zasnovan na dubokom modelu koji bi iz video snimaka naučio automatski označavati jedan od velikog broja sigurnosnih atributa - pripajanje na autocesti. 
+Duboko učenje donijelo je revoluciju u području računalnog vida. 
+Cilj rada bio je iskoristiti moć dubokog učenja i pokušati napraviti sustav zasnovan na dubokom modelu koji bi iz video snimaka naučio automatski označavati jedan od velikog broja sigurnosnih atributa - pripajanje trakova na autocesti.
+Pripajanje trakova na autocesti je vrlo rizično zbog mogućnosti da dođe do prometne nesreće.
 Prednost korištenja dubokog modela jest jeftinije i objektivnije pridruživanje sigurnosnih atributa segmentima video snimaka. 
 Konačno naučen sustav postizao je zadovoljavajuću performanse s obzirom na nekonzistentnost oznaka skupa podataka. 
 Naučen sustav može se iskoristiti za brzu validaciju ručno označenih atributa. 
-Svaki uzorak koji model krivo označi potencijalno je pogrešno označen i u sustavu pa je iz njegove geolokacije moguće brzo validirati prisutnost atributa pripajanja u samom sustavu.
+Svaki uzorak koji model krivo označi potencijalno je pogrešno označen i u sustavu pa je iz njegove geolokacije moguće brzo validirati prisutnost atributa pripajanja.
 
-Prvi korak za budući rad i poboljšanje sustava bio bi validirati skup podataka sa sustavom FTTS iRAP i tako ukloniti svaku moguću nekonzistentnost koja dovodi do lošijih performansi. 
+Prvi korak za budući rad i poboljšanje sustava bio bi odrediti sve krive oznake u sustavu FTTS iRAP, generirati novi skup podataka s pročišćenim oznakama te ponovno naučiti model na nekontaminiranim podacima.
 Nadalje, pokazano je kako korištenje sekvenci slika dovodi do povećanja performansi modela -- poboljšanje bi se moglo ostvariti korištenjem mnogo duljih sekvenci uz rjeđe uzorkovanje te uz uzorkovanje slika koje prethode i koje slijede pojedinačnoj slici od interesa. 
 Moguća poboljšanja mogla bi se ostvariti i u vidu korištenja modernijih naučenih arhitektura korištenih za tipične zadatke u računalnom vidu.
 
@@ -1481,16 +1508,19 @@ Moguća poboljšanja mogla bi se ostvariti i u vidu korištenja modernijih nauč
 
 \begin{sazetak}
 Ovaj rad opisuje modeliranje i učenje dubokih modela za klasifikaciju sekvenci prometnih scena.
-Svrha učenje modela za klasifikaciju sekvenci prometnih scena jest automatizirati dodjeljivanje sigurnosnih atributa definiranih od strane organizacije iRAP.
+Svrha učenje takvih modela jest automatizirati dodjeljivanje sigurnosnih atributa definiranih od strane organizacije iRAP.
 Dodjeljivanje sigurnosnih atributa u različitim sustavima trenutno se obavlja ručno.
 Korištenje dubokih modela pruža jeftiniju i objektivniju alternativu takvom zadatku.
 
 Predloženo je nekoliko arhitektura koje rade s pojedinačnim slikama i sa sekvencama slika te koje je moguće učiti s kraja na kraj.
-Skupovi podataka generirani su na dva načina -- ručnim označavanjem i automatskom metodom koja oznake generira na temelju podataka iz sustava FTTS iRAP.
+Skupovi podataka generirani su na dva načina. Prvi skup podataka generiran je označavanjem slika na kojima diskriminativni uzorak prisutan.
+Drugi skup podataka generiran je automatiziranom metodom preuzimanja slika označenih atributom ``pripajanje trakova'' u sustavu FTTS iRAP.
 Prikazani su eksperimentalni rezultati dobiveni nad oba skupa.
-Ručno označen skup podataka korišten je za pronalaženje najniže rezolucije na kojoj se ručno označene pojedinačne slike i dalje klasificiraju uspješno. 
-Pronalazak niske rezolucije slika na kojoj klasifikacija i dalje uspješno radi važna je jer učenje nad sekvencama slika zahtjeva više memorije nego učenje na pojedinačnim slikama.
+Skup podataka s diskriminativnim oznakama korišten je za pronalaženje najniže rezolucije na kojoj se ručno označene pojedinačne slike i dalje klasificiraju uspješno. 
+Pronalazak niske rezolucije slika na kojoj klasifikacija i dalje uspješno radi važna je zbog toga što je na nižim rezolucijama učenje brže i moguće je koristiti veće mini grupe.
+Niska rezolucija slika je također važna jer je učenje nad sekvencama slika memorijski zahtjevnije od učenja na pojedinačnim slikama.
 Skup podataka označen na temelju podataka iz sustava FTTS iRAP korišten je za usporedbu dobitka na performansama uvođenjem dodatnih informacija kroz sekvencu slika.
+Pokazali smo da sustav može pomoći pri detekciji krivo označenih atributa.
 
 
 \kljucnerijeci{duboko učenje, sekvencijalni podaci, iRAP sigurnosni atributi, klasifikacija, prometne scene} \\
@@ -1506,11 +1536,15 @@ Assignment of safety attributes in different systems is being performed manually
 Usage of the deep models provides cheaper and more objective alternative for that task.
 
 Several architectures that work with single images and image sequences and which can be trained end-to-end are suggested.
-Datasets are generated in two ways -- by manual labeling and by the automated method which generates labels based on the data from FTTS iRAP system.
+Datasets are generated in two ways.
+First dataset is generated by labeling images with discriminative pattern present on image.
+Second dataset is generated by automated method for downloading images labeled with ``merge lane'' attribute in FTTS iRAP system.
 Experimental results on both datasets are presented.
-Manually labeled dataset is used to find the lowest resolution on which manually labeled single images are still successfully classified.
-Determining low image resolution on which classification still works successfully is important because training on image sequences has greater memory requirements than training on single images.
+Dataset with discriminative labels is used to find the lowest resolution on which manually labeled single images are still successfully classified.
+Determining low image resolution on which classification still works successfully is important because training on lower resolutions is faster and it is possible to use larger mini batches.
+Low image resolution is also important because training on image sequences has greater memory requirements than training on single images.
 Dataset with labels based on the data from FTTS iRAP system is used to compare performance gain with introducing the additional information through the image sequences.
+We showed that system can help with detection of wrongly labeled attributes.
 
 \keywords{deep learning, sequence data, iRAP safety attributes, classification, traffic scenes}
 \end{abstract}

@@ -43,8 +43,9 @@
 \contentsline {section}{\numberline {4.6}Klasifikacija sekvenci slika s oznakama iz sustava FTTS iRAP koriste\IeC {\'c}i vremenski potpuno povezani sloj}{52}
 \contentsline {section}{\numberline {4.7}Analiza rezultata}{54}
 \contentsline {subsection}{\numberline {4.7.1}Analiza rezultata na slikama s oznakama iz sustava FTTS iRAP}{54}
-\contentsline {subsection}{\numberline {4.7.2}Analiza rezultata na sekvencama slika s oznakama iz sustava FTTS iRAP}{54}
+\contentsline {subsection}{\numberline {4.7.2}Analiza rezultata na sekvencama slika s oznakama iz sustava FTTS iRAP}{55}
 \contentsline {subsubsection}{La\IeC {\v z}ni pozitivi (engl.~\emph {false positives})}{55}
-\contentsline {subsubsection}{La\IeC {\v z}ni negativi (engl.~\emph {false negatives})}{57}
-\contentsline {chapter}{\numberline {5}Zaklju\IeC {\v c}ak}{61}
-\contentsline {chapter}{Literatura}{62}
+\contentsline {subsubsection}{La\IeC {\v z}ni negativi (engl.~\emph {false negatives})}{56}
+\contentsline {section}{\numberline {4.8}Detekcije krivih oznaka}{57}
+\contentsline {chapter}{\numberline {5}Zaklju\IeC {\v c}ak}{59}
+\contentsline {chapter}{Literatura}{60}
