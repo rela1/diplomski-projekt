@@ -7,6 +7,8 @@
 \usepackage[]{algorithm}
 \usepackage{diagbox}
 \usepackage{pdfpages}
+\usepackage{multirow}
+\usepackage{hhline}
 
 \renewcommand{\algorithmicfor}{\textbf{Za}}
 \renewcommand{\algorithmicendfor}{\textbf{Kraj}}
@@ -116,13 +118,13 @@ Kao pripajanje se promatra upravo taj dio prometnice jer predstavlja opasnost zb
 
 Iz georeferenciranih video snimaka kreirana su dva tipa skupova podataka:
 \begin{itemize}
- \item skup podataka s eksperimentalnim oznakama (oznake atributa nisu konzistentne s pravilima koja propisuje organizacija iRAP)
+ \item skup podataka s diskriminativnim oznakama (oznake atributa nisu konzistentne s pravilima koja propisuje organizacija iRAP)
  \item skup podataka s oznakama iz sustava FTTS iRAP (oznake atributa su konzistentne s pravilima koja propisuje organizacija iRAP)
 \end{itemize}
 U nastavku je opisan način kreiranja i uporaba pojedinih tipova skupova podataka.
 
-\section{Skup podataka s eksperimentalnim oznakama}
-Početna ideja bila je, neovisno o pridruženim atributima pripajanja sa stranice \citep{url:ftts_irap}, označiti pripajanja eksperimentalnim oznakama. 
+\section{Skup podataka s diskriminativnim oznakama}
+Početna ideja bila je, neovisno o pridruženim atributima pripajanja sa stranice \citep{url:ftts_irap}, označiti pripajanja diskriminativnim oznakama. 
 
 Dubokim modelima je, kao i ljudima, lakše izlučiti znanje iz podataka ukoliko u njima postoje diskriminativne značajke koje mogu odrediti pripadnost određenoj klasi.
 Dodjeljivanje oznaka prisutnosti atributa pripajanja prometnoj sceni iz tog se razloga vodilo tom mišlju -- scene na kojima su prisutne karakteristične, diskriminativne značajke koje bi mogle odrediti prisutnost atributa pripajanja označene su kao pozitivne, odnosno scene na kojima je atribut prisutan, dok su ostale označene kao negativne, odnosno scene na kojima atribut nije prisutan.
@@ -134,7 +136,7 @@ Dodjeljivanje oznaka prisutnosti atributa pripajanja prometnoj sceni iz tog se r
 \label{img:hand_labeled_positive}
 \end{figure}
 
-\noindent Slika \ref{img:hand_labeled_positive} prikazuje eksperimentalno označenu pozitivnu sliku. 
+\noindent Slika \ref{img:hand_labeled_positive} prikazuje pozitivnu sliku s diskriminativnom oznakom. 
 Na slici su vidljive karakteristične bijele trake u uzorku koji bi potencijalno mogao biti diskriminativan prilikom donošenja odluke modela o prisutnosti atributa pripajanja.
 
 \begin{figure}[H]
@@ -144,10 +146,10 @@ Na slici su vidljive karakteristične bijele trake u uzorku koji bi potencijalno
 \label{img:hand_labeled_negative}
 \end{figure}
 
-\noindent Slika \ref{img:hand_labeled_negative} prikazuje eksperimentalno označenu negativnu sliku.
+\noindent Slika \ref{img:hand_labeled_negative} prikazuje negativnu sliku s diskriminativnom oznakom.
 Vidljiv je izostanak karakterističnih bijelih traka na cijeloj sceni.
 
-Skup podataka s eksperimentalnim oznakama dobiven je obradom 7 video snimaka preuzetih sa stranice \citep{url:ftts_irap}. 
+Skup podataka s diskriminativnim oznakama dobiven je obradom 7 video snimaka preuzetih sa stranice \citep{url:ftts_irap}. 
 Ukupan broj dobivenih označenih slika s raspodjelom u podskupove je sljedeći:
 \begin{itemize}
  \item podskup za učenje -- 1796 slika, od toga 898 pozitivnih
@@ -158,7 +160,7 @@ Ukupan broj dobivenih označenih slika s raspodjelom u podskupove je sljedeći:
 \noindent Skup je kreiran na način da se iz svake video snimke uzorkuju pozitivni primjeri (primjeri na kojima je prisutna diskriminativna značajka atributa pripajanja) te se zatim uzorkuje isti broj negativnih primjera na kojima diskriminativna značajka karakterističnog bijelog uzorka nije prisutna.
 
 \section{Skup podataka s oznakama iz sustava FTTS iRAP}
-U skupu podataka s eksperimentalnim oznakama, pozitivne i negativne oznake određene su na temelju prisutnosti diskriminativnog uzorka u sceni. 
+U skupu podataka s diskriminativnim oznakama, pozitivne i negativne oznake određene su na temelju prisutnosti diskriminativnog uzorka u sceni. 
 Takav način označavanja nije konzistentan s načinom označavanja kakav provode eksperti za označavanje u sustavu FTTS iRAP na stranici \citep{url:ftts_irap}.
 Glavni cilj rada jest razviti sustav koji bi mogao automatski određivati prisutnost sigurnosnog atributa na prometnoj sceni. 
 Za učenje je stoga potrebno kreirati skup podataka koji je označen konzistentno s pravilima koja propisuje iRAP, odnosno koji će koristiti oznake iz sustava FTTS iRAP.
@@ -174,9 +176,6 @@ Također, moguće je i otvoriti video snimku koja prikazuje trenutak kada započ
 \label{img:sattelite_merge_lane_irap}
 \end{figure}
 
-Promotrimo sliku \ref{img:sattelite_merge_lane_irap}. Na slici je crvenom linijom označen segment koji je na stranici \citep{url:ftts_irap} prema pravilima koje propisuje iRAP označen kao pripajanje. 
-Već sa satelitske snimke je vidljivo kako bi moglo biti problema prilikom učenja zbog nedostatka diskriminativnih značajki koje bi mogle olakšati raspoznavanje pripajanja.
-
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.5]{images/video_merge_lane_irap.png}
@@ -184,8 +183,38 @@ Već sa satelitske snimke je vidljivo kako bi moglo biti problema prilikom učen
 \label{img:video_merge_lane_irap}
 \end{figure}
 
-\noindent Slika \ref{img:video_merge_lane_irap} prikazuje isječak iz video snimke u trenutku kada započinje segment sa slike \ref{img:sattelite_merge_lane_irap} označen kao pripajanje. 
-Iz same slike je vrlo teško odrediti da je u tom trenutku prisutan atribut pripajanja.
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/sattelite_merge_lane_irap2.png}
+\caption{Prikaz satelitske snimke s označenim segmentom atributa pripajanja (slika preuzeta s \citep{url:google_maps})}
+\label{img:sattelite_merge_lane_irap2}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{images/video_merge_lane_irap2.png}
+\caption{Prikaz video snimke s označenim segmentom atributa pripajanja sa slike \ref{img:sattelite_merge_lane_irap2} (slika preuzeta s \citep{url:ftts_irap})}
+\label{img:video_merge_lane_irap2}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/sattelite_merge_lane_irap3.png}
+\caption{Prikaz satelitske snimke s označenim segmentom atributa pripajanja (slika preuzeta s \citep{url:google_maps})}
+\label{img:sattelite_merge_lane_irap3}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{images/video_merge_lane_irap3.png}
+\caption{Prikaz video snimke s označenim segmentom atributa pripajanja sa slike \ref{img:sattelite_merge_lane_irap3} (slika preuzeta s \citep{url:ftts_irap})}
+\label{img:video_merge_lane_irap3}
+\end{figure}
+
+Promotrimo slike \ref{img:sattelite_merge_lane_irap}, \ref{img:sattelite_merge_lane_irap2} i \ref{img:sattelite_merge_lane_irap3}. Na slikama je crvenom linijom označen segment koji je na stranici \citep{url:ftts_irap} prema pravilima koje propisuje iRAP označen kao pripajanje. 
+Već sa satelitske snimke je vidljivo kako bi moglo biti problema prilikom detekcije tog atributa zbog nedostatka diskriminativnih značajki koje bi to mogle olakšati.
+Slike \ref{img:video_merge_lane_irap}, \ref{img:video_merge_lane_irap2} i \ref{img:video_merge_lane_irap3} redom prikazuju isječke iz video snimaka u trenucima kada započinju segmenti sa slika \ref{img:sattelite_merge_lane_irap}, \ref{img:sattelite_merge_lane_irap2} i \ref{img:sattelite_merge_lane_irap3} označeni kao pripajanja. 
+Iz same slike je vrlo teško odrediti da je u tom trenutku prisutan atribut pripajanja što pokazuje težinu zadatka koji pokušavamo riješiti.
 
 Problem nedostatka informacije možemo riješiti tako da odluku ne temeljimo na jednoj slici nego na sekvenci slika koje su prethodile trenutnoj. 
 Koristeći sekvencu slika koja prethodi slici označenoj kao početak segmenta označenog kao pripajanje, model će biti u mogućnosti lakše donijeti odluku zbog prisutnosti diskriminativne značajke (karakteristične bijele trake u uzorku).
@@ -349,7 +378,7 @@ Razlog tomu je što želimo postići da male promjene vrijednosti na ulazu u bil
  \item [L1 norma] $p(\boldsymbol{\phi})=\sum_{i=1}^n \left| \boldsymbol{\phi}_i \right|$ --- L1 \engl{Lasso} regularizacija
  \item [L2 norma] $p(\boldsymbol{\phi})=\sqrt{\sum_{i=1}^n  \boldsymbol{\phi}_i^2 }$ --- L2 \engl{Ridge} regularizacija
 \end{description}
-Regularizacija L2 normom je najčešće korištena zbog lakšeg izračuna izraza parcijalne derivacije za korak gradijentnog spusta.
+Regularizacija L2 normom parametara je najčešće korištena zbog lakšeg izračuna izraza parcijalne derivacije za korak gradijentnog spusta.
 
 \section{Tipični slojevi dubokih modela za primjenu u računalnom vidu}
 Duboki modeli koji se koriste za primjenu u računalnom vidu tipično su građeni od nekoliko različitih slojeva koji imaju različite uloge.
@@ -475,7 +504,7 @@ $F^{l-1}$ je skup mapa značajki iz sloja $l-1$ s kojima je mapa značajki iz sl
 $K_w^k$ je širina jezgre, a $K_h^k$ je visina jezgre za mapu značajki $k$ iz sloja $l-1$. 
 $w^l_{k, m, n}$ je vrijednost parametara jezgre za mapu značajki $k$ iz sloja $l-1$ za redak $m$ i stupac $n$.
 Vrijednosti $s_w$ i $s_h$ predstavljaju pomak po širini, odnosno visini.
-Vrijednost $b^l$ predstavlja vrijednost praga za mapu značajku iz sloja $l$. 
+Vrijednost $b^l$ predstavlja vrijednost praga za mapu značajki iz sloja $l$. 
 U pravilu se vrijednost praga dijeli za cijelu mapu značajki, no to nije nužno te je moguće za svaku od mapa značajki iz prethodnog sloja imati po jednu vrijednost praga.
 Konačno, funkcija $\sigma$ predstavlja aktivacijsku funkciju.
 
@@ -551,7 +580,7 @@ Slika \ref{img:vgg_architecture} prikazuje originalnu arhitekturu VGG-16 građen
 Prednji dio sastoji se od 5 konvolucijskih blokova. 
 Svaki od blokova izgrađen je na sličan način -- nekoliko konvolucijskih slojeva iza kojih slijedi sloj za sažimanje maksimalnom vrijednošću \engl{max pool}.
 Konvolucijski slojevi imaju jezgre dimenzija $3$ x $3$ uz izlazni korak konvolucije \engl{stride} 1. 
-Svi konvolucijski slojevi koriste po dijelovima linearnu funkciju \engl{ReLU} te su regularizirani L2 normom težina s faktorom regularizacije iznosa $5\cdot10^{-4}$.
+Svi konvolucijski slojevi koriste po dijelovima linearnu funkciju \engl{ReLU} te su regularizirani L2 normom parametara s faktorom regularizacije iznosa $5\cdot10^{-4}$.
 Slojevi za sažimanje maksimalnom vrijednošću imaju podmape za grupiranje veličine $2$ x $2$ uz korak uzorkovanja podmapa 2.
 Konvolucijski blokovi građeni su kako slijedi:
 \begin{itemize}
@@ -592,6 +621,7 @@ Konvolucijski blokovi građeni su kako slijedi:
 
 Stražnji dio građen je od  3 potpuno povezana sloja koji služe za klasifikaciju konvolucijskih reprezentacija dimenzija $7$ x $7$ x $512$ u 1000 različitih klasa. 
 Prilikom korištenja arhitekture VGG-16 za druge namjene, obično se uklanja stražnji ili svi potpuno povezani slojevi te se na prednji dio koji služi za izlučivanje značajki iz ulaznih slika nadodaju novi slojevi koji se treniraju za obavljanje specifičnog zadatka.
+Ovakva primjena prednaučenih konvolucijskih modela naziva se prijenos znanja \engl{knowledge transfer} \citep{proceeding:transfer_learning}.
 
 \subsection{Arhitektura za klasifikaciju pojedinačnih slika}
 Duboki model korišten za klasifikaciju pojedinačnih slika temeljen je na VGG-16 arhitekturi. 
@@ -602,74 +632,85 @@ Dobivene izlazne mape značajki pretvaraju se u jednodimenzionalan vektor koji s
  \begin{itemize}
   \item po dijelovima linearna \engl{ReLU} aktivacijska funkcija
   \item grupna normalizacija \engl{batch normalization}
-  \item L2 regularizacija
+  \item regularizacija L2 normom parametara
  \end{itemize}
  \item potpuno povezani sloj dimenzionalnosti 2 za binarnu klasifikaciju -- određivanje je li atribut prisutan na slici ili nije
  \begin{itemize}
   \item normalizirajuća eksponencijalna \engl{softmax} aktivacijska funkcija
-  \item L2 regularizacija
+  \item regularizacija L2 normom parametara
  \end{itemize}
 \end{itemize}
 
 \subsection{Arhitekture za klasifikaciju sekvenci slika}
-Za klasifikaciju sekvenci slika korišteno je nekoliko različitih modela temeljenih na naučenoj VGG-16 arhitekturi. 
+Za klasifikaciju sekvenci slika korišteno je nekoliko različitih modela temeljenih na prednaučenoj arhitekturi VGG-16. 
 Korišteni modeli su inspirirani arhitekturama iz \citep{article:sequential_architectures}.
 
-Zajednički postupak koji svi modeli dijele jest postupak izlučivanja prostornih značajki -- za svaku sliku sekvence se koristeći prednji dio naučenog VGG-16 modela izračunaju značajke koje se zatim dalje obrađuju na različite načine.
-Dobivene prostorne značajke svake pojedine slike su dimenzija $H$ x $W$ x $512$, gdje dimenzije $H$ i $W$ ovise o dimenzijama ulaznih slika, a treća dimenzija je određena brojem izlaznih mapa značajki posljednjeg konvolucijskog sloja VGG-16 modela. 
+Zajednički postupak koji svi modeli dijele jest postupak izlučivanja prostornih značajki -- za svaku sliku sekvence se koristeći prednji dio prednaučene arhitekture VGG-16 izračunaju značajke koje se zatim dalje obrađuju na različite načine.
+Dobivene prostorne značajke svake pojedine slike su dimenzija $H$ x $W$ x $512$, gdje dimenzije $H$ i $W$ ovise o dimenzijama ulaznih slika, a treća dimenzija je određena brojem izlaznih mapa značajki posljednjeg konvolucijskog sloja arhitekture VGG-16. 
 
 \subsubsection{Klasifikacija sekvenci slika korištenjem vremensko-prostornog sažimanja}
-Model koji koristi vremensko-prostorno sažimanje prostorne značajke svake slike pretvori u jednodimenzionalni vektor dimenzija $H$ x $W$ x $512$.
-Dobiveni jednodimenzionalni vektori se zatim oblikuju u dvodimenzionalnu strukturu dimenzija $N$ x ($H$ x $W$ x $512$), gdje je $N$ duljina sekvence slika.
+Model koji koristi vremensko-prostorno sažimanje pretvara dobivene prostorne značajke svake slike u jednodimenzionalni vektor dimenzija $H$ x $W$ x $512$.
+Dobiveni jednodimenzionalni vektori se zatim oblikuju u dvodimenzionalni tenzor dimenzija $N$ x ($H$ x $W$ x $512$), gdje je $N$ duljina sekvence slika.
 
-Dvodimenzionalna struktura koja se dobije povezivanjem prostornih značajki sadrži i vremenske i prostorne informacije. 
-Dobivena dvodimenzionalna zatim se obrađuje kroz nekoliko slojeva kako slijedi:
+Dvodimenzionalni tenzor koja se dobije povezivanjem prostornih značajki sadrži i vremenske i prostorne informacije. 
+Taj se tenzor zatim obrađuje kroz nekoliko slojeva kako slijedi:
 \begin{itemize}
  \item sloj za sažimanje maksimalnom vrijednošću s podmapama za grupiranje veličina $2$ x $2$ uz korak uzorkovanja podmapa 2
  \begin{itemize}
   \item operacija efektivno provodi vremensko-prostorno sažimanje značajki koje su bliske vremenski i prostorno
  \end{itemize}
- \item pretvaranje dobivene dvodimenzionalne strukture u jednodimenzionalnu
+ \item pretvaranje dobivenog dvodimenzionalnog tenzora u jednodimenzionalni
  \item potpuno povezani sloj dimenzionalnosti 200
  \begin{itemize}
   \item po dijelovima linearna \engl{ReLU} aktivacijska funkcija
   \item grupna normalizacija \engl{batch normalization}
-  \item L2 regularizacija
+  \item regularizacija L2 normom parametara
  \end{itemize}
  \item potpuno povezani sloj dimenzionalnosti 2 za binarnu klasifikaciju -- određivanje je li atribut prisutan na slici ili nije
  \begin{itemize}
   \item normalizirajuća eksponencijalna \engl{softmax} aktivacijska funkcija
-  \item L2 regularizacija
+  \item regularizacija L2 normom parametara
  \end{itemize}
 \end{itemize}
 
 \subsubsection{Klasifikacija sekvenci slika korištenjem povratnih LSTM ćelija \engl{Long Short Term Memory}}
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.6]{images/lstm.png}
-\caption{Arhitektura LSTM ćelije, nacrtano prema \citep{article:lstm}}
-\label{img:lstm}
-\end{figure}
-Slika \ref{img:lstm} prikazuje arhitekturu LSTM ćelije. 
 LSTM ćelije pogodne su za korištenje nad sekvencama podataka iz razloga što sadrže memorijske ćelije u kojima mogu čuvati informacije kroz dugačke vremenske periode.
 
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.7]{images/lstm_input.png}
+\caption{Arhitektura jednoslojne LSTM ćelije (slika nacrtana prema \citep{article:lstm})}
+\label{img:lstm_input}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.7]{images/lstm_hidden.png}
+\caption{Arhitektura s više slojeva LSTM ćelija (slika nacrtana prema \citep{article:lstm})}
+\label{img:lstm_hidden}
+\end{figure}
+
+Slika \ref{img:lstm_input} prikazuje arhitekturu jednoslojne LSTM ćelije koja kao ulaz dobiva ulazni podatak. 
+Slika \ref{img:lstm_input} prikazuje arhitekturu s više slojeva LSTM ćelija u kojoj je izlaz LSTM ćelije prethodnog sloja ulaz LSTM ćeliji idućeg sloja.
+
 U svakom vremenskom koraku potrebno je izračunati izlaz LSTM ćelije i novi sadržaj memorijske ćelije.
-Izlaz LSTM ćelije i novi sadržaj memorijske ćelije računaju se na temelju tri stvari:
+Izlaz LSTM ćelije i novi sadržaj memorijske ćelije računaju se na temelju tri vektora:
 \begin{itemize}
- \item izlaz iz LSTM ćelije iz prethodnog sloja za trenutni vremenski korak (ili ulazni podatak trenutnog vremenskog koraka ukoliko je riječ o prvom sloju LSTM ćelija) -- $\mathbf{h}_{l-1}^t$ na slici \ref{img:lstm}
- \item izlaz iz LSTM ćelije trenutnog sloja za prethodni vremenski korak  -- $\mathbf{h}_{l}^{t-1}$ na slici \ref{img:lstm}
- \item sadržaj memorijske ćelije trenutnog sloja za prethodni vremenski korak -- $\mathbf{c}_t$ na slici \ref{img:lstm}
+ \item ulaznom podatku trenutnog vremenskog koraka, odnosno izlazu LSTM ćelije prethodnog sloja trenutnog vremenskog koraka -- $\mathbf{x}_t$ na slici \ref{img:lstm_input}, odnosno $\mathbf{h}^{1}_t$ na slici \ref{img:lstm_hidden}
+ \item izlazu LSTM ćelije trenutnog sloja za prethodni vremenski korak  -- $\mathbf{h}_{t-1}$  na slici \ref{img:lstm_input}, odnosno $\mathbf{h}_{t-1}^1$ i $\mathbf{h}_{t-1}^2$ na slici \ref{img:lstm_hidden}
+ \item sadržaju memorijske ćelije trenutnog sloja za prethodni vremenski korak -- $\mathbf{c}_{t-1}$ na slici \ref{img:lstm_input}, odnosno $\mathbf{c}_{t-1}^1$ i $\mathbf{c}_{t-1}^2$ na slici \ref{img:lstm_hidden}
 \end{itemize}
-Izlaz LSTM ćelije i novi sadržaj memorijske ćelije računaju se sljedećim izrazima:
+U općenitom slučaju višeslojne arhitekture LSTM ćelija, izlaz i novi sadržaj memorijske ćelije računaju se sljedećim izrazima:
 \begin{align}
- \mathbf{c}_t^l &= \mathbf{f} \odot \mathbf{c}_{t-1}^l + \mathbf{i} \odot \mathbf{g} \\
- \mathbf{h}_t^l &= \mathbf{o} \odot \tanh(\mathbf{c}^l_t) \\
- \mathbf{i} &= \sigma (\mathbf{W}_i [\mathbf{h}_{l}^{t-1}, \mathbf{h}_{l-1}^t] + \mathbf{b}_i) \\
- \mathbf{f} &= \sigma (\mathbf{W}_f [\mathbf{h}_{l}^{t-1}, \mathbf{h}_{l-1}^t] + \mathbf{b}_f) \\
- \mathbf{o} &= \sigma (\mathbf{W}_o [\mathbf{h}_{l}^{t-1}, \mathbf{h}_{l-1}^t] + \mathbf{b}_o) \\
- \mathbf{g} &= \sigma (\mathbf{W}_g [\mathbf{h}_{l}^{t-1}, \mathbf{h}_{l-1}^t] + \mathbf{b}_g), 
+ \text{stanje ćelije: } \mathbf{c}_t^l &= \mathbf{f} \odot \mathbf{c}_{t-1}^l + \mathbf{i} \odot \mathbf{g} \\
+ \text{izlaz ćelije: } \mathbf{h}_t^l &= \mathbf{o} \odot \tanh(\mathbf{c}^l_t) \\
+ \text{vektor ulaznih vrata: } \mathbf{i} &= \sigma (\mathbf{W}_i [\mathbf{h}^{l}_{t-1}, \mathbf{h}^{l-1}_t] + \mathbf{b}_i) \\
+ \text{vektor vrata zaboravljanja: } \mathbf{f} &= \sigma (\mathbf{W}_f [\mathbf{h}^{l}_{t-1}, \mathbf{h}^{l-1}_t] + \mathbf{b}_f) \\
+ \text{vektor izlaznih vrata: } \mathbf{o} &= \sigma (\mathbf{W}_o [\mathbf{h}^{l}_{t-1}, \mathbf{h}^{l-1}_t] + \mathbf{b}_o) \\
+ \text{vektor ulaznih modulacijskih vrata: } \mathbf{g} &= \sigma (\mathbf{W}_g [\mathbf{h}^{l}_{t-1}, \mathbf{h}^{l-1}_t] + \mathbf{b}_g), 
 \end{align}
 gdje je $\tanh$ aktivacijska funkcija tangens hiperbolni, $\sigma$ je sigmoidalna aktivacijska funkcija, $\odot$ je operator množenja koji djeluje po elementima, a $[\mathbf{x}, \mathbf{y}]$ je operacija spajanja vektora $\mathbf{x}$ dimenzija $n_1$ i vektora $\mathbf{y}$ dimenzija $n_2$ u vektor dimenzija $n_1 + n_2$.
+Notacija $\mathbf{h}^{l}_{t}$ predstavlja izlazni vektor LSTM ćelije vremenskog trenutka $t$ u sloju $l$.
 
 Model koji koristi LSTM ćelije prostorne značajke svake slike pretvori u jednodimenzionalni vektor dimenzija $H$ x $W$ x $512$.
 Dobiveni jednodimenzionalni vektori se zatim redom obrađuju kako slijedi:
@@ -681,7 +722,7 @@ Dobiveni jednodimenzionalni vektori se zatim redom obrađuju kako slijedi:
  \begin{itemize}
   \item ulaz u ovaj potpuno povezani sloj jest posljednji izlaz dobiven iz LSTM ćelije prethodnog sloja koja je obradila cijelu sekvencu podataka (vektor dimenzionalnosti 32)
   \item normalizirajuća eksponencijalna \engl{softmax} aktivacijska funkcija
-  \item L2 regularizacija
+  \item regularizacija L2 normom parametara
  \end{itemize}
 \end{itemize}
 
@@ -694,31 +735,31 @@ Svaki dobiveni jednodimenzionalni vektor prostornih značajki se zatim obrađuje
  \begin{itemize}
   \item po dijelovima linearna \engl{ReLU} aktivacijska funkcija
   \item grupna normalizacija \engl{batch normalization}
-  \item L2 regularizacija
+  \item regularizacija L2 normom parametara
   \item ovaj potpuno povezani sloj služi za predstavljanje prostornih značajki vektorom manjih dimenzija
  \end{itemize}
 \end{itemize}
-Jednodimenzionalni vektori dobiveni nakon potpuno povezanog sloja se zatim oblikuju u dvodimenzionalnu strukturu dimenzija $N$ x ($H$ x $W$ x $512$), gdje je $N$ duljina sekvence slika.
-Dobivena dvodimenzionalna zatim se obrađuje kroz nekoliko slojeva kako slijedi:
+Jednodimenzionalni vektori dobiveni nakon potpuno povezanog sloja se zatim oblikuju u dvodimenzionalni tenzor dimenzija $N$ x $64$, gdje je $N$ duljina sekvence slika.
+Taj se tenzor zatim obrađuje kroz nekoliko slojeva kako slijedi:
 \begin{itemize}
- \item pretvaranje dobivene dvodimenzionalne strukture u jednodimenzionalnu
+ \item pretvaranje dobivenog dvodimenzionalnog tenzora u jednodimenzionalni
  \item potpuno povezani sloj dimenzionalnosti 64
  \begin{itemize}
   \item po dijelovima linearna \engl{ReLU} aktivacijska funkcija
   \item grupna normalizacija \engl{batch normalization}
-  \item L2 regularizacija
+  \item regularizacija L2 normom parametara
   \item ovaj potpuno povezani sloj služi za povezivanje dobivenih prostornih značajki po dimenziji vremena
  \end{itemize}
  \item potpuno povezani sloj dimenzionalnosti 2 za binarnu klasifikaciju -- određivanje je li atribut prisutan na slici ili nije
  \begin{itemize}
   \item normalizirajuća eksponencijalna \engl{softmax} aktivacijska funkcija
-  \item L2 regularizacija
+  \item regularizacija L2 normom parametara
  \end{itemize}
 \end{itemize}
 
 \section{Postupak pripreme skupova podataka}
 Poglavlje \ref{chapter:skupovi_podataka} opisuje dva tipa skupova podataka korištenih u ovom radu.
-U nastavku je opisan postupak pretprocesiranja slika dobivenih iz videa sa stranice \citep{url:ftts_irap} te postupak kreiranja slika označenih konzistentno s projektom FTTS iRAP.
+U nastavku je opisan postupak pretprocesiranja slika koje se dobivaju iz georeferenciranih video snimaka sa stranice \citep{url:ftts_irap} te postupak kreiranja skupa podataka s oznakama iz sustava FTTS iRAP.
 
 \subsection{Pretprocesiranje slika}
 Slike korištene za kreiranje skupova podataka dobivene su iz video snimaka snimljenih automobilom koji se kretao engleskim autocestama.
@@ -732,29 +773,30 @@ Metoda adaptivnog izjednačavanja histograma za računanje histograma ne uzima u
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.2]{images/original.png}
-\caption{Originalna slika, preuzeto s \citep{url:ftts_irap}}
+\caption{Originalna slika (slika preuzeta s \citep{url:ftts_irap})}
 \label{img:original}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.2]{images/hist.png}
-\caption{Slika s izjednačenim histogramom, preuzeto s \citep{url:ftts_irap}}
+\caption{Slika s izjednačenim histogramom}
 \label{img:hist}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.2]{images/adapt_hist.png}
-\caption{Slika s adaptivno izjednačenim histogramom, preuzeto s \citep{url:ftts_irap}}
+\caption{Slika s adaptivno izjednačenim histogramom}
 \label{img:adapt_hist}
 \end{figure}
 
 Iz slika \ref{img:original}, \ref{img:hist} i \ref{img:adapt_hist} vidljivo je kako su, u odnosu na originalnu sliku, na slici s adaptivno izjednačenim histogramom najbolje naglašeni detalji zbog najbolje ublažene varijacije kontrasta.
+Eksperimentalno je utvrđeno da adaptivno izjednavačanje histograma poboljšava performanse dubokog modela.
 Metoda adaptivnog izjednačavanja histograma se iz tog razloga koristi kao korak pretprocesiranja za svaku sliku korištenu prilikom kreiranja skupova podataka.
 
-\subsection{Postupak kreiranja slika označenih konzistentno s projektom FTTS iRAP}
-Za postupak kreiranja slika prometnih scena označenih konzistentno s projektom FTTS iRAP kreiran je automatizirani postupak.
+\subsection{Postupak kreiranja slika s oznakama iz sustava FTTS iRAP}
+Kreiranje slika prometnih scena s oznakama iz sustava FTTS iRAP obavlja se automatiziranim postupkom.
 Ulazni podaci za automatizirani postupak su sljedeći:
 \begin{itemize}
  \item geolokacije na kojima je prisutan atribut pripajanja
@@ -816,24 +858,24 @@ Kako su sve arhitekture korištene za potrebe ovog rada zasnovane na naučenom p
  \item 10 epoha učenja s početnom stopom učenja iznosa $5\cdot10^{-4}$ uz optimiranje samo novo nadodanih parametara -- svi parametri naučenog prednjeg dijela arhitekture VGG-16 ne mijenjaju se tijekom ove faze
  \item 40 epoha učenja s početnom stopom učenja iznosa $1\cdot10^{-5}$ uz optimiranje kompletnog skupa parametara (uključujući i parametre naučenog prednjeg dijela arhitekture VGG-16)
  \item korak učenja koristi gradijente izračunate nad mini-grupama veličina 5 ili 10, ovisno o memorijskoj zahtjevnosti modela
- \item optimizator korišten za učenje jest Adam optimizator
+ \item za optimizaciju je korišteno učenje postupkom Adam
  \item stopa učenja se svakim korakom učenja eksponencijalno smanjuje:
  \begin{align}
   \eta_{t}=\eta_0 \cdot 0.96^{\cfrac{t}{k}},
  \end{align}
 gdje je $t$ indeks koraka učenja, a $k$ je broj koraka učenja u jednoj epohi
- \item svi novo nadodani slobodni parametri (isključujući parametre naučenog prednjeg dijela VGG-16 arhitekture) inicijalizirani su na sljedeći način:
+ \item svi novo nadodani slobodni parametri (isključujući parametre prednaučenog prednjeg dijela arhitekture VGG-16) inicijalizirani su na sljedeći način:
  \begin{itemize}
   \item parametri slojeva (isključujući parametre pomaka) s po dijelovima linearnom aktivacijskom funkcijom inicijalizirani su koristeći inicijalizator koji skalira varijancu prema \citep{article:delving_deep_into_rectifiers}
   \item parametri slojeva (isključujući parametre pomaka) s normalizirajućom eksponencijalnom aktivacijskom funkcijom inicijalizirani su koristeći Xavier inicijalizaciju prema \citep{article:delving_deep_into_rectifiers}
   \item parametri pomaka svih slojeva inicijalizirani su s vrijednostima 0
  \end{itemize}
 
- \item slobodni parametri regularizirani su L2 regularizacijom s faktorom regularizacije iznosa $5\cdot10^{-4}$
+ \item slobodni parametri regularizirani su L2 normom parametara s faktorom regularizacije iznosa $5\cdot10^{-4}$
  \item podskup za validaciju korišten je za odabir slobodnih parametara modela
  \begin{itemize}
   \item na kraju svake epohe mjere se performanse modela na podskupu za validaciju
-  \item za testiranje se odabire onaj skup parametara koji postiže najbolju performansu na podskupu za validaciju -- ovime se efektivno obavlja regularizacija jer odabiremo onaj skup parametara koji najbolje generalizira
+  \item za testiranje se odabire onaj skup parametara koji postiže najbolju performansu na podskupu za validaciju -- ovime se efektivno obavlja regularizacija (rano zaustavljanje) jer odabiremo onaj skup parametara koji najbolje generalizira
  \end{itemize}
 \end{itemize}
 Svi eksperimenti provedeni su na nVIDIA grafičkim karticama GTX 1070 i GTX Titan. 
@@ -847,7 +889,7 @@ Zadatak ovog rada definiran je kao binarna klasifikacija pa možemo iskoristiti 
  \item FP \engl{false positive} -- slika koja je označena kao negativna, a predikcija modela je pozitivna
  \item FN \engl{false negative} -- slika koja je označena kao pozitivna, a predikcija modela je negativna
 \end{itemize}
-Mjere koje su uzimane u obzir prilikom testiranja jesu točnost \engl{accuracy}, preciznost \engl{precision} i odziv \engl{recall}. 
+Mjere koje su uzimane u obzir prilikom evaluacije jesu točnost \engl{accuracy}, preciznost \engl{precision} i odziv \engl{recall}. 
 Točnost jest definirana na sljedeći način:
 \begin{align}
  \text{točnost} = \cfrac{\text{TP} + \text{TN}}{\text{TP} + \text{TN} + \text{FP} + \text{FN}}
@@ -860,13 +902,16 @@ Preciznost jest definirana na sljedeći način:
 \begin{align}
  \text{preciznost} = \cfrac{\text{TP}}{\text{TP} + \text{FP}}
 \end{align}
+
 Kako je izlaz modela vjerojatnost da je atribut pripajanja prisutan na slici, odnosno da atribut pripajanja nije prisutan na slici, definira se prag kao iznos vjerojatnosti iznad koje se smatra da je atribut prisutan.
 Za različite pragove dobivaju se različite vrijednosti preciznosti i odziva modela prilikom evaluacije. 
 Ucrtavanjem svih točaka koje povezuju vrijednost preciznosti i odziva za različite pragove dobivamo graf ovisnosti preciznosti i odziva.
 Prosječna preciznost jest definirana kao površina ispod tog grafa.
+Kako je ranije spomenuto, za izračun ostalih mjera potrebno je definirati prag iznad kojeg se smatra da je atribut pripajanja prisutan.
+Vrijednost praga pronalazi se pomoću podskupa za validaciju -- izračunava se točnost na podskupu za validaciju za različite vrijednosti pragova i uzima se onaj prag kojim se dobiva najveća točnost.
 
-\section{Klasifikacija ručno označenih slika na različitim rezolucijama}
-Eksperimenti na ručno označenim slikama provedeni su koristeći arhitekturu za klasifikaciju pojedinačnih slika. 
+\section{Klasifikacija slika s diskriminativnim oznakama na različitim rezolucijama}
+Eksperimenti na slikama s diskriminativnim oznakama provedeni su koristeći arhitekturu za klasifikaciju pojedinačnih slika. 
 Kako su eksperimenti nad sekvencama slika memorijski mnogo zahtjevniji od eksperimenata na pojedinačnim slikama, svrha ovog eksperimenta bila je utvrditi
 na kojoj rezoluciji ulaznih slika model gubi ekspresivnu moć i ne uspijeva dati zadovoljavajuću performansu.
 
@@ -877,51 +922,35 @@ $700$x$280$, $525$x$210$, $350$x$140$ i $175$x$70$. Rezultati su dani u nastavku
 Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $700$x$280$ su sljedeći:
 \begin{table}[H]
 \centering
-\caption{Statistički rezultati na rezoluciji $700$x$280$}
+\caption{Rezultati na rezoluciji $700$x$280$}
 \label{score:single_hand_700x280}
-\begin{tabular}{|c|c|c|c|c|}
-\hline
-podskup podataka      & točnost & preciznost & odziv & prosječna preciznost \\ \hline
-podskup za učenje     & 1.0     & 1.0        & 1.0  & 1.0 \\ \hline
-podskup za validaciju & 0.91     & 0.98        & 0.83  & 0.99 \\ \hline
-podskup za testiranje & 0.95     & 0.99          & 0.91  & 0.99 \\ \hline
+\begin{tabular}{c|c|c|c|c|}
+\cline{2-5}
+                                            & točnost & preciznost & odziv & prosječna preciznost \\ \hline
+\multicolumn{1}{|c|}{podskup za učenje}     & 0.99       & 0.99        & 1.0     &           1.0           \\ \hline
+\multicolumn{1}{|c|}{podskup za validaciju} & 0.96       & 0.93        & 0.99     &            0.99          \\ \hline
+\multicolumn{1}{|c|}{podskup za testiranje} & 0.93       & 0.88        & 1.0     &            0.99          \\ \hline
 \end{tabular}
 \end{table}
+
 \begin{table}[H]
 \centering
-\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $700$x$280$ na podskupu za učenje}
-\label{score:single_hand_700x280_tpfptnfn_train}
-\begin{tabular}{|c|c|c|}
-\hline
-\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
-0                                & 898 & 0 \\ \hline
-1                                & 0 & 902 \\ \hline
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $700$x$280$}
+\label{score:single_hand_700x280_tpfptnfn}
+\begin{tabular}{ccccllll}
+\multicolumn{1}{l}{}                                         &                                                                      & \multicolumn{2}{c}{}                                & \multicolumn{2}{c}{}                        & \multicolumn{2}{c}{}                        \\ \hhline{~---}
+\multicolumn{1}{l|}{}                                        & \multicolumn{1}{c|}{\diagbox{stvarna oznaka}{predikcija modela}} & \multicolumn{1}{c|}{0}   & \multicolumn{1}{c|}{1}   & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} \\ \hhline{-===}
+\multicolumn{1}{|c|}{\multirow{2}{*}{podskup za učenje}}     & \multicolumn{1}{c|}{0}                                               & \multicolumn{1}{c|}{886} & \multicolumn{1}{c|}{12}   & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} \\ \hhline{~---}
+\multicolumn{1}{|c|}{}                                       & \multicolumn{1}{c|}{1}                                               & \multicolumn{1}{c|}{0}   & \multicolumn{1}{c|}{898} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} \\ \hhline{====}
+\multicolumn{1}{|c|}{\multirow{2}{*}{podskup za validaciju}} & \multicolumn{1}{c|}{0}                                               & \multicolumn{1}{c|}{290} & \multicolumn{1}{c|}{23}   &                      &                      &                      &                      \\ \hhline{~---}
+\multicolumn{1}{|c|}{}                                       & \multicolumn{1}{c|}{1}                                               & \multicolumn{1}{c|}{4}  & \multicolumn{1}{c|}{309} &                      &                      &                      &                      \\ \hhline{====}
+\multicolumn{1}{|c|}{\multirow{2}{*}{podskup za testiranje}} & \multicolumn{1}{c|}{0}                                               & \multicolumn{1}{c|}{255} & \multicolumn{1}{c|}{42}   &                      &                      &                      &                      \\ \hhline{~---}
+\multicolumn{1}{|c|}{}                                       & \multicolumn{1}{c|}{1}                                               & \multicolumn{1}{c|}{1}  & \multicolumn{1}{c|}{296} &                      &                      &                      &                      \\ \hhline{----}
 \end{tabular}
 \end{table}
-\begin{table}[H]
-\centering
-\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $700$x$280$ na podskupu za validaciju}
-\label{score:single_hand_700x280_tpfptnfn_valid}
-\begin{tabular}{|c|c|c|}
-\hline
-\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
-0                                & 308 & 5 \\ \hline
-1                                & 54 & 259 \\ \hline
-\end{tabular}
-\end{table}
-\begin{table}[H]
-\centering
-\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $700$x$280$ na podskupu za testiranje}
-\label{score:single_hand_700x280_tpfptnfn_test}
-\begin{tabular}{|c|c|c|}
-\hline
-\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
-0                                & 295 & 2 \\ \hline
-1                                & 26 & 271 \\ \hline
-\end{tabular}
-\end{table}
+
 \noindent Tablica \ref{score:single_hand_700x280} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
-Tablice \ref{score:single_hand_700x280_tpfptnfn_train}, \ref{score:single_hand_700x280_tpfptnfn_valid} i \ref{score:single_hand_700x280_tpfptnfn_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matrice zabune.
+Tablica \ref{score:single_hand_700x280_tpfptnfn} prikazuje odnos predikcija modela i stvarnih oznaka kroz matrice zabune.
 
 \begin{figure}[H]
 \centering
@@ -943,51 +972,35 @@ Tablice \ref{score:single_hand_700x280_tpfptnfn_train}, \ref{score:single_hand_7
 Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $525$x$210$ su sljedeći:
 \begin{table}[H]
 \centering
-\caption{Statistički rezultati na rezoluciji $525$x$210$}
+\caption{Rezultati na rezoluciji $525$x$210$}
 \label{score:single_hand_525x210}
-\begin{tabular}{|c|c|c|c|c|}
-\hline
-podskup podataka      & točnost & preciznost & odziv & prosječna preciznost \\ \hline
-podskup za učenje     & 1.0     & 1.0        & 1.0   & 1.0\\ \hline
-podskup za validaciju & 0.92     & 0.99        & 0.85  & 0.99 \\ \hline
-podskup za testiranje & 0.98     & 0.99          & 0.96  & 0.99 \\ \hline
+\begin{tabular}{c|c|c|c|c|}
+\cline{2-5}
+                                            & točnost & preciznost & odziv & prosječna preciznost \\ \hline
+\multicolumn{1}{|c|}{podskup za učenje}     & 1.0       & 1.0        & 1.0     &           1.0           \\ \hline
+\multicolumn{1}{|c|}{podskup za validaciju} & 0.97       & 0.97        & 0.97     &            0.99          \\ \hline
+\multicolumn{1}{|c|}{podskup za testiranje} & 0.98       & 0.97        & 0.99     &            1.0          \\ \hline
 \end{tabular}
 \end{table}
+
 \begin{table}[H]
 \centering
-\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $525$x$210$ na podskupu za učenje}
-\label{score:single_hand_525x210_tpfptnfn_train}
-\begin{tabular}{|c|c|c|}
-\hline
-\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
-0                                & 898 & 0 \\ \hline
-1                                & 0 & 898 \\ \hline
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $525$x$210$}
+\label{score:single_hand_525x210_tpfptnfn}
+\begin{tabular}{ccccllll}
+\multicolumn{1}{l}{}                                         &                                                                      & \multicolumn{2}{c}{}                                & \multicolumn{2}{c}{}                        & \multicolumn{2}{c}{}                        \\ \hhline{~---}
+\multicolumn{1}{l|}{}                                        & \multicolumn{1}{c|}{\diagbox{stvarna oznaka}{predikcija modela}} & \multicolumn{1}{c|}{0}   & \multicolumn{1}{c|}{1}   & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} \\ \hhline{-===}
+\multicolumn{1}{|c|}{\multirow{2}{*}{podskup za učenje}}     & \multicolumn{1}{c|}{0}                                               & \multicolumn{1}{c|}{898} & \multicolumn{1}{c|}{0}   & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} \\ \hhline{~---}
+\multicolumn{1}{|c|}{}                                       & \multicolumn{1}{c|}{1}                                               & \multicolumn{1}{c|}{0}   & \multicolumn{1}{c|}{898} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} \\ \hhline{====}
+\multicolumn{1}{|c|}{\multirow{2}{*}{podskup za validaciju}} & \multicolumn{1}{c|}{0}                                               & \multicolumn{1}{c|}{305} & \multicolumn{1}{c|}{8}   &                      &                      &                      &                      \\ \hhline{~---}
+\multicolumn{1}{|c|}{}                                       & \multicolumn{1}{c|}{1}                                               & \multicolumn{1}{c|}{10}  & \multicolumn{1}{c|}{303} &                      &                      &                      &                      \\ \hhline{====}
+\multicolumn{1}{|c|}{\multirow{2}{*}{podskup za testiranje}} & \multicolumn{1}{c|}{0}                                               & \multicolumn{1}{c|}{287} & \multicolumn{1}{c|}{10}   &                      &                      &                      &                      \\ \hhline{~---}
+\multicolumn{1}{|c|}{}                                       & \multicolumn{1}{c|}{1}                                               & \multicolumn{1}{c|}{3}  & \multicolumn{1}{c|}{294} &                      &                      &                      &                      \\ \hhline{----}
 \end{tabular}
 \end{table}
-\begin{table}[H]
-\centering
-\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $525$x$210$ na podskupu za validaciju}
-\label{score:single_hand_525x210_tpfptnfn_valid}
-\begin{tabular}{|c|c|c|}
-\hline
-\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
-0                                & 310 & 3 \\ \hline
-1                                & 48 & 265 \\ \hline
-\end{tabular}
-\end{table}
-\begin{table}[H]
-\centering
-\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $525$x$210$ na podskupu za testiranje}
-\label{score:single_hand_525x210_tpfptnfn_test}
-\begin{tabular}{|c|c|c|}
-\hline
-\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
-0                                & 295 & 2 \\ \hline
-1                                & 12 & 285 \\ \hline
-\end{tabular}
-\end{table}
+
 \noindent Tablica \ref{score:single_hand_525x210} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
-Tablice \ref{score:single_hand_525x210_tpfptnfn_train}, \ref{score:single_hand_525x210_tpfptnfn_valid} i \ref{score:single_hand_525x210_tpfptnfn_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matrice zabune.
+Tablica \ref{score:single_hand_525x210_tpfptnfn} prikazuje odnos predikcija modela i stvarnih oznaka kroz matrice zabune.
 
 \begin{figure}[H]
 \centering
@@ -1007,53 +1020,38 @@ Tablice \ref{score:single_hand_525x210_tpfptnfn_train}, \ref{score:single_hand_5
 
 \subsection{Rezultati na rezoluciji 350x140}
 Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $350$x$140$ su sljedeći:
+
 \begin{table}[H]
 \centering
-\caption{Statistički rezultati na rezoluciji  $350$x$140$}
+\caption{Rezultati na rezoluciji $350$x$140$}
 \label{score:single_hand_350x140}
-\begin{tabular}{|c|c|c|c|c|}
-\hline
-podskup podataka      & točnost & preciznost & odziv & prosječna preciznost \\ \hline
-podskup za učenje     & 1.0     & 1.0        & 1.0  & 1.0 \\ \hline
-podskup za validaciju & 0.92     & 0.96        & 0.88 &  0.99 \\ \hline
-podskup za testiranje & 0.98     & 0.96          & 0.99 &  0.99 \\ \hline
+\begin{tabular}{c|c|c|c|c|}
+\cline{2-5}
+                                            & točnost & preciznost & odziv & prosječna preciznost \\ \hline
+\multicolumn{1}{|c|}{podskup za učenje}     & 1.0       & 1.0        & 1.0     &           1.0           \\ \hline
+\multicolumn{1}{|c|}{podskup za validaciju} & 0.95       & 0.93        & 0.97     &            0.99          \\ \hline
+\multicolumn{1}{|c|}{podskup za testiranje} & 0.98       & 0.96        & 0.99     &            0.99          \\ \hline
 \end{tabular}
 \end{table}
+
 \begin{table}[H]
 \centering
-\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji  $350$x$140$ na podskupu za treniranje}
-\label{score:single_hand_350x140_tpfptnfn_train}
-\begin{tabular}{|c|c|c|}
-\hline
-\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
-0                                & 898 & 0 \\ \hline
-1                                & 0 & 898 \\ \hline
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $350$x$140$}
+\label{score:single_hand_350x140_tpfptnfn}
+\begin{tabular}{ccccllll}
+\multicolumn{1}{l}{}                                         &                                                                      & \multicolumn{2}{c}{}                                & \multicolumn{2}{c}{}                        & \multicolumn{2}{c}{}                        \\ \hhline{~---}
+\multicolumn{1}{l|}{}                                        & \multicolumn{1}{c|}{\diagbox{stvarna oznaka}{predikcija modela}} & \multicolumn{1}{c|}{0}   & \multicolumn{1}{c|}{1}   & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} \\ \hhline{-===}
+\multicolumn{1}{|c|}{\multirow{2}{*}{podskup za učenje}}     & \multicolumn{1}{c|}{0}                                               & \multicolumn{1}{c|}{898} & \multicolumn{1}{c|}{0}   & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} \\ \hhline{~---}
+\multicolumn{1}{|c|}{}                                       & \multicolumn{1}{c|}{1}                                               & \multicolumn{1}{c|}{0}   & \multicolumn{1}{c|}{898} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} \\ \hhline{====}
+\multicolumn{1}{|c|}{\multirow{2}{*}{podskup za validaciju}} & \multicolumn{1}{c|}{0}                                               & \multicolumn{1}{c|}{291} & \multicolumn{1}{c|}{22}   &                      &                      &                      &                      \\ \hhline{~---}
+\multicolumn{1}{|c|}{}                                       & \multicolumn{1}{c|}{1}                                               & \multicolumn{1}{c|}{8}  & \multicolumn{1}{c|}{305} &                      &                      &                      &                      \\ \hhline{====}
+\multicolumn{1}{|c|}{\multirow{2}{*}{podskup za testiranje}} & \multicolumn{1}{c|}{0}                                               & \multicolumn{1}{c|}{284} & \multicolumn{1}{c|}{13}   &                      &                      &                      &                      \\ \hhline{~---}
+\multicolumn{1}{|c|}{}                                       & \multicolumn{1}{c|}{1}                                               & \multicolumn{1}{c|}{1}  & \multicolumn{1}{c|}{296} &                      &                      &                      &                      \\ \hhline{----}
 \end{tabular}
 \end{table}
-\begin{table}[H]
-\centering
-\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji  $350$x$140$ na podskupu za validaciju}
-\label{score:single_hand_350x140_tpfptnfn_valid}
-\begin{tabular}{|c|c|c|}
-\hline
-\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
-0                                & 303 & 10 \\ \hline
-1                                & 39 & 274 \\ \hline
-\end{tabular}
-\end{table}
-\begin{table}[H]
-\centering
-\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji  $350$x$140$ na podskupu za testiranje}
-\label{score:single_hand_350x140_tpfptnfn_test}
-\begin{tabular}{|c|c|c|}
-\hline
-\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
-0                                & 286 & 11 \\ \hline
-1                                & 2 & 295 \\ \hline
-\end{tabular}
-\end{table}
+
 \noindent Tablica \ref{score:single_hand_350x140} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
-Tablice \ref{score:single_hand_350x140_tpfptnfn_train}, \ref{score:single_hand_350x140_tpfptnfn_valid} i \ref{score:single_hand_350x140_tpfptnfn_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matrice zabune.
+Tablica \ref{score:single_hand_350x140_tpfptnfn} prikazuje odnos predikcija modela i stvarnih oznaka kroz matrice zabune.
 
 \begin{figure}[H]
 \centering
@@ -1075,51 +1073,35 @@ Tablice \ref{score:single_hand_350x140_tpfptnfn_train}, \ref{score:single_hand_3
 Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $175$x$70$ su sljedeći:
 \begin{table}[H]
 \centering
-\caption{Statistički rezultati na rezoluciji $175$x$70$}
+\caption{Rezultati na rezoluciji $175$x$70$}
 \label{score:single_hand_175x70}
-\begin{tabular}{|c|c|c|c|c|}
-\hline
-podskup podataka      & točnost & preciznost & odziv & prosječna preciznost \\ \hline
-podskup za učenje     & 1.0     & 1.0        & 1.0  & 1.0  \\ \hline
-podskup za validaciju & 0.81     & 0.98        & 0.63  & 0.96 \\ \hline
-podskup za testiranje & 0.71     & 0.96          & 0.43 & 0.92 \\ \hline
+\begin{tabular}{c|c|c|c|c|}
+\cline{2-5}
+                                            & točnost & preciznost & odziv & prosječna preciznost \\ \hline
+\multicolumn{1}{|c|}{podskup za učenje}     & 0.99       & 0.99        & 1.0     &           1.0           \\ \hline
+\multicolumn{1}{|c|}{podskup za validaciju} & 0.89       & 0.90        & 0.88     &            0.96          \\ \hline
+\multicolumn{1}{|c|}{podskup za testiranje} & 0.87       & 0.84        & 0.90     &            0.92          \\ \hline
 \end{tabular}
 \end{table}
+
 \begin{table}[H]
 \centering
-\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $175$x$70$ na podskupu za učenje}
-\label{score:single_hand_175x70_tpfptnfn_train}
-\begin{tabular}{|c|c|c|}
-\hline
-\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
-0                                & 898 & 0 \\ \hline
-1                                & 0 & 898 \\ \hline
+\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $175$x$70$}
+\label{score:single_hand_175x70_tpfptnfn}
+\begin{tabular}{ccccllll}
+\multicolumn{1}{l}{}                                         &                                                                      & \multicolumn{2}{c}{}                                & \multicolumn{2}{c}{}                        & \multicolumn{2}{c}{}                        \\ \hhline{~---}
+\multicolumn{1}{l|}{}                                        & \multicolumn{1}{c|}{\diagbox{stvarna oznaka}{predikcija modela}} & \multicolumn{1}{c|}{0}   & \multicolumn{1}{c|}{1}   & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} \\ \hhline{-===}
+\multicolumn{1}{|c|}{\multirow{2}{*}{podskup za učenje}}     & \multicolumn{1}{c|}{0}                                               & \multicolumn{1}{c|}{897} & \multicolumn{1}{c|}{1}   & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} \\ \hhline{~---}
+\multicolumn{1}{|c|}{}                                       & \multicolumn{1}{c|}{1}                                               & \multicolumn{1}{c|}{0}   & \multicolumn{1}{c|}{898} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} \\ \hhline{====}
+\multicolumn{1}{|c|}{\multirow{2}{*}{podskup za validaciju}} & \multicolumn{1}{c|}{0}                                               & \multicolumn{1}{c|}{282} & \multicolumn{1}{c|}{31}   &                      &                      &                      &                      \\ \hhline{~---}
+\multicolumn{1}{|c|}{}                                       & \multicolumn{1}{c|}{1}                                               & \multicolumn{1}{c|}{39}  & \multicolumn{1}{c|}{274} &                      &                      &                      &                      \\ \hhline{====}
+\multicolumn{1}{|c|}{\multirow{2}{*}{podskup za testiranje}} & \multicolumn{1}{c|}{0}                                               & \multicolumn{1}{c|}{247} & \multicolumn{1}{c|}{50}   &                      &                      &                      &                      \\ \hhline{~---}
+\multicolumn{1}{|c|}{}                                       & \multicolumn{1}{c|}{1}                                               & \multicolumn{1}{c|}{29}  & \multicolumn{1}{c|}{268} &                      &                      &                      &                      \\ \hhline{----}
 \end{tabular}
 \end{table}
-\begin{table}[H]
-\centering
-\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $175$x$70$ na podskupu za validaciju}
-\label{score:single_hand_175x70_tpfptnfn_valid}
-\begin{tabular}{|c|c|c|}
-\hline
-\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
-0                                & 310 & 3 \\ \hline
-1                                & 117 & 196 \\ \hline
-\end{tabular}
-\end{table}
-\begin{table}[H]
-\centering
-\caption{Odnos predikcija modela i stvarnih oznaka na rezoluciji $175$x$70$ na podskupu za testiranje}
-\label{score:single_hand_175x70_tpfptnfn_test}
-\begin{tabular}{|c|c|c|}
-\hline
-\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
-0                                & 291 & 6 \\ \hline
-1                                & 169 & 128 \\ \hline
-\end{tabular}
-\end{table}
+
 \noindent Tablica \ref{score:single_hand_175x70} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
-Tablice \ref{score:single_hand_175x70_tpfptnfn_train}, \ref{score:single_hand_175x70_tpfptnfn_valid} i \ref{score:single_hand_175x70_tpfptnfn_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matrice zabune.
+Tablica \ref{score:single_hand_175x70_tpfptnfn} prikazuje odnos predikcija modela i stvarnih oznaka kroz matrice zabune.
 
 \begin{figure}[H]
 \centering
@@ -1137,58 +1119,103 @@ Tablice \ref{score:single_hand_175x70_tpfptnfn_train}, \ref{score:single_hand_17
 \end{figure}
 \noindent Na slici \ref{img:single_hand_scale025_acc_ap} vidljivo je kretanje točnosti, preciznosti i odziva po epohama na podskupu za validaciju.
 
-Vidljivo je kako se tek na rezoluciji $175$x$70$ pojavljuje značajniji pad performansi. 
-Iz tog razloga se za eksperimente nad sekvencama slika (zbog veće memorijske zahtjevnosti) koriste rezolucije pojedinih slika $350$x$140$.
+\subsection{Analiza rezultata}
+Svrha niza eksperimenata na slikama s diskriminativnim oznakama bila je utvrditi najnižu rezoluciju na kojoj je performansa zadovoljavajuća.
+Rezolucija ulaznih slika bitan je faktor za daljnje eksperimente jer je učenje mnogo brže na slikama niže rezolucije i moguće je koristiti veće mini grupe za učenje.
+Odabir rezolucije ulaznih slika također je bitan faktor zbog toga će učenje na sekvencama slika biti memorijski mnogo zahtjevnije.
+\begin{table}[H]
+\centering
+\caption{Rezultati na podskupu za testiranje}
+\label{score:single_hand_test_resolutions}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+rezolucija slika & točnost & preciznost & odziv & prosječna preciznost \\ \hline
+700x280          &     0.93    &   0.88         &   1.0    &       0.99               \\ \hline
+525x210          &    0.98     &    0.97        &   0.99    &       1.0               \\ \hline
+350x140          &     0.98    &    0.96        &   0.99    &        0.99              \\ \hline
+175x70           &    0.87     &    0.84        &   0.90    &      0.92                \\ \hline
+\end{tabular}
+\end{table}
+Tablica \ref{score:single_hand_test_resolutions} prikazuje performanse modela na podskupu za testiranje s ulaznim slikama različitih rezolucija.
+Rezulati pokazuju kako je najniža rezolucija na kojoj su performanse modela i dalje visoke $350$x$140$. 
+Eksperimenti koji koriste sekvence slika iz tog će razloga koristiti ulazne slike na toj rezoluciji.
 
-\section{Klasifikacija pojedinačnih slika označenih konzistentno s projektom FTTS iRAP na originalnoj rezoluciji}
-Za razliku od prethodnih eksperimenata, ovaj eksperiment je proveden na skupu podataka označenom konzistentno sa sustavom FTTS iRAP.
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.55]{images/pr_350_140.png}
+\caption{Graf ovisnosti preciznosti i odziva}
+\label{img:pr_350_140}
+\end{figure}
+Slika \ref{img:pr_350_140} prikazuje graf ovisnosti preciznosti i odziva za model koji koristi ulazne slike rezolucije $350$x$140$.
+
+Pogreške modela na podskupu za testiranje su vrlo slične te su u nastavku prikazani tipovi pogrešaka.
+Model koji radi s ulaznim podacima rezolucije $175$x$70$ izuzet je iz analize pogrešaka jer je eksperimentima pokazano da na toj rezoluciji performanse znatno padaju zbog nedovoljno informacija na temelju kojih bi model donio ispravne odluke.
+
+\subsubsection{Lažni pozitivi \engl{false positives}}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{images/single_false_positive1.png}
+\caption{Lažni pozitiv s diskriminativnim uzorkom (slika preuzeta s \citep{url:ftts_irap})}
+\label{img:single_false_positive1}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{images/single_false_positive2.png}
+\caption{Lažni pozitiv s krajnjom lijevom trakom različite boje (slika preuzeta s \citep{url:ftts_irap})}
+\label{img:single_false_positive2}
+\end{figure}
+Slika \ref{img:single_false_positive1} prikazuje sliku na kojoj se pojavljuje uzorak vrlo sličan uzorku prema kojem su označene pozitivne slike te je to vjerojatan uzrok krive klasifikacije.
+Riječ je o slici koja je označena kao negativ jer se karakteristični uzorak pojavljuje na razdvajanju trakova, a na pozitivnim slikama se uzorak pojavljuje na pripajanju.
+Slika \ref{img:single_false_positive2} prikazuje sliku na kojoj se krajnje lijevi trak bojom i strukturom razlikuje od preostalih trakova. 
+Razlika krajnjeg lijevog traka moguće je utjecala na odluku modela.
+Preostali lažni pozitivi su uglavnom slični navedenima.
+
+\subsubsection{Lažni negativi \engl{false negatives}}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{images/single_false_negative.png}
+\caption{Lažni negativ s uzdignutim pripajanjem (slika preuzeta s \citep{url:ftts_irap})}
+\label{img:single_false_negative}
+\end{figure}
+Slika \ref{img:single_false_negative} prikazuje sliku koju su svi modeli klasificirali kao negativnu.
+Razlog moguće krive klasifikacije jest što je cesta koja se priključuje slijeva uzdignuta te karakteristični diskriminativni uzorak nije raspoređen kao na ostalim pozitivnim slikama.
+
+
+\section{Klasifikacija pojedinačnih slika s oznakama iz sustava FTTS iRAP}
+Za razliku od prethodnih eksperimenata, ovaj eksperiment je proveden na skupu podataka s oznakama iz sustava FTTS iRAP.
 Eksperiment je proveden na pojedinačnim slikama rezolucije $700$x$280$ kako bi se u daljnjim eksperimentima moglo usporediti poboljšava li se rezultat uvođenjem dodatnih informacija sa sekvencom slika koje prethode slici za koju je određena oznaka prisutnosti atributa pripajanja.
 
 \begin{table}[H]
 \centering
-\caption{Statistički rezultati}
-\label{score:single_irap}
-\begin{tabular}{|c|c|c|c|c|}
-\hline
-podskup podataka      & točnost & preciznost & odziv & prosječna preciznost \\ \hline
-podskup za učenje     & 0.95     & 0.95        & 0.95  & 0.99  \\ \hline
-podskup za validaciju & 0.88     & 0.92        & 0.83  & 0.93 \\ \hline
-podskup za testiranje & 0.82     & 0.87          & 0.76 & 0.90 \\ \hline
+\caption{Rezultati}
+\label{score:single_hand_175x70}
+\begin{tabular}{c|c|c|c|c|}
+\cline{2-5}
+                                            & točnost & preciznost & odziv & prosječna preciznost \\ \hline
+\multicolumn{1}{|c|}{podskup za učenje}     & 0.88       & 0.92        & 0.83     &           0.93           \\ \hline
+\multicolumn{1}{|c|}{podskup za validaciju} & 0.89       & 0.90        & 0.88     &            0.96          \\ \hline
+\multicolumn{1}{|c|}{podskup za testiranje} & 0.87       & 0.84        & 0.90     &            0.92          \\ \hline
 \end{tabular}
 \end{table}
+
 \begin{table}[H]
 \centering
-\caption{Odnos predikcija modela i stvarnih oznaka na podskupu za učenje}
-\label{score:single_irap_train}
-\begin{tabular}{|c|c|c|}
-\hline
-\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
-0                                & 3572 & 205 \\ \hline
-1                                & 173 & 3604 \\ \hline
+\caption{Odnos predikcija modela i stvarnih oznaka}
+\label{score:single_hand_175x70_tpfptnfn}
+\begin{tabular}{ccccllll}
+\multicolumn{1}{l}{}                                         &                                                                      & \multicolumn{2}{c}{}                                & \multicolumn{2}{c}{}                        & \multicolumn{2}{c}{}                        \\ \hhline{~---}
+\multicolumn{1}{l|}{}                                        & \multicolumn{1}{c|}{\diagbox{stvarna oznaka}{predikcija modela}} & \multicolumn{1}{c|}{0}   & \multicolumn{1}{c|}{1}   & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} \\ \hhline{-===}
+\multicolumn{1}{|c|}{\multirow{2}{*}{podskup za učenje}}     & \multicolumn{1}{c|}{0}                                               & \multicolumn{1}{c|}{897} & \multicolumn{1}{c|}{1}   & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} \\ \hhline{~---}
+\multicolumn{1}{|c|}{}                                       & \multicolumn{1}{c|}{1}                                               & \multicolumn{1}{c|}{0}   & \multicolumn{1}{c|}{898} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} \\ \hhline{====}
+\multicolumn{1}{|c|}{\multirow{2}{*}{podskup za validaciju}} & \multicolumn{1}{c|}{0}                                               & \multicolumn{1}{c|}{282} & \multicolumn{1}{c|}{31}   &                      &                      &                      &                      \\ \hhline{~---}
+\multicolumn{1}{|c|}{}                                       & \multicolumn{1}{c|}{1}                                               & \multicolumn{1}{c|}{39}  & \multicolumn{1}{c|}{274} &                      &                      &                      &                      \\ \hhline{====}
+\multicolumn{1}{|c|}{\multirow{2}{*}{podskup za testiranje}} & \multicolumn{1}{c|}{0}                                               & \multicolumn{1}{c|}{247} & \multicolumn{1}{c|}{50}   &                      &                      &                      &                      \\ \hhline{~---}
+\multicolumn{1}{|c|}{}                                       & \multicolumn{1}{c|}{1}                                               & \multicolumn{1}{c|}{29}  & \multicolumn{1}{c|}{268} &                      &                      &                      &                      \\ \hhline{----}
 \end{tabular}
 \end{table}
-\begin{table}[H]
-\centering
-\caption{Odnos predikcija modela i stvarnih oznaka na podskupu za validaciju}
-\label{score:single_irap_valid}
-\begin{tabular}{|c|c|c|}
-\hline
-\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
-0                                & 800 & 60 \\ \hline
-1                                & 149 & 711 \\ \hline
-\end{tabular}
-\end{table}
-\begin{table}[H]
-\centering
-\caption{Odnos predikcija modela i stvarnih oznaka na podskupu za testiranje}
-\label{score:single_irap_test}
-\begin{tabular}{|c|c|c|}
-\hline
-\diagbox{stvarna oznaka}{predikcija modela} & 0  & 1  \\ \hline
-0                                & 731 & 90 \\ \hline
-1                                & 198 & 623 \\ \hline
-\end{tabular}
-\end{table}
+
 \noindent Tablica \ref{score:single_irap} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
 Tablice \ref{score:single_irap_train}, \ref{score:single_irap_valid} i \ref{score:single_irap_test} prikazuju odnos predikcija modela i stvarnih oznaka kroz matrice zabune.
 
@@ -1416,7 +1443,7 @@ Proveden je eksperiment na pojedinačnim i na sekvencama slika kako bi se ustano
 \subsection{Analiza rezultata na ručno označenim slikama}
 Eksperimentima na ručno označenim slikama utvrđeno je da je rezolucija slika $350$x$140$ pogodna za korištenje u sekvencijalnom pristupu jer je to najniža rezolucija na kojoj se ne događa pad performanse.
 
-Pad performanse može se objasniti time što je prednji dio modela VGG-16 koji služi za izlučivanje značajki originalno naučen na slikama rezolucije $224$x$224$. 
+Pad performanse može se objasniti time što je prednji dio arhitekture VGG-16 koji služi za izlučivanje značajki originalno naučen na slikama rezolucije $224$x$224$. 
 Najveći pad performanse vidljiv je na mjeri odziva -- zbog manje rezolucije slika model ne uspijeva uvijek prepoznati diskriminativni dio na temelju kojeg bi donio odluku da je slika pozitivna.
 
 \subsection{Analiza rezultata na slikama označenima konzistentno sa sustavom FTTS iRAP}

@@ -2,7 +2,7 @@
 \contentsline {chapter}{\numberline {1}Uvod}{1}
 \contentsline {chapter}{\numberline {2}Skupovi podataka i njihovo kori\IeC {\v s}tenje}{3}
 \contentsline {section}{\numberline {2.1}Video snimke projekta FTTS iRAP}{4}
-\contentsline {section}{\numberline {2.2}Skup podataka s eksperimentalnim oznakama}{5}
+\contentsline {section}{\numberline {2.2}Skup podataka s diskriminativnim oznakama}{5}
 \contentsline {section}{\numberline {2.3}Skup podataka s oznakama iz sustava FTTS iRAP}{6}
 \contentsline {chapter}{\numberline {3}Metode, modeli i postupci}{10}
 \contentsline {section}{\numberline {3.1}Unakrsna entropija kao funkcija gubitka}{11}
@@ -29,19 +29,22 @@
 \contentsline {subsection}{\numberline {3.5.2}Postupak kreiranja slika s oznakama iz sustava FTTS iRAP}{30}
 \contentsline {chapter}{\numberline {4}Eksperimenti i rezultati}{32}
 \contentsline {section}{\numberline {4.1}Na\IeC {\v c}in u\IeC {\v c}enja i testiranja u eksperimentima}{32}
-\contentsline {section}{\numberline {4.2}Klasifikacija ru\IeC {\v c}no ozna\IeC {\v c}enih slika na razli\IeC {\v c}itim rezolucijama}{34}
+\contentsline {section}{\numberline {4.2}Klasifikacija slika s diskriminativnim oznakama na razli\IeC {\v c}itim rezolucijama}{34}
 \contentsline {subsection}{\numberline {4.2.1}Rezultati na rezoluciji 700x280}{35}
 \contentsline {subsection}{\numberline {4.2.2}Rezultati na rezoluciji 525x210}{37}
 \contentsline {subsection}{\numberline {4.2.3}Rezultati na rezoluciji 350x140}{39}
 \contentsline {subsection}{\numberline {4.2.4}Rezultati na rezoluciji 175x70}{41}
-\contentsline {section}{\numberline {4.3}Klasifikacija pojedina\IeC {\v c}nih slika ozna\IeC {\v c}enih konzistentno s projektom FTTS iRAP na originalnoj rezoluciji}{43}
-\contentsline {section}{\numberline {4.4}Klasifikacija sekvenci slika ozna\IeC {\v c}enih konzistentno s projektom FTTS iRAP koriste\IeC {\'c}i vremensko-prostorno sa\IeC {\v z}imanje}{45}
-\contentsline {section}{\numberline {4.5}Klasifikacija sekvenci slika ozna\IeC {\v c}enih konzistentno s projektom FTTS iRAP koriste\IeC {\'c}i povratne LSTM \IeC {\'c}elije}{47}
-\contentsline {section}{\numberline {4.6}Klasifikacija sekvenci slika ozna\IeC {\v c}enih konzistentno s projektom FTTS iRAP koriste\IeC {\'c}i vremenski potpuno povezani sloj}{49}
-\contentsline {section}{\numberline {4.7}Analiza rezultata}{51}
-\contentsline {subsection}{\numberline {4.7.1}Analiza rezultata na ru\IeC {\v c}no ozna\IeC {\v c}enim slikama}{51}
-\contentsline {subsection}{\numberline {4.7.2}Analiza rezultata na slikama ozna\IeC {\v c}enima konzistentno sa sustavom FTTS iRAP}{51}
-\contentsline {subsubsection}{La\IeC {\v z}ni pozitivi (engl.~\emph {false positives})}{52}
-\contentsline {subsubsection}{La\IeC {\v z}ni negativi (engl.~\emph {false negatives})}{54}
-\contentsline {chapter}{\numberline {5}Zaklju\IeC {\v c}ak}{58}
-\contentsline {chapter}{Literatura}{59}
+\contentsline {subsection}{\numberline {4.2.5}Analiza rezultata}{43}
+\contentsline {subsubsection}{La\IeC {\v z}ni pozitivi (engl.~\emph {false positives})}{44}
+\contentsline {subsubsection}{La\IeC {\v z}ni negativi (engl.~\emph {false negatives})}{45}
+\contentsline {section}{\numberline {4.3}Klasifikacija pojedina\IeC {\v c}nih slika s oznakama iz sustava FTTS iRAP}{46}
+\contentsline {section}{\numberline {4.4}Klasifikacija sekvenci slika s oznakama iz sustava FTTS iRAP koriste\IeC {\'c}i vremensko-prostorno sa\IeC {\v z}imanje}{48}
+\contentsline {section}{\numberline {4.5}Klasifikacija sekvenci slika s oznakama iz sustava FTTS iRAP koriste\IeC {\'c}i povratne LSTM \IeC {\'c}elije}{50}
+\contentsline {section}{\numberline {4.6}Klasifikacija sekvenci slika s oznakama iz sustava FTTS iRAP koriste\IeC {\'c}i vremenski potpuno povezani sloj}{52}
+\contentsline {section}{\numberline {4.7}Analiza rezultata}{54}
+\contentsline {subsection}{\numberline {4.7.1}Analiza rezultata na slikama s oznakama iz sustava FTTS iRAP}{54}
+\contentsline {subsection}{\numberline {4.7.2}Analiza rezultata na sekvencama slika s oznakama iz sustava FTTS iRAP}{54}
+\contentsline {subsubsection}{La\IeC {\v z}ni pozitivi (engl.~\emph {false positives})}{55}
+\contentsline {subsubsection}{La\IeC {\v z}ni negativi (engl.~\emph {false negatives})}{57}
+\contentsline {chapter}{\numberline {5}Zaklju\IeC {\v c}ak}{61}
+\contentsline {chapter}{Literatura}{62}
