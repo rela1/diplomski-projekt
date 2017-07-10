@@ -20,7 +20,7 @@ if __name__ == '__main__':
   dataset_root = sys.argv[2]
   model_path = sys.argv[3]
   resolution_factor = float(sys.argv[4])
-  add_geolocations = eval(sys.argv[4])
+  add_geolocations = eval(sys.argv[5])
 
   dataset = SingleImageDataset(dataset_root, BATCH_SIZE, INPUT_SHAPE, add_geolocations=add_geolocations, is_training=True)
 
