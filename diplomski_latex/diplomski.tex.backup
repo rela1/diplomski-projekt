@@ -62,7 +62,7 @@ Upravo zbog vrlo dobrih rezultata koje duboki modeli ostvaruju, sve više zadata
 Dobri rezultati dubokih modela na području računalnog vida svakako otvaraju mnoge primjene računala u praktičnim problemima. 
 Jedan takav problem, kojim se ovaj rad bavi, jest inspekcija kvaliteta cesta. 
 Organizacija iRAP \engl{International Road Assessment Programe} ima za cilj upravo inspekciju kvaliteta ceste pridruživanjem različitih sigurnosnih atributa segmentima prometnica.
-Zadatak se obavlja tako da se na temelju video snimaka prometnica uz geolokacije, pridružene video snimkama, određuje prisutnost sigurnosnog atributa na tom dijelu prometnice.
+Zadatak se obavlja tako da se na temelju video snimaka prometnica uz geolokacije, pridružene videosnimkama, određuje prisutnost sigurnosnog atributa na tom dijelu prometnice.
 Na temelju prisutnih atributa moguće je procijeniti sigurnost promatranog dijela prometnice, što je vrlo korisno.
 
 Trenutno, pridruživanje atributa segmentima prometnica obavljaju ljudi. 
@@ -79,8 +79,8 @@ Završni dio rada opisuje provedene eksperimente i dobivene rezultate prilikom k
  
 Prepoznavanje prisutnosti sigurnosnih atributa možemo okarakterizirati kao binarnu klasifikaciju čiji konačni izlaz nam govori je li atribut prisutan u sceni ili nije.
 Standard organizacije iRAP propisuje 78 sigurnosnih atributa \citep{man:ftts_irap_attributes} koje je moguće pridružiti segmentima prometnica.
-Neki od njih su: tip križanja, ograničenje brzine, udaljenost i tip objekata pored ceste, broj prometnih traka i tako dalje.
-Pojedine atribute moguće je detektirati u statičnim slikama, dok je neke moguće detektirati samo iz video snimke -- primjerice, da bismo odredili ograničenje brzine nekog segmenta prometnice, potrebna nam je video snimka cijelog tog segmenta.
+Neki od njih su: tip križanja, ograničenje brzine, udaljenost i tip objekata pored ceste i broj prometnih traka.
+Pojedine atribute moguće je detektirati u statičnim slikama, dok je neke moguće detektirati samo iz videosnimke -- primjerice, da bismo odredili ograničenje brzine nekog segmenta prometnice, potrebna nam je videosnimka cijelog tog segmenta.
 
 Modeli dubokog učenja danas uspješno rješavaju probleme klasifikacije. Rješavanje takvog problema temelji se na odabiru prikladnog modela uz dovoljan broj označenih podataka. 
 Ključna stvar prilikom rješavanja problema klasifikacije jest izvlačenje znanja iz označenih podataka koje model koristi. Takav postupak nazivamo nadziranim učenjem \citep{book:deeplearningbook}. 
@@ -94,16 +94,16 @@ Skup podataka možemo podijeliti na 3 podskupa koji imaju različite uloge:
 \end{itemize}
 
 
-\section{Video snimke projekta FTTS iRAP}
+\section{Videosnimke projekta FTTS iRAP}
 
 Kao osnova za kreiranje skupova podataka, korištena je stranica sustava FTTS iRAP \citep{url:ftts_irap}. 
 Stranica nudi sučelje u kojem je moguće pregledavati, uređivati i prikupljati sigurnosne atribute prisutne na segmentima prometnica.
-Uz same atribute dodijeljene segmentima prometnica, dostupne su i georeferencirane video snimke -- moguć je pregled video snimke koja geolokacijom odgovara segmentu.
-Video snimke snimljene su iz automobila koji se kretao po engleskim autocestama te ih je moguće, uz pripadajuće informacije o njihovim geolokacijama, slobodno preuzeti sa stranice \citep{url:ftts_irap}.
+Uz same atribute dodijeljene segmentima prometnica, dostupne su i georeferencirane videosnimke -- moguć je pregled videosnimke koja geolokacijom odgovara segmentu.
+Videosnimke snimljene su iz automobila koji se kretao po engleskim autocestama te ih je moguće, uz pripadajuće informacije o njihovim geolokacijama, slobodno preuzeti sa stranice \citep{url:ftts_irap}.
 
-Sustav opisan u radu koristi georeferencirane video snimke s navedene stranice za učenje. Konkretno, kako je riječ o binarnoj klasifikaciji, potrebni su nam označeni podaci. 
-Atribut koji sustav prepoznaje jest pripajanje \engl{merge lane} (tip križanja). Kako je riječ o video snimkama s engleskih cesta, pripajanja koja se prepoznaju bit će s lijeve strane.
-Definicija atributa pripajanje prema \citep{man:ftts_irap_coding_manual} jest sljedeća -- promet koji prilazi sa strane pripaja se preko linije za pripajanje na cestu kojoj se atribut dodjeljuje.
+Sustav opisan u radu koristi georeferencirane videosnimke s navedene stranice za učenje. Konkretno, kako je riječ o binarnoj klasifikaciji, potrebni su nam označeni podaci. 
+Atribut koji sustav prepoznaje jest pripajanje \engl{merge lane} (tip križanja). Kako je riječ o videosnimkama s engleskih cesta, pripajanja koja se prepoznaju bit će s lijeve strane.
+Definicija atributa ``pripajanje trakova'' prema pravilima organizacije \citep{man:ftts_irap_coding_manual} jest sljedeća: promet koji prilazi sa strane pripaja se preko linije za pripajanje na cestu kojoj se atribut dodjeljuje.
 
 \begin{figure}[H]
 \centering
@@ -112,9 +112,9 @@ Definicija atributa pripajanje prema \citep{man:ftts_irap_coding_manual} jest sl
 \label{img:merge_lane_symbolic}
 \end{figure}
 
-\noindent Slika \ref{img:merge_lane_symbolic} simbolički prikazuje što se konkretno smatra pripajanjem prilikom pridjeljivanja sigurnosnog atributa pripajanja.
+\noindent Slika \ref{img:merge_lane_symbolic} simbolički prikazuje što se konkretno smatra pripajanjem prilikom pridruživanja sigurnosnog atributa pripajanja.
 Prilikom označavanja, eksperti za označavanje kao pripajanje označavaju onaj dio prometnice u kojem se automobil iz traka prometnice koja se pripaja mora prebaciti u trak prometnice kojoj se pripaja.
-Kao pripajanje se promatra upravo taj dio prometnice jer predstavlja opasnost zbog toga što vozač prilikom ubacivanja mora promijeniti trak kojim prometuje.
+Kao pripajanje se promatra upravo taj dio prometnice, jer predstavlja opasnost zbog toga što vozač prilikom ubacivanja mora promijeniti trak kojim prometuje.
 
 Iz georeferenciranih video snimaka kreirana su dva tipa skupova podataka:
 \begin{itemize}
@@ -153,21 +153,21 @@ Skup podataka s diskriminativnim oznakama dobiven je obradom 7 video snimaka pre
 Ukupan broj dobivenih označenih slika s raspodjelom u podskupove je sljedeći:
 \begin{itemize}
  \item podskup za učenje -- 1796 slika, od toga 898 pozitivnih
- \item podskp za validaciju -- 626 slika, od toga 313 pozitivnih
+ \item podskup za validaciju -- 626 slika, od toga 313 pozitivnih
  \item podskup za testiranje -- 594 slike, od toga 297 pozitivnih
 \end{itemize}
 
-\noindent Skup je kreiran na način da se iz svake video snimke uzorkuju pozitivni primjeri (primjeri na kojima je prisutna diskriminativna značajka atributa pripajanja) te se zatim uzorkuje isti broj negativnih primjera na kojima diskriminativna značajka karakterističnog bijelog uzorka nije prisutna.
+\noindent Skup je kreiran na način da se iz svake videosnimke uzorkuju pozitivni primjeri (primjeri na kojima je prisutna diskriminativna značajka atributa pripajanja) te se zatim uzorkuje isti broj negativnih primjera na kojima diskriminativna značajka karakterističnog bijelog uzorka nije prisutna.
 
 \section{Skup podataka s oznakama iz sustava FTTS iRAP}
 U skupu podataka s diskriminativnim oznakama, pozitivne i negativne oznake određene su na temelju prisutnosti diskriminativnog uzorka u sceni. 
 Takav način označavanja nije konzistentan s načinom označavanja kakav provode eksperti za označavanje u sustavu FTTS iRAP na stranici \citep{url:ftts_irap}.
 Glavni cilj rada jest razviti sustav koji bi mogao automatski određivati prisutnost sigurnosnog atributa na prometnoj sceni. 
-Za učenje je stoga potrebno kreirati skup podataka koji je označen konzistentno s pravilima koja propisuje iRAP, odnosno koji će koristiti oznake iz sustava FTTS iRAP.
+Za učenje je, stoga, potrebno kreirati skup podataka koji je označen konzistentno s pravilima koja propisuje iRAP, odnosno koji će koristiti oznake iz sustava FTTS iRAP.
 
 U dogovoru s kreatorima stranice \citep{url:ftts_irap}, izvučeni su podaci geolokacija svih segmenata prometnica na kojima je prisutan atribut pripajanja. 
 Segmenti na kojima se određuje je li sigurnosni atribut prisutan ili nije dugački su $10$m.
-Također, moguće je i otvoriti video snimku koja prikazuje trenutak kada započinje segment s atributom pripajanja.
+Također, moguće je i otvoriti videosnimku koja prikazuje trenutak kada započinje segment s atributom pripajanja.
 
 \begin{figure}[H]
 \centering
@@ -179,7 +179,7 @@ Također, moguće je i otvoriti video snimku koja prikazuje trenutak kada započ
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.5]{images/video_merge_lane_irap.png}
-\caption{Prikaz video snimke s označenim segmentom atributa pripajanja sa slike \ref{img:sattelite_merge_lane_irap} (slika preuzeta s \citep{url:ftts_irap})}
+\caption{Prikaz videosnimke s označenim segmentom atributa pripajanja sa slike \ref{img:sattelite_merge_lane_irap} (slika preuzeta s \citep{url:ftts_irap})}
 \label{img:video_merge_lane_irap}
 \end{figure}
 
@@ -193,7 +193,7 @@ Također, moguće je i otvoriti video snimku koja prikazuje trenutak kada započ
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.5]{images/video_merge_lane_irap2.png}
-\caption{Prikaz video snimke s označenim segmentom atributa pripajanja sa slike \ref{img:sattelite_merge_lane_irap2} (slika preuzeta s \citep{url:ftts_irap})}
+\caption{Prikaz videosnimke s označenim segmentom atributa pripajanja sa slike \ref{img:sattelite_merge_lane_irap2} (slika preuzeta s \citep{url:ftts_irap})}
 \label{img:video_merge_lane_irap2}
 \end{figure}
 
@@ -207,19 +207,19 @@ Također, moguće je i otvoriti video snimku koja prikazuje trenutak kada započ
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.5]{images/video_merge_lane_irap3.png}
-\caption{Prikaz video snimke s označenim segmentom atributa pripajanja sa slike \ref{img:sattelite_merge_lane_irap3} (slika preuzeta s \citep{url:ftts_irap})}
+\caption{Prikaz videosnimke s označenim segmentom atributa pripajanja sa slike \ref{img:sattelite_merge_lane_irap3} (slika preuzeta s \citep{url:ftts_irap})}
 \label{img:video_merge_lane_irap3}
 \end{figure}
 
 Promotrimo slike \ref{img:sattelite_merge_lane_irap}, \ref{img:sattelite_merge_lane_irap2} i \ref{img:sattelite_merge_lane_irap3}. Na slikama je crvenom linijom označen segment koji je na stranici \citep{url:ftts_irap} prema pravilima koje propisuje iRAP označen kao pripajanje. 
 Već sa satelitske snimke je vidljivo kako bi moglo biti problema prilikom detekcije tog atributa zbog nedostatka diskriminativnih značajki koje bi to mogle olakšati.
-Slike \ref{img:video_merge_lane_irap}, \ref{img:video_merge_lane_irap2} i \ref{img:video_merge_lane_irap3} redom prikazuju isječke iz video snimaka u trenucima kada započinju segmenti sa slika \ref{img:sattelite_merge_lane_irap}, \ref{img:sattelite_merge_lane_irap2} i \ref{img:sattelite_merge_lane_irap3} označeni kao pripajanja. 
+Slike \ref{img:video_merge_lane_irap}, \ref{img:video_merge_lane_irap2} i \ref{img:video_merge_lane_irap3} redom prikazuju isječke iz videosnimaka u trenutcima kada započinju segmenti sa slika \ref{img:sattelite_merge_lane_irap}, \ref{img:sattelite_merge_lane_irap2} i \ref{img:sattelite_merge_lane_irap3} označeni kao pripajanja. 
 Iz same slike je vrlo teško odrediti da je u tom trenutku prisutan atribut pripajanja što pokazuje težinu zadatka koji pokušavamo riješiti.
 
-Problem nedostatka informacije možemo riješiti tako da odluku ne temeljimo na jednoj slici nego na sekvenci slika koje su prethodile trenutnoj. 
+Problem nedostatka informacije možemo riješiti tako da odluku ne temeljimo na jednoj slici, nego na sekvenci slika koje su prethodile trenutnoj. 
 Koristeći sekvencu slika koja prethodi slici označenoj kao početak segmenta označenog kao pripajanje, model će biti u mogućnosti lakše donijeti odluku zbog prisutnosti diskriminativne značajke (karakteristične bijele trake u uzorku).
 Prisutnost diskriminativne značajke u sekvenci koja prethodi početku pripajanja vidljiva je i iz satelitske snimke.
-Skup podataka s oznakama iz sustava FTTS iRAP iz tog razloga ne sadrži statične, pojedinačne slike nego sekvence slika.
+Skup podataka s oznakama iz sustava FTTS iRAP iz tog razloga ne sadrži statične, pojedinačne slike, nego sekvence slika.
 
 Skup podataka s oznakama iz sustava FTTS iRAP dobiven je obradom 100 videa preuzetih sa stranice \citep{url:ftts_irap}. 
 Ukupan broj dobivenih označenih sekvenci s raspodjelom u podskupove je sljedeći:
@@ -229,14 +229,14 @@ Ukupan broj dobivenih označenih sekvenci s raspodjelom u podskupove je sljedeć
  \item podskup za testiranje -- 1642 sekvenci, od toga 821 pozitivnih
 \end{itemize}
 
-\noindent Skup je kreiran na način da se iz svake video snimke uzorkuju pozitivni primjeri na sljedeći način: 
+\noindent Skup je kreiran na način da se iz svake videosnimke uzorkuju pozitivni primjeri na sljedeći način: 
 \begin{itemize}
- \item odrede se rasponi sličica video snimke koji su prema stranici \citep{url:ftts_irap} označeni kao pozitivni (sadrže atribut pripajanja)
- \item za svaku sličicu označenu kao pozitivnu uzorkuje se i nekoliko sličica unatrag koje će zajedno činiti jednu pozitivnu sekvencu
+ \item odrede se rasponi sličica videosnimke koji su prema stranici \citep{url:ftts_irap} označeni kao pozitivni (sadrže atribut pripajanja)
+ \item za svaku sličicu označenu kao pozitivnu, uzorkuje se i nekoliko sličica unatrag, koje će zajedno činiti jednu pozitivnu sekvencu
 \end{itemize}
 
 \noindent Na sličan način uzorkuje se i jednak broj negativnih primjera za one sličice za koje je prema stranici \citep{url:ftts_irap} označeno da ne sadrže atribut pripajanja.
-Cjelokupni postupak kreiranja skupa podataka uz konkretne podatke o duljini sekvence bit će dan u nastavku rada.
+Cjelokupni postupak kreiranja skupa podataka uz konkretne podatke o duljini sekvence bit će opisan u nastavku rada.
 
 \chapter{Metode, modeli i postupci} \label{chapter:methods}
 Sustav koji ovaj rad opisuje temelji se na algoritmima dubokog učenja. 
@@ -247,10 +247,10 @@ Model koji rješava zadatak tada možemo prikazati sljedećom funkcijom:
  \mathbf{y} = f^*(\mathbf{x}; \boldsymbol{\phi}),
 \end{equation}
 
-\noindent gdje je $f^*$ funkcija koju želimo naučiti na podacima. Argumenti funkcije $f^*$ su podatak $\mathbf{x}$ (slika ili sekvenca slika -- isječak video snimke) te skup slobodnih parametara, $\boldsymbol{\phi}$.
-Vrijednost funkcije $f^*$, odnosno $\mathbf{y}$ predstavlja upravo željenu informaciju koja nas zanima -- vjerojatnost da je atribut pripajanja prisutan, odnosno vjerojatnost da atribut pripajanja nije prisutan na prometnoj sceni koja odgovara ulaznom vektoru podataka, $\mathbf{x}$.
+\noindent gdje je $f^*$ funkcija koju želimo naučiti na podacima. Argumenti funkcije $f^*$ su podatak $\mathbf{x}$ (slika ili sekvenca slika -- isječak videosnimke) te skup slobodnih parametara, $\boldsymbol{\phi}$.
+Vrijednost funkcije $f^*$, odnosno $\mathbf{y}$, predstavlja upravo željenu informaciju koja nas zanima -- vjerojatnost da je atribut pripajanja prisutan, odnosno vjerojatnost da atribut pripajanja nije prisutan na prometnoj sceni koja odgovara ulaznom vektoru podataka, $\mathbf{x}$.
 
-Modeli dubokog učenja pretpostavljaju kompozitnu strukturu ulaznih podataka -- npr. čovjek je građen od glave i tijela, glava je građena od očiju, usta, nosa i ušiju, oči su građene od rožnice, zjenice i šarenice, i tako dalje.
+Modeli dubokog učenja pretpostavljaju kompozitnu strukturu ulaznih podataka -- npr. čovjek je građen od glave i tijela, glava je građena od očiju, usta, nosa i ušiju; oči su građene od rožnice, zjenice i šarenice; i tako dalje.
 Iz tog razloga se nad ulaznim podacima obavljaju višestruke linearne i nelinearne operacije \citep{pdf:duboko_0}.
 Funkciju $f^*$ stoga možemo prikazati i na sljedeći način:
 $f^*(\mathbf{x}; \boldsymbol{\phi})=f^{(n)}(f^{(n-1)}(...f^{(2)}(f^{(1)}(\mathbf{x}, \boldsymbol{\phi}), \boldsymbol{\phi}), \boldsymbol{\phi}), \boldsymbol{\phi})$ \citep{book:deeplearningbook}.
@@ -307,19 +307,19 @@ Korekciju parametara moguće je vršiti akumulirajući gradijent parametara po s
 Akumulirani gradijent se zatim koristi za korekciju parametara prema izrazu \ref{eq:gradient_descent_neural}. U tom slučaju govorimo o klasičnom gradijentnom spustu.
 
 Varijanta u kojoj se gradijent izračunat u svakom primjeru odmah koristi za korekciju parametara naziva se stohastički gradijentni spust. 
-Stohastičnost varijante očituje se u tome što ustvari ne računamo stvarni gradijent funkcije gubitka $C$, nego funkcije $C_\mathbf{x}$ koja definira gubitak nad jednim određenim primjerom $\mathbf{x}$ iz skupa za učenje.
+Stohastičnost varijante očituje se u tome što ustvari ne računamo stvarni gradijent funkcije gubitka $C$, nego funkcije $C_\mathbf{x}$, koja definira gubitak nad jednim određenim primjerom $\mathbf{x}$ iz skupa za učenje.
 Stohastički gradijentni spust pokazuje bolju otpornost na zaglavljivanje u lokalnim optimumima, ali i brže učenje zbog češće korekcije parametara.
 
-Varijanta u kojoj se gradijent akumulira nad određenim brojem primjera i zatim se koristi za korekciju parametara naziva se grupni \engl{mini-batch} gradijentni spust \citep{seminar:rela}.
+Varijanta u kojoj se gradijent akumulira nad određenim brojem primjera, i zatim se koristi za korekciju parametara, naziva se gradijentni spust s mini grupama \engl{mini-batch} \citep{seminar:rela}.
 
 \subsection{Učenje postupkom Adam}
 Učenje postupkom Adam je varijanta postupka učenja klasičnim algoritmom gradijentnog spusta.
-Za potrebe učenja modela korištenog u ovom radu korišteno je učenje postupkom Adam zbog toga što je postupak robusniji i daje bolje rezultate u odnosu na klasični algoritam gradijentnog spusta \citep{article:adam}. 
+Za potrebe učenja modela upotrijebljenog u ovom radu upotrijebljeno je učenje postupkom Adam zbog toga što je postupak robusniji i daje bolje rezultate u odnosu na klasični algoritam gradijentnog spusta \citep{article:adam}. 
 
 Učenje postupkom Adam, za razliku od učenja klasičnim algoritmom gradijentnog spusta, kombinira dvije napredne tehnike prilikom korekcije parametara. 
 Algoritam kombinira metode momenta i adaptivnog pomaka što pospješuje učenje dubokih modela.
 
-Metoda momenta pomaže ubrzanju učenja na način da prilikom korekcije parametara modela u obzir uzima i iznos prethodne korekcije --- samo ime i analogija dolaze iz područja fizike pa metodu možemo poistovjetiti s tromosti tijela.
+Metoda momenta pomaže ubrzanju učenja na način da prilikom korekcije parametara modela u obzir uzima i iznos prethodne korekcije -- samo ime i analogija dolaze iz područja fizike pa metodu možemo poistovjetiti s tromosti tijela.
 Korekcija parametara se, u odnosu na izraz \ref{eq:gradient_descent_neural}, definira na sljedeći način:
 \begin{align}
 \mathbf{v}_{n+1} &= \alpha \mathbf{v}_{n} - \eta \cfrac{\partial C}{\partial \boldsymbol{\phi}} \\
@@ -329,10 +329,10 @@ Parametar $\alpha$ određuje jačinu momenta, odnosno utjecaj prethodne korekcij
 Osim ubrzanja učenja, moment pospješuje i otpornost na zaglavljivanje u lokalnim optimumima jer je moguće ``preskočiti'' lokalni optimum u koji bismo inače zaglavili slijepo prateći samo iznos gradijenta \citep{book:deeplearningbook} \citep{seminar:rela}.
 
 Metoda adaptivnog pomaka pretpostavlja da je stabilnost gradijenta ovisna o svakoj komponenti parametara koji se optimiraju zbog toga što promjena svake pojedine komponente parametara može drugačije utjecati na promjenu iznosa funkcije gubitka koja se optimira.
-Iz tog razloga je smisleno koristiti zasebne stope učenja za svaku od njih i automatski im mijenjati vrijednost kroz postupak učenja, ovisno o tome kako se pojedina komponenta gradijenta mijenja.
+Iz tog razloga, smisleno je koristiti zasebne stope učenja za svaku od njih i automatski im mijenjati vrijednost kroz postupak učenja, ovisno o tome kako se pojedina komponenta gradijenta mijenja.
 Konačan efekt jest da će se komponente parametara čije su parcijalne derivacije po funkciji gubitka vrlo visokih vrijednosti korigirati sa značajno manjim stopama učenja, a komponente parametara čije su parcijalne derivacije po funkciji gubitka relativno niskih vrijednosti, korigirat će se većim stopama učenja \citep{book:deeplearningbook} \citep{seminar:rela}.
 Efekt se postiže skaliranjem vrijednosti gradijenata akumuliranim eksponencijalnim pomičnim prosjekom \engl{exponential moving average} što je vidljivo u pseudokodu algoritma \ref{alg:adam}. 
-Takvim skaliranjem će gradijenti koji su veći po iznosu biti skalirani većim vrijednostima čime će se njihov konačan iznos biti kontroliran.
+Takvim skaliranjem će gradijenti koji su veći po iznosu biti skalirani većim vrijednostima čime će njihov konačan iznos biti kontroliran.
 
 \begin{algorithm}[H]
 \caption{Učenje postupkom Adam}
@@ -381,7 +381,7 @@ Razlog tomu je što želimo postići da male promjene vrijednosti na ulazu u bil
 Regularizacija L2 normom parametara je najčešće korištena zbog lakšeg izračuna izraza parcijalne derivacije za korak gradijentnog spusta.
 
 \section{Tipični slojevi dubokih modela za primjenu u računalnom vidu}
-Duboki modeli koji se koriste za primjenu u računalnom vidu tipično su građeni od nekoliko različitih slojeva koji imaju različite uloge.
+Duboki modeli, koji se koriste za primjenu u računalnom vidu, tipično su građeni od nekoliko različitih slojeva koji imaju različite uloge.
 Slojevi obavljaju različite operacije nad podacima i tako ostvaruju željenu konačnu funkcionalnost koja je potrebna da se obavi neki zadatak.
 
 \subsection{Potpuno povezani sloj}
@@ -394,7 +394,7 @@ Operacija koju obavlja potpuno povezani sloj definirana je na sljedeći način:
 \noindent gdje je $\mathbf{x}$ vektor ulaznih podataka, $g$ je aktivacijska funkcija, a  $\mathbf{y}$ je vektor izlaznih podataka. 
 Vektor ulaznih podataka obično se proširuje na oblik $\mathbf{x} = \begin{bmatrix} 1 & x_1 & x_2 & ... & x_n \end{bmatrix}^T$.
 Vrijednost $\mathbf{x}_1$ se fiksno postavlja na vrijednost $1$ iz razloga što želimo dozvoliti da model modelira pomak parametrima prvog stupca matrice $\mathbf{W}$.
-Primjetimo kako će upravo dimenzionalnost matrice $\mathbf{W}$ određivati dimenzionalnost vektora izlaznih podataka.
+Primijetimo kako će upravo dimenzionalnost matrice $\mathbf{W}$ određivati dimenzionalnost vektora izlaznih podataka.
 
 Aktivacijska funkcija $g$ djeluje po elementima vektora dobivenog operacijom matričnog množenja matrice $\mathbf{W}$ i vektora ulaznih podataka $\mathbf{x}$.
 Tipično se koriste nelinearne aktivacijske funkcije kako bismo dobili veću ekspresivnost dubokog modela.
@@ -416,10 +416,10 @@ Sigmoidalna aktivacijska funkcija i njena derivacija definirane su kao:
 
 \noindent Sigmoidalna aktivacijska funkcija preslikava ulaznu vrijednost na vrijednost iz intervala $\left< 0, 1\right>$. Sigmoidalna aktivacijska funkcija je derivabilna na cijeloj domeni i njenim korištenjem dobivamo nelinearne modele. 
 Slika \ref{img:sigmoid_graph} prikazuje graf sigmoidalne aktivacijske funkcije. 
-Iz njega je vidljivo kako će gradijent za većinu vrijednosti sigmoidalne funkcije biti vrlo niska zbog toga što je vrijednost sigmoidalne funkcije gotovo na cijeloj domeni u zasićenju \engl{saturating function} — asimptotski se približava vrijednosti 0 ili 1.
+Iz njega je vidljivo kako će gradijent za većinu vrijednosti sigmoidalne funkcije biti vrlo nizak zbog toga što je vrijednost sigmoidalne funkcije gotovo na cijeloj domeni u zasićenju \engl{saturating function} -- asimptotski se približava vrijednosti 0 ili 1.
 Kako je ranije navedeno, učenje modela obavljamo koristeći gradijentni spust funkcije gubitka po parametrima modela. 
-Uglavnom nizak iznos gradijenta utječe na to da će već u zadnjem, izlaznom sloju korekcije parametara modela biti vrlo male. 
-Kako izračun korekcija propagiramo unatrag, slojevi koji su sve dalje od završnog sloja imat će sve manje iznose korekcija što će uvelike utjecati na brzinu i kvalitetu učenja koje će se drastično smanjiti.
+Uglavnom nizak iznos gradijenta utječe na to da će već u zadnjem, izlaznom sloju, korekcije parametara modela biti vrlo male. 
+Kako izračun korekcija propagiramo unatrag, slojevi koji su sve dalje od završnog sloja imat će sve manje iznose korekcija, što će uvelike utjecati na brzinu i kvalitetu učenja, koje će se drastično smanjiti.
 Sigmoidalne aktivacijske funkcije se u praksi zato ne koriste u dubokim modelima \citep{seminar:rela}.
 
 \subsubsection{Po dijelovima linearna aktivacijska funkcija}
@@ -442,7 +442,7 @@ Po dijelovima linearna aktivacijska funkcija, ReLU \engl{Rectified Linear Unit} 
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.5]{images/relu_graph.png}
-\caption{Graf po dijelovima linearne aktivacijske funkcija}
+\caption{Graf po dijelovima linearne aktivacijske funkcije}
 \label{img:relu_graph}
 \end{figure}
 
@@ -450,7 +450,7 @@ Po dijelovima linearna aktivacijska funkcija, ReLU \engl{Rectified Linear Unit} 
 Po dijelovima linearna aktivacijska funkcija je često korištena u dubokim modelima zbog zanimljivih svojstava koja pokazuje prilikom učenja takvih struktura.
 Vrijednost gradijenta je kod po dijelovima linearne aktivacijske funkcije konstantna za polovicu cijele njene domene. 
 U drugoj polovici iznosi $0$, što ponekad također može biti problem jer može dovesti do mrtvih dijelova slojeva kojima se parametri nikako ne korigiraju.
-Problem mrtvih dijelova slojeva može se riješiti korištenjem tzv. leaky ReLU prijenosne funkcije koja dozvoljava mali iznos gradijenta kada je vrijednost aktivacije $0$ \citep{book:deeplearningbook} \citep{seminar:rela}.
+Problem mrtvih dijelova slojeva može se riješiti korištenjem tzv. leaky ReLU prijenosne funkcije koja dopusti mali iznos gradijenta kada je vrijednost aktivacije $0$ \citep{book:deeplearningbook} \citep{seminar:rela}.
 
 \subsubsection{Normalizirajuća eksponencijalna aktivacijska funkcija}
 Normalizirajuća eksponencijalna aktivacijska funkcija \engl{softmax} i njena derivacija definirane su kao:
@@ -470,7 +470,7 @@ Takav vektor realnih vrijednosti možemo promatrati kao vjerojatnosnu razdiobu i
 
 \subsection{Konvolucijski sloj}
 Konvolucijski slojevi koriste se za stvaranje mapa značajki uporabom dvodimenzionalne konvolucije jezgre s podacima.
-Za definiciju konvolucije potrebno je prvo definirati veličinu jezgre (širinu i visinu), vrijednosti parametara jezgre te pomak jezgre po širini odnosno po visini prilikom izračuna.
+Za definiciju konvolucije potrebno je prvo definirati veličinu jezgre (širinu i visinu), vrijednosti parametara jezgre te pomak jezgre po širini, odnosno po visini prilikom izračuna.
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.4]{images/convolution.png}
@@ -481,7 +481,7 @@ Slika \ref{img:convolution} prikazuje dva koraka konvolucije podataka s jezgrom.
 U oba koraka veličina jezgre je $3x3$, a korak iznosi $1$. 
 Korak konvolucije \engl{stride} određuje pomak prozora po širini, odnosno visini ulazne mape značajki. 
 
-Općenito, vrijednost jednog elementa mape značajki u sloju $l$ dobivene konvolucijom nad jednom ulaznom mapom značajki iz sloja $l-1$ definiramo kao:
+Općenito, vrijednost jednog elementa mape značajki u sloju $l$, dobivene konvolucijom nad jednom ulaznom mapom značajki iz sloja $l-1$ definiramo kao:
 \begin{equation}
  x^l_{i,j}=\sum_{m,n=0}^{m=K_w,n=K_h}x^{l-1}_{i \cdot s_w +m, j \cdot s_h +n} w^l_{m, n}, \label{eq:convolution}
 \end{equation}
@@ -491,11 +491,11 @@ Vrijednosti $s_w$ i $s_h$ predstavljaju pomak po širini, odnosno visini.
 Izraz \ref{eq:convolution} opisuje izračun vrijednosti jednog elementa mape značajke koji je linearna kombinacija vrijednosti samo jedne mape značajki prethodnog sloja.
 U konvolucijskim arhitekturama se općenito koriste mape značajki koje su povezane s većim brojem mapa značajki iz prethodnog sloja.
 Za svaku od mapa značajki s kojom je povezana postoji po jedna jezgra koja se koristi za izračun vrijednosti.
-Primjerice, jedna mapa značajki ulaznog sloja može biti povezana s 3 mapa značajki - crvenom, plavom i zelenom komponentom slike u boji.
-Za svaku od komponenti boja će mapa značajki tada imati drukčiju jezgru.
+Primjerice, jedna mapa značajki ulaznog sloja može biti povezana s 3 mape značajki - crvenom, plavom i zelenom komponentom slike u boji.
+Za svaku od komponenanta boja će mapa značajki imati drukčiju jezgru.
 
 Nadalje, izračun vrijednosti mapa značajki se često generalizira kao i kod potpuno povezanog sloja pa se dodaje dodatan parametar kao vrijednost praga te se koriste aktivacijske funkcije.
-Generalizirani izraz za izračun vrijednosti jednog elementa mape značajki u sloju $n$ dobivene konvolucijom odgovarajućih jezgri sa svakom od mapa značajki iz sloja $n-1$ s kojima je povezana definiramo kao:
+Generalizirani izraz za izračun vrijednosti jednog elementa mape značajki u sloju $l$, dobivene konvolucijom odgovarajućih jezgara sa svakom od mapa značajki iz sloja $l-1$ s kojima je povezana definiramo kao:
 \begin{equation}
  x^l_{k',i,j}=\sigma\left(\sum_{k\in F^{l-1}}\sum_{m,n=0}^{m=K_w^k,n=K_h^k}x^{l-1}_{k, i \cdot s_w +m, j \cdot s_h +n} w^l_{k, m, n} + b^l\right), \label{eq:generalized_convolution}
 \end{equation}
@@ -509,24 +509,21 @@ U pravilu se vrijednost praga dijeli za cijelu mapu značajki, no to nije nužno
 Konačno, funkcija $\sigma$ predstavlja aktivacijsku funkciju.
 
 Zbog svojih svojstava, konvolucijski slojevi mogu uvelike poboljšati učinkovitost modela za klasifikaciju slika.
-Konvolucijski slojevi su tipično rijetko povezani --- nije nužno da su sve mape značajki sloja $l-1$ povezane sa svakom od mapa značajki iz sloja $l$ \citep{book:deeplearningbook}, što uz jezgre koje su tipično mnogo manjih veličina od ulaza nad kojima djeluju u velikoj mjeri smanjuje broj parametara i povećava efikasnost učenja i računanja.
+Konvolucijski slojevi su tipično rijetko povezani -- nije nužno da su sve mape značajki sloja $l-1$ povezane sa svakom od mapa značajki iz sloja $l$ \citep{book:deeplearningbook}, što, uz jezgre koje su tipično mnogo manjih veličina od ulaza nad kojima djeluju, u velikoj mjeri smanjuje broj parametara i povećava efikasnost učenja i računanja.
 Potpuno povezani slojevi koriste matrično množenje i svaki parametar je iskorišten samo jednom za opisivanje veze između ulaza i izlaza, dok se konvolucijom isti parametri koriste za više lokacija ulaza i predstavljaju svojevrsne značajke koje jezgra izlučuje na slici.
-Konvolucijske arhitekture korištenjem jezgara s dijeljenim parametrima uče skup parametara koji je otporan na translacije jer će za iste ulazne vrijednosti jezgra dati iste izlazne vrijednosti, bez obzira gdje na slici se one pojave. 
+Konvolucijske arhitekture korištenjem jezgara s dijeljenim parametrima uče skup parametara koji je otporan na translacije, jer će za iste ulazne vrijednosti jezgra dati iste izlazne vrijednosti, bez obzira gdje na slici se one pojave. 
 Naučeni dijeljeni skup parametara predstavlja jednu funkciju koju jezgra obavlja (primjerice, detekcija rubova) -- učenjem se skup parametara prilagođava cijeloj slici i uči se tako da obavlja apstraktne funkcije neovisne o lokaciji slike, a koje će pripomoći u samoj klasifikaciji.
-Nabrojana svojstva konvolucijske arhitekture donose svojevrsnu ugrađenu regularizaciju što povlači bolju generalizaciju uz veću efikasnost \citep{book:deeplearningbook} \citep{masters:vukotic_ms} \citep{seminar:rela}.
+Nabrojana svojstva konvolucijske arhitekture donose svojevrsnu ugrađenu regularizaciju, što povlači bolju generalizaciju uz veću efikasnost \citep{book:deeplearningbook} \citep{masters:vukotic_ms} \citep{seminar:rela}.
 
 \subsection{Sloj sažimanja}
 Slojevi sažimanja koriste se da se grupira određeni broj podataka mape značajki i predstavi ih kao jedan podatak koji statistički dobro predstavlja tu grupu.
-Sam postupak također smanjuje veličinu mapa značajki i to tako da ih skalira faktorom $\cfrac{1}{S_w}$ po širini, odnosno faktorom $\cfrac{1}{S_h}$ po visini, gdje je $S_w$ širina, a $S_h$ visina podmape značajki koja se grupira.
+Sam postupak također smanjuje veličinu mapa značajki, i to tako da ih skalira faktorom $\cfrac{1}{S_w}$ po širini, odnosno faktorom $\cfrac{1}{S_h}$ po visini, gdje je $S_w$ širina, a $S_h$ visina podmape značajki koja se grupira.
 
-Korisnost postupka očituje se u vidu ostvarivanja invarijantnosti na lokalne translacije što može biti vrlo korisno u slučaju da nam je bitnije da je neka značajka prisutna od toga na kojoj je točno lokaciji \citep{seminar:rela}.
+Korisnost postupka očituje se u vidu ostvarivanja invarijantnosti na lokalne translacije što može biti vrlo korisno u slučaju da nam je važnije da je neka značajka prisutna od toga na kojoj je točno lokaciji \citep{seminar:rela}.
 
-Postoje različite vrste funkcija koje se koriste za sažimanje od kojih je u ovom radu korištena sljedeća:
-\begin{description}
-\item [sažimanje maksimalnom vrijednošću]
+Postoje različite vrste funkcija koje se koriste za sažimanje, od kojih je u ovom radu korišteno sažimanje maksimalnom vrijednošću.
 Sažimanje maksimalnom vrijednošću \engl{max-pooling} sažima značajke tako da iz podmape značajki nad kojom djeluje izluči samo maksimalnu vrijednost koja postaje predstavnik.
 Pokazuje se da se ovom metodom dobivaju vrlo dobri rezultati \citep{article:maxpooling_article}.
-\end{description}
 
 \subsection{Sloj grupne normalizacije \engl{batch normalization}}
 Učenje dubokih modela može biti vrlo komplicirano ukoliko bolje promotrimo njihovu arhitekturu, način učenja i sam utjecaj načina učenja na brzinu učenja.
@@ -554,7 +551,7 @@ Transformacija $k$-te komponente prethodno normaliziranog ulaznog vektora $\hat{
 \end{equation}
 gdje su $\boldsymbol{\gamma}_{k}$ i $\boldsymbol{\beta}_{k}$ parametri koji se uče zajedno s parametrima modela i koji omogućuju skaliranje i pomak normalizirane vrijednosti izlaza.
 
-Druga pretpostavka za pojednostavljenje složenosti jest da normalizaciju umjesto nad statistikom cjelokupnog skupa podataka za učenje, obavljamo nad statistikama malih podskupova podataka \engl{mini-batch}.
+Druga pretpostavka za pojednostavljenje složenosti jest da normalizaciju, umjesto nad statistikom cjelokupnog skupa podataka za učenje, obavljamo nad statistikama malih podskupova podataka \engl{mini-batch}.
 Grupna normalizacija nad statistikom malog podskupa skupa podataka za učenje u nekom sloju tada je definirana kao normalizacija i linearna transformacija ulaza, definirane u izrazima \ref{eq:bn_normalization} i \ref{eq:bn_transformation}.
 
 Transformacija grupne normalizacije najčešće se koristi nad izračunatim težinskim sumama slojeva, prije djelovanja aktivacijske funkcije.
@@ -581,13 +578,13 @@ Prednji dio sastoji se od 5 konvolucijskih blokova.
 Svaki od blokova izgrađen je na sličan način -- nekoliko konvolucijskih slojeva iza kojih slijedi sloj za sažimanje maksimalnom vrijednošću \engl{max pool}.
 Konvolucijski slojevi imaju jezgre dimenzija $3$ x $3$ uz izlazni korak konvolucije \engl{stride} 1. 
 Svi konvolucijski slojevi koriste po dijelovima linearnu funkciju \engl{ReLU} te su regularizirani L2 normom parametara s faktorom regularizacije iznosa $5\cdot10^{-4}$.
-Slojevi za sažimanje maksimalnom vrijednošću imaju podmape za grupiranje veličine $2$ x $2$ uz korak uzorkovanja podmapa 2.
+Slojevi za sažimanje maksimalnom vrijednošću imaju podmape za grupiranje veličine $2$ x $2$, uz korak uzorkovanja podmapa 2.
 Konvolucijski blokovi građeni su kako slijedi:
 \begin{itemize}
  \item prvi konvolucijski blok:
  \begin{itemize}
-  \item konvolucijski sloj sa 64 izlaznih mapa značajki
-  \item konvolucijski sloj sa 64 izlaznih mapa značajki
+  \item konvolucijski sloj sa 64 izlazne mape značajki
+  \item konvolucijski sloj sa 64 izlazne mape značajki
   \item sloj za sažimanje maksimalnom vrijednošću
  \end{itemize}
   \item drugi konvolucijski blok:
@@ -620,13 +617,13 @@ Konvolucijski blokovi građeni su kako slijedi:
 \end{itemize}
 
 Stražnji dio građen je od  3 potpuno povezana sloja koji služe za klasifikaciju konvolucijskih reprezentacija dimenzija $7$ x $7$ x $512$ u 1000 različitih klasa. 
-Prilikom korištenja arhitekture VGG-16 za druge namjene, obično se uklanja stražnji ili svi potpuno povezani slojevi te se na prednji dio koji služi za izlučivanje značajki iz ulaznih slika nadodaju novi slojevi koji se treniraju za obavljanje specifičnog zadatka.
+Prilikom korištenja arhitekture VGG-16 za druge namjene, obično se uklanja stražnji ili svi potpuno povezani slojevi te se na prednji dio, koji služi za izlučivanje značajki iz ulaznih slika, nadodaju novi slojevi, koji se treniraju za obavljanje specifičnog zadatka.
 Ovakva primjena prednaučenih konvolucijskih modela naziva se prijenos znanja \engl{knowledge transfer} \citep{proceeding:transfer_learning}.
 
 \subsection{Arhitektura za klasifikaciju pojedinačnih slika}
 Duboki model korišten za klasifikaciju pojedinačnih slika temeljen je na VGG-16 arhitekturi. 
 Koristi se naučen prednji dio s 5 konvolucijskih blokova. 
-Dobivene izlazne mape značajki pretvaraju se u jednodimenzionalan vektor koji se zatim vodi na potpuno povezane slojeve koji su definirani kako slijedi:
+Dobivene izlazne mape značajki pretvaraju se u jednodimenzionalan vektor, koji se zatim vodi na potpuno povezane slojeve definirane kako slijedi:
 \begin{itemize}
  \item potpuno povezani sloj dimenzionalnosti 200
  \begin{itemize}
@@ -645,14 +642,14 @@ Dobivene izlazne mape značajki pretvaraju se u jednodimenzionalan vektor koji s
 Za klasifikaciju sekvenci slika korišteno je nekoliko različitih modela temeljenih na prednaučenoj arhitekturi VGG-16. 
 Korišteni modeli su inspirirani arhitekturama iz \citep{article:sequential_architectures}.
 
-Zajednički postupak koji svi modeli dijele jest postupak izlučivanja prostornih značajki -- za svaku sliku sekvence se koristeći prednji dio prednaučene arhitekture VGG-16 izračunaju značajke koje se zatim dalje obrađuju na različite načine.
+Zajednički postupak koji svi modeli dijele jest postupak izlučivanja prostornih značajki -- za svaku sliku sekvence se, koristeći prednji dio prednaučene arhitekture VGG-16, izračunaju značajke, koje se zatim dalje obrađuju na različite načine.
 Dobivene prostorne značajke svake pojedine slike su dimenzija $H$ x $W$ x $512$, gdje dimenzije $H$ i $W$ ovise o dimenzijama ulaznih slika, a treća dimenzija je određena brojem izlaznih mapa značajki posljednjeg konvolucijskog sloja arhitekture VGG-16. 
 
 \subsubsection{Klasifikacija sekvenci slika korištenjem vremensko-prostornog sažimanja}
 Model koji koristi vremensko-prostorno sažimanje pretvara dobivene prostorne značajke svake slike u jednodimenzionalni vektor dimenzija $H$ x $W$ x $512$.
 Dobiveni jednodimenzionalni vektori se zatim oblikuju u dvodimenzionalni tenzor dimenzija $N$ x ($H$ x $W$ x $512$), gdje je $N$ duljina sekvence slika.
 
-Dvodimenzionalni tenzor koja se dobije povezivanjem prostornih značajki sadrži i vremenske i prostorne informacije. 
+Dvodimenzionalni tenzor, koji se dobije povezivanjem prostornih značajki, sadrži i vremenske i prostorne informacije. 
 Taj se tenzor zatim obrađuje kroz nekoliko slojeva kako slijedi:
 \begin{itemize}
  \item sloj za sažimanje maksimalnom vrijednošću s podmapama za grupiranje veličina $2$ x $2$ uz korak uzorkovanja podmapa 2
@@ -674,7 +671,7 @@ Taj se tenzor zatim obrađuje kroz nekoliko slojeva kako slijedi:
 \end{itemize}
 
 \subsubsection{Klasifikacija sekvenci slika korištenjem povratnih LSTM ćelija \engl{Long Short Term Memory}}
-LSTM ćelije pogodne su za korištenje nad sekvencama podataka iz razloga što sadrže memorijske ćelije u kojima mogu čuvati informacije kroz dugačke vremenske periode.
+LSTM ćelije pogodne su za korištenje nad sekvencama podataka jer sadrže memorijske ćelije u kojima mogu čuvati informacije kroz dugačke vremenske periode.
 
 \begin{figure}[H]
 \centering
@@ -728,7 +725,7 @@ Dobiveni jednodimenzionalni vektori se zatim redom obrađuju kako slijedi:
 
 
 \subsubsection{Klasifikacija sekvenci slika korištenjem vremenskog potpuno povezanog sloja}
-Model koji koristi vremenski potpuno povezani sloj prostorne značajke pretvori u jednodimenzionalni vektor dimenzija $H$ x $W$ x $512$.
+Model koji koristi vremenski potpuno povezani sloj, prostorne značajke pretvori u jednodimenzionalni vektor dimenzija $H$ x $W$ x $512$.
 Svaki dobiveni jednodimenzionalni vektor prostornih značajki se zatim obrađuje kako slijedi:
 \begin{itemize}
   \item potpuno povezani sloj dimenzionalnosti 64
@@ -759,10 +756,10 @@ Taj se tenzor zatim obrađuje kroz nekoliko slojeva kako slijedi:
 
 \section{Postupak pripreme skupova podataka}
 Poglavlje \ref{chapter:skupovi_podataka} opisuje dva tipa skupova podataka korištenih u ovom radu.
-U nastavku je opisan postupak pretprocesiranja slika koje se dobivaju iz georeferenciranih video snimaka sa stranice \citep{url:ftts_irap} te postupak kreiranja skupa podataka s oznakama iz sustava FTTS iRAP.
+U nastavku je opisan postupak pretprocesiranja slika koje se dobivaju iz georeferenciranih videosnimaka sa stranice \citep{url:ftts_irap} te postupak kreiranja skupa podataka s oznakama iz sustava FTTS iRAP.
 
 \subsection{Pretprocesiranje slika}
-Slike korištene za kreiranje skupova podataka dobivene su iz video snimaka snimljenih automobilom koji se kretao engleskim autocestama.
+Slike korištene za kreiranje skupova podataka dobivene su iz videosnimaka snimljenih automobilom koji se kretao engleskim autocestama.
 Zbog kretnje automobila uzorkovane slike bit će snimljene iz različitog kuta u odnosu na Sunce.
 Takva situacija za posljedicu ima da su neke slike mnogo svjetlije, a neke mnogo tamnije od drugih.
 
@@ -811,9 +808,9 @@ Postupak će iz ulaznih podataka kreirati sljedeće:
 \end{itemize}
 \noindent Postupak kreira označene slike sa i bez sekvence koja joj prethodi kako bi se eksperimentima ustanovilo dobiva li se na točnosti postupka uvodeći više informacija kroz sekvencu slika.
 
-Geolokacije video snimaka uzorkovane su rijetko -- najčešće svakih $0.5s$. 
-Iz tog razloga se za točnu geolokaciju konkretne sličice video snimke vrši linearna interpolacija između dvije uzorkovane geolokacije koje su vremenski najbliže konkretnoj sličici.
-Geolokacija konkretnih sličica korisna je informacija iz razloga što je prilikom testiranja modela za svaki ulazni podatak kojem model dodijeli krivu oznaku moguće u sustavu FTTS iRAP provjeriti je li osoba koja je dodijelila vrijednost atributa tom segmentu to napravila točno ili je riječ o mogućoj pogrešci. 
+Geolokacije videosnimaka uzorkovane su rijetko -- najčešće svakih $0.5s$. 
+Iz tog razloga se za točnu geolokaciju konkretne sličice videosnimke vrši linearna interpolacija između dvije uzorkovane geolokacije koje su vremenski najbliže konkretnoj sličici.
+Geolokacija konkretnih sličica korisna je informacija, jer je prilikom testiranja modela za svaki ulazni podatak kojem model dodijeli krivu oznaku moguće u sustavu FTTS iRAP provjeriti je li osoba koja je dodijelila vrijednost atributa tom segmentu to napravila točno ili je riječ o mogućoj pogrešci. 
 Takvim postupkom moguće je na brži način validirati ispravnost dodijeljenih oznaka u sustavu.
 
 Nastavak opisuje sažeti pseudokod automatiziranog postupka:
@@ -837,10 +834,10 @@ Nastavak opisuje sažeti pseudokod automatiziranog postupka:
 
 \noindent Izračunavanje raspona sličica na kojima je prisutan atribut pripajanja (pozitivne sličice) radi se na sljedeći način:
 \begin{itemize}
- \item za svako pripajanje i njegovu geolokaciju pronađu se dvije najbliže geolokacije video snimke
- \item ukoliko je bliža geolokacija video snimke unutar praga udaljenosti pripajanju, uzima se da je pripajanje prisutno na tom dijelu video snimke
- \item na temelju udaljenosti geolokacija video snimke od geolokacije pripajanja i brzina kretanja automobila izračuna se točan raspon vremena video snimke na kojem se nalazi segment atributa pripajanja
- \item iz dobivenog raspona vremena izračuna se raspon sličica video snimke na kojem se nalazi segment atributa pripajanja
+ \item za svako pripajanje i njegovu geolokaciju pronađu se dvije najbliže geolokacije videosnimke
+ \item ukoliko je bliža geolokacija videosnimke unutar praga udaljenosti pripajanju, uzima se da je pripajanje prisutno na tom dijelu videosnimke
+ \item na temelju udaljenosti geolokacija videosnimke od geolokacije pripajanja i brzina kretanja automobila izračuna se točan raspon vremena videosnimke na kojem se nalazi segment atributa pripajanja
+ \item iz dobivenog raspona vremena izračuna se raspon sličica videosnimke na kojem se nalazi segment atributa pripajanja
 \end{itemize}
 
 \chapter{Eksperimenti i rezultati}
@@ -853,7 +850,7 @@ Početni korak prilikom učenja jest normalizacija skupa podataka.
 Kako su podaci slike u boji, na podacima za treniranje se izračunava srednja vrijednost intenziteta piksela za svaki od kanala -- crveni, zeleni i plavi.
 Dobivene srednje vrijednosti se zatim po kanalima oduzimaju svim podacima -- podacima za treniranje, podacima za validaciju i podacima za testiranje.
 
-Kako su sve arhitekture korištene za potrebe ovog rada zasnovane na naučenom prednjem dijelu arhitekture VGG-16, učenje se obavlja kroz 50 epoha i to na sljedeći način:
+Kako su sve arhitekture korištene za potrebe ovog rada izgrađene na naučenom prednjem dijelu arhitekture VGG-16, učenje se obavlja kroz 50 epoha i to na sljedeći način:
 \begin{itemize}
  \item 10 epoha učenja s početnom stopom učenja iznosa $5\cdot10^{-4}$ uz optimiranje samo novo nadodanih parametara -- svi parametri naučenog prednjeg dijela arhitekture VGG-16 ne mijenjaju se tijekom ove faze
  \item 40 epoha učenja s početnom stopom učenja iznosa $1\cdot10^{-5}$ uz optimiranje kompletnog skupa parametara (uključujući i parametre naučenog prednjeg dijela arhitekture VGG-16)
@@ -912,7 +909,7 @@ Vrijednost praga pronalazi se pomoću podskupa za validaciju -- izračunava se t
 
 \section{Klasifikacija slika s diskriminativnim oznakama na različitim rezolucijama}
 Eksperimenti na slikama s diskriminativnim oznakama provedeni su koristeći arhitekturu za klasifikaciju pojedinačnih slika. 
-Kako su eksperimenti nad sekvencama slika memorijski mnogo zahtjevniji od eksperimenata na pojedinačnim slikama, svrha ovog eksperimenta bila je utvrditi
+Kako su eksperimenti nad sekvencama slika memorijski mnogo zahtjevniji od eksperimenata nad pojedinačnim slikama, svrha ovog eksperimenta bila je utvrditi
 na kojoj rezoluciji ulaznih slika model gubi ekspresivnu moć i ne uspijeva dati zadovoljavajuću performansu.
 
 Za početnu, originalnu rezoluciju pojedinačnih slika odabrana je rezolucija $700$x$280$. Eksperiment je proveden redom na sljedećim rezolucijama:
@@ -920,6 +917,20 @@ $700$x$280$, $525$x$210$, $350$x$140$ i $175$x$70$. Rezultati su dani u nastavku
 
 \subsection{Rezultati na rezoluciji 700x280}
 Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $700$x$280$ su sljedeći:
+
+\begin{table}[H]
+\centering
+\caption{Rezultati na rezoluciji $700$x$280$ bez pretprocesiranja}
+\label{score:single_hand_700x280_no_preprocess}
+\begin{tabular}{c|c|c|c|c|}
+\cline{2-5}
+                                            & točnost & preciznost & odziv & prosječna preciznost \\ \hline
+\multicolumn{1}{|c|}{podskup za učenje}     & 0.99       & 0.98        & 1.0     &           0.99           \\ \hline
+\multicolumn{1}{|c|}{podskup za validaciju} & 0.96       & 0.96        & 0.95     &            0.98          \\ \hline
+\multicolumn{1}{|c|}{podskup za testiranje} & 0.94       & 0.91        & 0.98     &            0.98          \\ \hline
+\end{tabular}
+\end{table}
+
 \begin{table}[H]
 \centering
 \caption{Rezultati na rezoluciji $700$x$280$}
@@ -949,7 +960,9 @@ Konačni rezultati dobiveni za eksperiment s ulaznim podacima rezolucije $700$x$
 \end{tabular}
 \end{table}
 
-\noindent Tablica \ref{score:single_hand_700x280} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
+\noindent Tablica \ref{score:single_hand_700x280_no_preprocess} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja na podacima koji nisu pretprocesirani.
+Tablica \ref{score:single_hand_700x280} prikazuje rezultate dobivene evaluacijom modela koji je postigao najbolju performansu na podskupu za validaciju prilikom učenja.
+Usporedbom tablica \ref{score:single_hand_700x280_no_preprocess} i \ref{score:single_hand_700x280} vidljivo je kako se nešto bolji rezultati dobivaju korištenjem podataka koji su pretprocesirani.
 Tablica \ref{score:single_hand_700x280_tpfptnfn} prikazuje odnos predikcija modela i stvarnih oznaka kroz matrice zabune.
 
 \begin{figure}[H]
@@ -1121,8 +1134,8 @@ Tablica \ref{score:single_hand_175x70_tpfptnfn} prikazuje odnos predikcija model
 
 \subsection{Analiza rezultata}
 Svrha niza eksperimenata na slikama s diskriminativnim oznakama bila je utvrditi najnižu rezoluciju na kojoj je performansa zadovoljavajuća.
-Rezolucija ulaznih slika bitan je faktor za daljnje eksperimente jer je učenje mnogo brže na slikama niže rezolucije i moguće je koristiti veće mini grupe za učenje.
-Odabir rezolucije ulaznih slika također je bitan faktor zbog toga će učenje na sekvencama slika biti memorijski mnogo zahtjevnije.
+Rezolucija ulaznih slika bitan je faktor za daljnje eksperimente, jer je učenje mnogo brže na slikama niže rezolucije, i moguće je koristiti veće mini grupe za učenje.
+Odabir rezolucije ulaznih slika također je bitan faktor zbog toga što će učenje na sekvencama slika biti memorijski mnogo zahtjevnije.
 \begin{table}[H]
 \centering
 \caption{Rezultati na podskupu za testiranje}
@@ -1137,13 +1150,12 @@ rezolucija slika & točnost & preciznost & odziv & prosječna preciznost \\ \hli
 \end{tabular}
 \end{table}
 Tablica \ref{score:single_hand_test_resolutions} prikazuje performanse modela na podskupu za testiranje s ulaznim slikama različitih rezolucija.
-Rezulati pokazuju kako je najniža rezolucija na kojoj su performanse modela i dalje visoke $350$x$140$. 
+Rezulati pokazuju kako je najniža rezolucija na kojoj su performanse modela i dalje visoke, ona od $350$x$140$. 
 Eksperimenti koji koriste sekvence slika iz tog će razloga koristiti ulazne slike na toj rezoluciji.
 
 Pad performansi na rezoluciji $175$x$70$ može se objasniti time što je prednji dio arhitekture VGG-16 koji
 služi za izlučivanje značajki originalno naučen na slikama rezolucije $224$x$224$. 
-Najveći
-Zbog manje rezolucije slika model ne uspijeva uvijek prepoznati diskriminativni dio na temelju kojeg bi donio odluku je li slika pozitivan ili negativan primjer.
+Zbog manje rezolucije slika, model ne uspijeva uvijek prepoznati diskriminativni dio na temelju kojeg bi donio odluku je li slika pozitivan ili negativan primjer.
 
 \begin{figure}[H]
 \centering
@@ -1151,7 +1163,7 @@ Zbog manje rezolucije slika model ne uspijeva uvijek prepoznati diskriminativni 
 \caption{Graf ovisnosti preciznosti i odziva}
 \label{img:pr_350_140}
 \end{figure}
-Slika \ref{img:pr_350_140} prikazuje graf ovisnosti preciznosti i odziva za model koji koristi ulazne slike rezolucije $350$x$140$.
+Slika \ref{img:pr_350_140} prikazuje graf ovisnosti preciznosti i odziva na podskupu za testiranje za model koji koristi ulazne slike rezolucije $350$x$140$.
 
 Pogreške modela na podskupu za testiranje su vrlo slične te su u nastavku prikazani tipovi pogrešaka.
 Model koji radi s ulaznim podacima rezolucije $175$x$70$ izuzet je iz analize pogrešaka jer je eksperimentima pokazano da na toj rezoluciji performanse znatno padaju zbog nedovoljno informacija na temelju kojih bi model donio ispravne odluke.
@@ -1422,10 +1434,19 @@ Zbog toga je korištena sekvenca slika koja prethodi pojedinim slikama označeni
 
 \subsection{Analiza rezultata na sekvencama slika s oznakama iz sustava FTTS iRAP}
 Kako su eksperimenti pokazali, uvođenjem sekvence slika koja prethodi označenoj slici dobiva se na performansama u odnosu na pojedinačne slike s oznakama iz sustava FTTS iRAP. 
-Najbolji rezultat dobiven je modelom koji dobivene prostorne značajke obrađuje koristeći vremenski potpuno povezani sloj.
+Najbolji rezultati dobiveni su modelom koji dobivene prostorne značajke obrađuje koristeći vremenski potpuno povezani sloj.
 
 Performanse modela koji prostorne značajke slika s oznakama iz sustava FTTS iRAP obrađuje vremenskim potpuno povezanim slojem i dalje su niže od performansi modela za pojedinačne slike na slikama s diskriminativnim oznakama.
 Pad performansi možemo analizirati tako da promotrimo slike iz podskupa za testiranje koje model loše klasificira. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.55]{images/pr_temporal.png}
+\caption{Graf ovisnosti preciznosti i odziva}
+\label{img:pr_temporal}
+\end{figure}
+Slika \ref{img:pr_temporal} prikazuje graf ovisnosti preciznosti i odziva na podskupu za testiranje.
+
 U nastavku su pokazani najčešći tipovi pogrešaka modela.
 
 \subsubsection{Lažni pozitivi \engl{false positives}}
@@ -1470,11 +1491,21 @@ Slika \ref{img:fn_2} prikazuje situaciju u kojoj se dogodilo da je zbog prisutno
 Analizom lažnih pozitiva i lažnih negativa sa skupa za testiranje utvrđeno je kako se lažni negativi pojavljuju u sekvencama -- kompletni dijelovi video snimaka označeni atributom pripajanja trakova su klasificirani pogrešno.
 Lažni pozitivi uglavnom se pojavljuju pojedinačno, bez slijedova lažno klasificiranih pozitivnih slika.
 
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{images/wrong_lane_label.png}
+\caption{Oznaka atributa pripajanja dodijeljena drugom traku (slika preuzeta s \citep{url:google_maps})}
+\label{img:wrong_lane_label}
+\end{figure}
+
 U razgovoru s kreatorima sustava FTTS iRAP zaključeno je kako je moguće da postoje moguće nekonzistentnosti i krive oznake atributa pripajanja uslijed ljudske pogreške i uslijed načina na koji se oznake dodjeljuju.
 Analizom geolokacija slika koje su pogrešno klasificirane utvrđeno je kako uglavnom dolazi do sljedeće situacije: atributi pripajanja su po geolokaciji pridruženi drugom traku što je prikazano na slici \ref{img:wrong_lane_label}.
+Vidljivo je kako je pripajanje ustvari na drugom traku od originalne geolokacije atributa pripajanja. 
+
 Iz tog razloga skup podataka sadrži ``nečistoće'' koje je potrebno validirati sa samim sustavom. 
-Podatak koji se u tom slučaju može pokazati kao koristan je geolokacija svakog primjera iz skupa podataka za učenje.
-Na taj način moguće je relativno brzo provjeriti sve sumnjive primjere iz skupa za učenje, eventualno im promijeniti oznaku prisutnosti atributa te generirati novi, čišći skup podataka.
+Podatak koji se u tom slučaju može pokazati kao koristan, osim geolokacije svakog primjera iz skupa podataka, i podatak o tome događaju li se iste klasifikacijske pogreške kod različitih modela.
+Analizom je utvrđeno da modeli uglavnom griješe na istim primjerima -- pokazuje se da su na preko 50\% primjera iz skupa za testiranje pogriješila sva 3 modela za klasifikaciju sekvenci slika.
+Na taj način moguće je relativno brzo provjeriti sve sumnjive primjere iz skupa podataka, eventualno im promijeniti oznaku prisutnosti atributa pripajanja te generirati novi, nekontaminirani skup podataka.
 
 \chapter{Zaključak}
 Organizacija iRAP bavi se inspekcijom kvaliteta ceste pridruživanjem različitih sigurnosnih atributa segmentima prometnica. 

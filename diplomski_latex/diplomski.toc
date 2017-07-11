@@ -1,7 +1,7 @@
 \select@language {croatian}
 \contentsline {chapter}{\numberline {1}Uvod}{1}
 \contentsline {chapter}{\numberline {2}Skupovi podataka i njihovo kori\IeC {\v s}tenje}{3}
-\contentsline {section}{\numberline {2.1}Video snimke projekta FTTS iRAP}{4}
+\contentsline {section}{\numberline {2.1}Videosnimke projekta FTTS iRAP}{4}
 \contentsline {section}{\numberline {2.2}Skup podataka s diskriminativnim oznakama}{5}
 \contentsline {section}{\numberline {2.3}Skup podataka s oznakama iz sustava FTTS iRAP}{6}
 \contentsline {chapter}{\numberline {3}Metode, modeli i postupci}{10}
@@ -18,14 +18,14 @@
 \contentsline {subsection}{\numberline {3.3.3}Sloj sa\IeC {\v z}imanja}{20}
 \contentsline {subsection}{\numberline {3.3.4}Sloj grupne normalizacije (engl.~\emph {batch normalization})}{21}
 \contentsline {section}{\numberline {3.4}Arhitekture kori\IeC {\v s}tene u eksperimentima}{22}
-\contentsline {subsection}{\numberline {3.4.1}Arhitektura VGG-16 modela}{23}
+\contentsline {subsection}{\numberline {3.4.1}Arhitektura VGG-16 modela}{22}
 \contentsline {subsection}{\numberline {3.4.2}Arhitektura za klasifikaciju pojedina\IeC {\v c}nih slika}{24}
-\contentsline {subsection}{\numberline {3.4.3}Arhitekture za klasifikaciju sekvenci slika}{25}
+\contentsline {subsection}{\numberline {3.4.3}Arhitekture za klasifikaciju sekvenci slika}{24}
 \contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem vremensko-prostornog sa\IeC {\v z}imanja}{25}
-\contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem povratnih LSTM \IeC {\'c}elija (engl.~\emph {Long Short Term Memory})}{26}
-\contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem vremenskog potpuno povezanog sloja}{28}
+\contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem povratnih LSTM \IeC {\'c}elija (engl.~\emph {Long Short Term Memory})}{25}
+\contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem vremenskog potpuno povezanog sloja}{27}
 \contentsline {section}{\numberline {3.5}Postupak pripreme skupova podataka}{28}
-\contentsline {subsection}{\numberline {3.5.1}Pretprocesiranje slika}{29}
+\contentsline {subsection}{\numberline {3.5.1}Pretprocesiranje slika}{28}
 \contentsline {subsection}{\numberline {3.5.2}Postupak kreiranja slika s oznakama iz sustava FTTS iRAP}{30}
 \contentsline {chapter}{\numberline {4}Eksperimenti i rezultati}{32}
 \contentsline {section}{\numberline {4.1}Na\IeC {\v c}in u\IeC {\v c}enja i testiranja u eksperimentima}{32}
@@ -44,8 +44,8 @@
 \contentsline {section}{\numberline {4.7}Analiza rezultata}{54}
 \contentsline {subsection}{\numberline {4.7.1}Analiza rezultata na slikama s oznakama iz sustava FTTS iRAP}{54}
 \contentsline {subsection}{\numberline {4.7.2}Analiza rezultata na sekvencama slika s oznakama iz sustava FTTS iRAP}{55}
-\contentsline {subsubsection}{La\IeC {\v z}ni pozitivi (engl.~\emph {false positives})}{55}
-\contentsline {subsubsection}{La\IeC {\v z}ni negativi (engl.~\emph {false negatives})}{56}
+\contentsline {subsubsection}{La\IeC {\v z}ni pozitivi (engl.~\emph {false positives})}{56}
+\contentsline {subsubsection}{La\IeC {\v z}ni negativi (engl.~\emph {false negatives})}{57}
 \contentsline {section}{\numberline {4.8}Detekcije krivih oznaka}{57}
 \contentsline {chapter}{\numberline {5}Zaklju\IeC {\v c}ak}{59}
 \contentsline {chapter}{Literatura}{60}
