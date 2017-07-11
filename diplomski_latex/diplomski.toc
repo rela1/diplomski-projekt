@@ -18,14 +18,14 @@
 \contentsline {subsection}{\numberline {3.3.3}Sloj sa\IeC {\v z}imanja}{20}
 \contentsline {subsection}{\numberline {3.3.4}Sloj grupne normalizacije (engl.~\emph {batch normalization})}{21}
 \contentsline {section}{\numberline {3.4}Arhitekture kori\IeC {\v s}tene u eksperimentima}{22}
-\contentsline {subsection}{\numberline {3.4.1}Arhitektura VGG-16 modela}{22}
+\contentsline {subsection}{\numberline {3.4.1}Arhitektura VGG-16 modela}{23}
 \contentsline {subsection}{\numberline {3.4.2}Arhitektura za klasifikaciju pojedina\IeC {\v c}nih slika}{24}
-\contentsline {subsection}{\numberline {3.4.3}Arhitekture za klasifikaciju sekvenci slika}{24}
+\contentsline {subsection}{\numberline {3.4.3}Arhitekture za klasifikaciju sekvenci slika}{25}
 \contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem vremensko-prostornog sa\IeC {\v z}imanja}{25}
-\contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem povratnih LSTM \IeC {\'c}elija (engl.~\emph {Long Short Term Memory})}{25}
-\contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem vremenskog potpuno povezanog sloja}{27}
+\contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem povratnih LSTM \IeC {\'c}elija (engl.~\emph {Long Short Term Memory})}{26}
+\contentsline {subsubsection}{Klasifikacija sekvenci slika kori\IeC {\v s}tenjem vremenskog potpuno povezanog sloja}{28}
 \contentsline {section}{\numberline {3.5}Postupak pripreme skupova podataka}{28}
-\contentsline {subsection}{\numberline {3.5.1}Pretprocesiranje slika}{28}
+\contentsline {subsection}{\numberline {3.5.1}Pretprocesiranje slika}{29}
 \contentsline {subsection}{\numberline {3.5.2}Postupak kreiranja slika s oznakama iz sustava FTTS iRAP}{30}
 \contentsline {chapter}{\numberline {4}Eksperimenti i rezultati}{32}
 \contentsline {section}{\numberline {4.1}Na\IeC {\v c}in u\IeC {\v c}enja i testiranja u eksperimentima}{32}
