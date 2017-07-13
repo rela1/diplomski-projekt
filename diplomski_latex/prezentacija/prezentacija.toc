@@ -1,0 +1,8 @@
+\select@language {croatian}
+\beamer@endinputifotherversion {3.36pt}
+\select@language {croatian}
+\beamer@sectionintoc {1}{Uvod}{2}{0}{1}
+\beamer@sectionintoc {2}{Zadatak}{3}{0}{2}
+\beamer@sectionintoc {3}{Skup podataka s diskriminativnim oznakama}{4}{0}{3}
+\beamer@sectionintoc {4}{Skup podataka s oznakama iz sustava FTTS iRAP}{5}{0}{4}
+\beamer@sectionintoc {5}{Kori\IeC {\v s}tene arhitekture}{6}{0}{5}
