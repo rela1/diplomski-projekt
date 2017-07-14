@@ -6,3 +6,5 @@
 \beamer@sectionintoc {3}{Skup podataka s diskriminativnim oznakama}{4}{0}{3}
 \beamer@sectionintoc {4}{Skup podataka s oznakama iz sustava FTTS iRAP}{5}{0}{4}
 \beamer@sectionintoc {5}{Kori\IeC {\v s}tene arhitekture}{6}{0}{5}
+\beamer@sectionintoc {6}{Rezultati}{11}{0}{6}
+\beamer@sectionintoc {7}{Zaklju\IeC {\v c}ak}{18}{0}{7}

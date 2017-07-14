@@ -6,14 +6,15 @@
 \usepackage{graphicx} 
 \usepackage{booktabs}
 \mode<presentation> {
-\usetheme{Dresden}
+\usetheme{Madrid}
+\usecolortheme{default}
 \setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
 }
 
 \selectlanguage{croatian}
 \author{Ivan Relić}
 
-\title{Detekcija sigurnosnih atributa prometnica u snimkama} 
+\title[Sveučilište u Zagrebu, FER]{Detekcija sigurnosnih atributa prometnica u snimkama} 
 
 
 \begin{document}
@@ -155,12 +156,11 @@
 
 \begin{frame}
 \frametitle{Arhitektura za klasifikaciju pojedinačnih slika}
+ \begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{images/single_image_architecture.png}
+\end{figure} 
  \begin{itemize}
-  \item izlazi prednjeg dijela prednaučene arhitekture VGG-16 obrađuju se sljedećim slojevima:
-  \begin{itemize}
-   \item potpuno povezani sloj dimenzionalnosti 200 (ReLU aktivacijska funkcija, grupna normalizacija, L2 regularizacija)
-   \item potpuno povezani sloj dimenzionalnosti 2 (normalizirajuća eksponencijalna aktivacijska funkcija, L2 regularizacija)
-  \end{itemize}
   \item eksperimenti na slikama s diskriminativnim oznakama i na pojedinačnim slikama s oznakama iz sustava FTTS iRAP
  \end{itemize}
 
@@ -168,53 +168,56 @@
 
 \begin{frame}
 \frametitle{Arhitektura za klasifikaciju sekvenci korištenjem vremensko-prostornog sažimanja}
- \begin{itemize}
-  \item za svaku sliku sekvence izračunavaju se izlazi prednjeg dijela prednaučene arhitekture VGG-16
-  \item dobiveni izlazi pretvaraju se u tenzor dimenzija $25$x$20480$ i obrađuju se sljedećim slojevima:
-  \begin{itemize}
-  \item sloj za sažimanje maksimalnom vrijednošću $2$x$2$ -- sažimanje značajki bliskih vremenski i prostorno
-  \item potpuno povezani sloj dimenzionalnosti 200 (ReLU aktivacijska funkcija, grupna normalizacija, L2 regularizacija)
-  \item potpuno povezani sloj dimenzionalnosti 2 (normalizirajuća eksponencijalna aktivacijska funkcija, L2 regularizacija)
- \end{itemize}
- \end{itemize}
+
+ \begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/sequence_pooling.png}
+\end{figure} 
 
 \end{frame}
 
 \begin{frame}
 \frametitle{Arhitektura za klasifikaciju sekvenci korištenjem LSTM ćelija}
- \begin{itemize}
-  \item za svaku sliku sekvence izračunavaju se izlazi prednjeg dijela prednaučene arhitekture VGG-16
-  \item dobivena izlazna sekvenca se zatim obrađuje s nekoliko slojeva LSTM ćelija kako slijedi:
-  \begin{itemize}
-  \item LSTM sloj sa stanjem dimenzionalnosti 128
-  \item LSTM sloj sa stanjem dimenzionalnosti 64
-  \item LSTM sloj sa stanjem dimenzionalnosti 32
- \end{itemize}
- \item izlaz posljednjeg LSTM sloja u posljednjem vremenskom trenutku se dalje obrađuje sljedećim slojem:
- \begin{itemize}
-  \item potpuno povezani sloj dimenzionalnosti 2 (normalizirajuća eksponencijalna aktivacijska funkcija, L2 regularizacija)
- \end{itemize}
 
- \end{itemize}
+ \begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/sequence_lstm.png}
+\end{figure} 
 
 \end{frame}
 
 \begin{frame}
 \frametitle{Arhitektura za klasifikaciju sekvenci korištenjem vremenskog potpuno povezanog sloja}
+
+ \begin{figure}[H]
+\centering
+\includegraphics[scale=0.35]{images/sequence_temporal.png}
+\end{figure} 
+
+\end{frame}
+
+\section{Rezultati}
+
+\begin{frame}
+ \frametitle{Učenje}
  \begin{itemize}
-  \item za svaku sliku sekvence izračunavaju se izlazi prednjeg dijela prednaučene arhitekture VGG-16
-  \item izlaz svake pojedine slike obrađuje se sljedećim slojem:
+ \item nVidia GTX 1070 i GTX Titan
+  \item 50 epoha -- 10 epoha ($5\cdot10^{-4}$, samo novo nadodani parametri) + 40 epoha ($1\cdot10^{-5}$, svi parametri)
+  \item mini grupe veličina 5 ili 10, ovisno o memorijskoj zahtjevnosti
+  \item učenje postupkom Adam, eksponencijalno smanjivanje stope učenja -- 0.96 u svakoj epohi
+  \item svi parametri regularizirani L2 normom s faktorom regularizacije $5\cdot10^{-4}$
+  \item normalizacija po mini grupama za sve potpuno povezane slojeve osim za binarnu klasifikaciju
+  \item aktivacijske funkcije -- ReLU i softmax
+  \item podskup za validaciju:
   \begin{itemize}
-   \item potpuno povezani sloj dimenzionalnosti 64 (ReLU aktivacijska funkcija, grupna normalizacija, L2 regularizacija)
+   \item rano zaustavljanje
+   \item validacija praga
   \end{itemize}
-  \item dobiveni izlazi pretvaraju se u tenzor dimenzija $25$x$64$ i obrađuju se sljedećim slojevima:
-  \begin{itemize}
-  \item potpuno povezani sloj dimenzionalnosti 64 (ReLU aktivacijska funkcija, grupna normalizacija, L2 regularizacija)
-  \item potpuno povezani sloj dimenzionalnosti 2 (normalizirajuća eksponencijalna aktivacijska funkcija, L2 regularizacija)
- \end{itemize}
+
  \end{itemize}
 
 \end{frame}
+
 
 \begin{frame}
  \frametitle{Rezultati na slikama s diskriminativnim oznakama}
@@ -244,6 +247,7 @@ rezolucija slika & točnost & preciznost & odziv & prosječna preciznost \\ \hli
  \frametitle{Rezultati na pojedinačnim slikama s oznakama iz sustava FTTS iRAP}
  \begin{itemize}
   \item rezolucija ulaznih slika $700$x$280$
+  \item učenje: 20.89 slika/sec, evaluacija: 25.59 slika/sec
  \end{itemize}
  
 \begin{table}[H]
@@ -270,6 +274,7 @@ rezolucija slika & točnost & preciznost & odziv & prosječna preciznost \\ \hli
  \begin{itemize}
   \item rezolucija ulaznih slika $350$x$140$
   \item arhitektura koja koristi vremensko-prostorno sažimanje
+    \item učenje: 3.93 sekvence/sec, evaluacija: 4.95 sekvenci/sec
  \end{itemize}
  
 \begin{table}[H]
@@ -296,6 +301,7 @@ rezolucija slika & točnost & preciznost & odziv & prosječna preciznost \\ \hli
  \begin{itemize}
   \item rezolucija ulaznih slika $350$x$140$
   \item arhitektura koja koristi LSTM slojeve
+  \item učenje: 3.68 sekvenci/sec, evaluacija: 4.6 sekvenci/sec
  \end{itemize}
  
 \begin{table}[H]
@@ -323,6 +329,7 @@ rezolucija slika & točnost & preciznost & odziv & prosječna preciznost \\ \hli
  \begin{itemize}
   \item rezolucija ulaznih slika $350$x$140$
   \item arhitektura koja koristi vremenski potpuno povezani sloj
+  \item učenje: 3.73 sekvence/sec, evaluacija: 4.81 sekvenci/sec
  \end{itemize}
  
 \begin{table}[H]
@@ -349,8 +356,8 @@ rezolucija slika & točnost & preciznost & odziv & prosječna preciznost \\ \hli
  \frametitle{Analiza pogrešaka i detekcija krivih oznaka}
  \begin{itemize}
   \item evaluacija koristeći model koji koristi vremenski potpuno povezani sloj
-  \item većina pogrešnih predikcija su lažni negativi -- 91\%
-  \item analiza geolokacija krivih predikcija -- atribut pripajanja pridružen drugom traku
+  \item većina pogrešnih predikcija su lažni negativi (91\%)
+  \item analiza geolokacija krivih predikcija -- atribut pripajanja pridružen drugom traku u 336/429 slučajeva (78\%)
   \item skup podataka kontaminiran krivim oznakama
  \end{itemize}
  
@@ -360,6 +367,8 @@ rezolucija slika & točnost & preciznost & odziv & prosječna preciznost \\ \hli
 \end{figure} 
 
 \end{frame}
+
+\section{Zaključak}
 
 \begin{frame}
 \frametitle{Zaključak}

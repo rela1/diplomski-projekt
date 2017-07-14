@@ -34,24 +34,32 @@
 \headcommand {\beamer@framepages {9}{9}}
 \headcommand {\slideentry {5}{0}{5}{10/10}{}{0}}
 \headcommand {\beamer@framepages {10}{10}}
-\headcommand {\slideentry {5}{0}{6}{11/11}{}{0}}
+\headcommand {\sectionentry {6}{Rezultati}{11}{Rezultati}{0}}
+\headcommand {\beamer@sectionpages {6}{10}}
+\headcommand {\beamer@subsectionpages {6}{10}}
+\headcommand {\slideentry {6}{0}{1}{11/11}{}{0}}
 \headcommand {\beamer@framepages {11}{11}}
-\headcommand {\slideentry {5}{0}{7}{12/12}{}{0}}
+\headcommand {\slideentry {6}{0}{2}{12/12}{}{0}}
 \headcommand {\beamer@framepages {12}{12}}
-\headcommand {\slideentry {5}{0}{8}{13/13}{}{0}}
+\headcommand {\slideentry {6}{0}{3}{13/13}{}{0}}
 \headcommand {\beamer@framepages {13}{13}}
-\headcommand {\slideentry {5}{0}{9}{14/14}{}{0}}
+\headcommand {\slideentry {6}{0}{4}{14/14}{}{0}}
 \headcommand {\beamer@framepages {14}{14}}
-\headcommand {\slideentry {5}{0}{10}{15/15}{}{0}}
+\headcommand {\slideentry {6}{0}{5}{15/15}{}{0}}
 \headcommand {\beamer@framepages {15}{15}}
-\headcommand {\slideentry {5}{0}{11}{16/16}{}{0}}
+\headcommand {\slideentry {6}{0}{6}{16/16}{}{0}}
 \headcommand {\beamer@framepages {16}{16}}
-\headcommand {\slideentry {5}{0}{12}{17/17}{}{0}}
+\headcommand {\slideentry {6}{0}{7}{17/17}{}{0}}
 \headcommand {\beamer@framepages {17}{17}}
-\headcommand {\slideentry {5}{0}{13}{18/18}{}{0}}
+\headcommand {\sectionentry {7}{Zaklju\IeC {\v c}ak}{18}{Zaklju\IeC {\v c}ak}{0}}
+\headcommand {\beamer@sectionpages {11}{17}}
+\headcommand {\beamer@subsectionpages {11}{17}}
+\headcommand {\slideentry {7}{0}{1}{18/18}{}{0}}
 \headcommand {\beamer@framepages {18}{18}}
-\headcommand {\beamer@partpages {1}{18}}
-\headcommand {\beamer@subsectionpages {6}{18}}
-\headcommand {\beamer@sectionpages {6}{18}}
-\headcommand {\beamer@documentpages {18}}
-\headcommand {\def \inserttotalframenumber {18}}
+\headcommand {\slideentry {7}{0}{2}{19/19}{}{0}}
+\headcommand {\beamer@framepages {19}{19}}
+\headcommand {\beamer@partpages {1}{19}}
+\headcommand {\beamer@subsectionpages {18}{19}}
+\headcommand {\beamer@sectionpages {18}{19}}
+\headcommand {\beamer@documentpages {19}}
+\headcommand {\def \inserttotalframenumber {19}}
