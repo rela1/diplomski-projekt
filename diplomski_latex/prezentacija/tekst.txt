@@ -1,0 +1,50 @@
+Uvod
+-sigurnost na prometnicama vrlo je bitna stvar. iRAP je međunarodna organizacija koja vrši inspekciju kvaliteta cesta i tako smanjuje rizik od prometnih nesreća.
+-ocjena kvalitete ceste donosi se na temelju velikog broja sigurnosnih atributa. prisutnost sigurnosnih atributa na segmentima prometnica procjenjuju eksperti za označavanje prema naputcima organizacije iRAP na temelju slikovnih i video zapisa prometnih scena.
+-zadatak procjene prisutnosti atributa je  vrlo naporan, skup te su moguće različite greške uzrokovanje ljudskim faktorom.
+-cilj rada je zamijeniti postupak ručnog označavanja strojnim koji pruža jeftiniju, bržu i objektivniju alternativu ručnom označavanju.
+-FTTS iRAP je sustav koji je korišten za izgradnju modela koji bi automatizirao postupak označavanja sigurnosnih atributa.
+sustav sadrži snimke engleskih autocesta snimljenih iz vozila koje su označene sigurnosnim atributima od strane eksperata.
+
+Zadatak
+-prema organizaciji iRAP postoji velik broj sigurnosnih atributa, a ovaj rad se bavi jednim od njih: atribut "pripajanje trakova" koji predstavlja tip križanja. problem detekcije atributa promatramo kao binarnu klasifikaciju.
+-detekcija atributa pripajanja je zanimljiva zbog opasnosti koju može predstavljati u trenutku kada vozilo mora promijeniti traku što je vidljivo iz satelitske snimke. 
+-satelitska snimka crvenom linijom prikazuje službenu oznaku pripajanja iz sustava FTTS iRAP. slika pored satelitske snimke prikazuje snimku iz vozila na kojoj je vidljivo kako je vrlo teško odrediti je li riječ o pripajanju iz same slike.
+-za sam zadatak generirana su dva skupa podataka: prema satelitskoj snimci, vidljiva je crvena linija koja predstavlja službenu oznaku pripajanja iz sustava FTTS iRAP. prvi skup podataka generiran je neovisno o službenim oznakama - za pozitivne slike uzete su sve slike na kojima je vidljiv karakteristični bijeli uzorak, a za negativne one na kojima nije.
+drugi skup podataka koristi službene oznake iz sustava FTTS iRAP. kako je vrlo teško odrediti prisutnost atributa pripajanja iz pojedinačne slike, u ovom skupu podataka se generiraju sekvence slika - svakoj slici pridružuje se sekvenca slika koja joj prethodi (i u kojoj se nalazi karakteristični bijeli uzorak) za koju se nadamo da će pripomoći prilikom određivanja prisutnosti atributa pripajanja.
+
+Skup podataka s diskriminativnim oznakama
+-objasniti pozitivnu i negativnu sliku
+-raspodjela podataka
+-koriste se različite rezolucije prilikom eksperimentiranja da bismo utvrdili najnižu rezoluciju na kojoj klasifikacija ovakvih slika i dalje daje dobre rezultate. niska rezolucija je bitna jer je treniranje na nižim rezolucijama brže, mogu se koristiti veće mini grupe, a posebno je to izraženo prilikom korištenja sekvenci slika koje imaju puno veću memorijsku zahtjevnost.
+
+Skup podataka s oznakama iz sustava FTTS iRAP
+-skup podataka generiran je automatiziranim postupkom iz sljedećih podataka: georeferencirane videosnimke iz sustava FTTS iRAP, geolokacije pripajanja koje se zatim kombiniraju kako bi se iz videosnimaka izdvojili rasponi sličica na kojima se nalaze atributi pripajanja.
+-kako su videosnimke georeferencirane, svakoj slici je pridružena geolokacija što može biti vrlo korisno.
+-skup podataka sastoji se od pojedinačnih označenih slika te od sekvenci duljine 25.
+-objasniti način na koji se uzorkuju sekvence
+-raspodjela podataka
+
+Korištene arhitekture
+-sve korištene arhitekture zasnovane su na prednaučenoj arhitekturi VGG-16 namijenjenoj klasifikaciji slika.
+-arhitektura VGG-16 sastoji se od 5 konvolucijskih blokova koji su građeni na sličan način: nakon nekoliko konvolucijskih slojeva dolazi sloj sažimanja.
+-nakon posljednjeg konvolucijskog bloka dolaze 3 potpuno povezana sloja koja se uklanjaju - koristi se samo prednji dio arhitekture u svrhu izlučivanja značajki iz slika.
+
+Arhitektura za klasifikaciju pojedinačnih slika
+-arhitektura za klasifikaciju pojedinačnih slika izlaze prednjeg dijela prednaučene arhitekture VGG-16 dalje obrađuje kroz sljedeće slojeve: ...
+-arhitektura je korištena za pojedinačne slike s diskriminativnim oznakama i za pojedinačne slike s oznakama iz sustava FTTS iRAP
+
+Arhitekture za sekvence...
+
+Rezultati...
+
+Analiza pogrešaka i detekcija krivih oznaka
+-evaluacijom modela koji koristi vremenski potpuno povezani sloj na skupu podataka s oznakama iz sustava FTTS iRAP dobivene su predikcije modela za cijeli skup podataka.
+-analizom je utvrđeno da većina pogrešnih detekcija predstavlja lažne negative - čak 91% njih
+-većina lažnih negativa pak ima slične karakteristike - atribut pripajanja pridružen je drugom traku što možemo vidjeti na satelitskoj snimci - narančasti pin predstavlja početak segmenta atributa pripajanja za koji je vidljivo kako pripada suprotnoj strani autoceste - automatizirani postupak će ovakvu oznaku pridjeliti sekvencama na kojima pripajanje ustvari nije prisutno i skup podataka će se kontaminirati krivim oznakama.
+
+Zaključak
+-analizom pogrešaka utvrđeno je da je skup podataka kontaminiran krivim oznakama. unatoč tome, modeli postižu zadovoljavajuće performanse.
+-prvi korak u budućem radu bio bi iskoristiti geolokacije pogrešnih predikcija, validirati i pročistiti oznake te ponovno naučiti model na nekontaminiranim podacima.
+-sljedeći korak za poboljšanje bio bi koristiti dulje sekvence slika koje su rjeđe uzorkovane - ne uzimati svaku sličicu iz video snimke, nego npr svaku 3. čime bi se za istu duljinu sekvence od 25 sličica obuhvatilo mnogo veći vremenski opseg videosnimke.
+-moguće poboljšanje bi se svakako moglo ostvariti i korištenjem modernijih arhitektura od arhitekture vgg-16.
