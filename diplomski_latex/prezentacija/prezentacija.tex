@@ -41,7 +41,9 @@
 \begin{frame}
  \frametitle{Zadatak}
  \begin{itemize}
-  \item detektiranje atributa ``pripajanje trakova''
+  \item detektiranje atributa ``pripajanje trakova'' -- opasnost prilikom promjene traka
+  \item binarna klasifikacija
+  \item težina zadatka -- pojedinačne slike i sekvence
  \end{itemize}
 
  \begin{columns}
@@ -49,7 +51,7 @@
 
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.25]{images/sattelite.png}
+\includegraphics[scale=0.24]{images/sattelite.png}
 \end{figure} 
 
 \end{column}
@@ -57,7 +59,7 @@
 \begin{column}{0.5\textwidth}
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.19]{images/car.png}
+\includegraphics[scale=0.22]{images/car.png}
 \end{figure} 
 
 \begin{itemize}
@@ -205,7 +207,7 @@
   \item 50 epoha -- 10 epoha ($5\cdot10^{-4}$, samo novo nadodani parametri) + 40 epoha ($1\cdot10^{-5}$, svi parametri)
   \item mini grupe veličina 5 ili 10, ovisno o memorijskoj zahtjevnosti
   \item učenje postupkom Adam, eksponencijalno smanjivanje stope učenja -- 0.96 u svakoj epohi
-  \item svi parametri regularizirani L2 normom s faktorom regularizacije $5\cdot10^{-4}$
+  \item svi parametri konvolucijskih i potpuno povezanih slojeva regularizirani L2 normom s faktorom regularizacije $5\cdot10^{-4}$
   \item normalizacija po mini grupama za sve potpuno povezane slojeve osim za binarnu klasifikaciju
   \item aktivacijske funkcije -- ReLU i softmax
   \item podskup za validaciju:

@@ -1,10 +1,11 @@
 Uvod
--sigurnost na prometnicama vrlo je bitna stvar. iRAP je međunarodna organizacija koja vrši inspekciju kvaliteta cesta i tako smanjuje rizik od prometnih nesreća.
--ocjena kvalitete ceste donosi se na temelju velikog broja sigurnosnih atributa. prisutnost sigurnosnih atributa na segmentima prometnica procjenjuju eksperti za označavanje prema naputcima organizacije iRAP na temelju slikovnih i video zapisa prometnih scena.
+-sigurnosni atributi prometnica definirani su od strane organizacije iRAP koja se bavi inspekcijom kvalitete cesta.
+-na temelju prisutnosti, odnosno odsutnosti sigurnosnih atributa na prometnicama moguće je ocijeniti kvalitetu ceste.
 -zadatak procjene prisutnosti atributa je  vrlo naporan, skup te su moguće različite greške uzrokovanje ljudskim faktorom.
--cilj rada je zamijeniti postupak ručnog označavanja strojnim koji pruža jeftiniju, bržu i objektivniju alternativu ručnom označavanju.
--FTTS iRAP je sustav koji je korišten za izgradnju modela koji bi automatizirao postupak označavanja sigurnosnih atributa.
-sustav sadrži snimke engleskih autocesta snimljenih iz vozila koje su označene sigurnosnim atributima od strane eksperata.
+-proces ručnog dodjeljivanja atributa je skup, subjektivan i sklon pogreškama.
+-cilj rada je zamijeniti postupak ručnog označavanja strojnim koji je jeftiniji, brži i objektivan.
+-sustav FTTS iRAP je sustav koji sadrži snimke engleskih autocesta snimljenih iz vozila koje su označene sigurnosnim atributima od strane eksperata prema naputcima organizacije iRAP.
+-sustav je korišten za generiranje skupova podataka za učenje modela koji bi automatizirao postupak označavanja sigurnosnih atributa.
 
 Zadatak
 -prema organizaciji iRAP postoji velik broj sigurnosnih atributa, a ovaj rad se bavi jednim od njih: atribut "pripajanje trakova" koji predstavlja tip križanja. problem detekcije atributa promatramo kao binarnu klasifikaciju.
@@ -36,12 +37,23 @@ Arhitektura za klasifikaciju pojedinačnih slika
 
 Arhitekture za sekvence...
 
+Učenje
+-učenje i evaluacija je provedena na grafičkim karticama nVidia GTX1070 i GTX Titan.
+-modeli su učeni kroz 50 epoha - prvih 10 epoha su učeni samo novo nadodani parametri, bez parametara arhitekture VGG-16, s početnom stopom učenja od 5*10^-4.
+idućih 40 epoha učen je cijeli skup parametara modela, s početnom stopom učenja od 1*10^-5.
+-mini grupe su veličina 5 ili 10, ovisno o memorijskoj zahtjevnosti modela.
+-postupak za učenje koji je korišten je postupak Adam uz eksponencijalno smanjivanje stope učenja - 0.96 puta manja stopa učenja u svakoj epohi.
+-svi slobodni parametri potpuno povezanih i konvolucijskih slojeva regularizirani su L2 normom s faktorom regularizacije 5*10^-4.
+-normalizacija po mini grupama za sve potpuno povezane slojeve osim za završni sloj koji se koristi za predikciju.
+-svi potpuno povezani i konvolucijski slojevi koriste ReLU aktivacijsku funkciju, završni potpuno povezani sloj koji se koristi za predikciju koristi softmax aktivacijsku funkciju.
+-podskup za validaciju korišten je za regularizaciju ranim zaustavljanjem i za validaciju predikcijskog praga.
+
 Rezultati...
 
 Analiza pogrešaka i detekcija krivih oznaka
 -evaluacijom modela koji koristi vremenski potpuno povezani sloj na skupu podataka s oznakama iz sustava FTTS iRAP dobivene su predikcije modela za cijeli skup podataka.
 -analizom je utvrđeno da većina pogrešnih detekcija predstavlja lažne negative - čak 91% njih
--većina lažnih negativa pak ima slične karakteristike - atribut pripajanja pridružen je drugom traku što možemo vidjeti na satelitskoj snimci - narančasti pin predstavlja početak segmenta atributa pripajanja za koji je vidljivo kako pripada suprotnoj strani autoceste - automatizirani postupak će ovakvu oznaku pridjeliti sekvencama na kojima pripajanje ustvari nije prisutno i skup podataka će se kontaminirati krivim oznakama.
+-većina lažnih negativa (336/429 slučajeva 78%) pak ima slične karakteristike - atribut pripajanja pridružen je drugom traku što možemo vidjeti na satelitskoj snimci - narančasti pin predstavlja početak segmenta atributa pripajanja za koji je vidljivo kako pripada suprotnoj strani autoceste - automatizirani postupak će ovakvu oznaku pridjeliti sekvencama na kojima pripajanje ustvari nije prisutno i skup podataka će biti kontaminirati krivim oznakama. 
 
 Zaključak
 -analizom pogrešaka utvrđeno je da je skup podataka kontaminiran krivim oznakama. unatoč tome, modeli postižu zadovoljavajuće performanse.
